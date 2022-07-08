@@ -98,7 +98,7 @@ class UserController extends AdminController
                     'id' => 'ref_by',
                     'info' => '邀请人',
                     'type' => 'input',
-                    'placeholder' => '',
+                    'placeholder' => '邀请人的注册邮箱或用户id',
                 ],
                 [
                     'id' => 'email_notify',
@@ -316,9 +316,15 @@ class UserController extends AdminController
                             break;
                     }
                 }
-                if ($ref_by != '') {
-                    $user->ref_by = $ref_by;
+                $user->save();
+            }
+            if ($ref_by != '') {
+                if (Tools::emailCheck($ref_by)) {
+                    $invite_user = User::where('email', $ref_by)->first();
+                    $ref_by = $invite_user->id;
                 }
+                $user = User::where('email', $email)->first();
+                $user->ref_by = $ref_by;
                 $user->save();
             }
         } catch (\Exception $e) {

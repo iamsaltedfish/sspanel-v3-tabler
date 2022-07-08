@@ -321,6 +321,9 @@ class UserController extends AdminController
             if ($ref_by != '') {
                 if (Tools::emailCheck($ref_by)) {
                     $invite_user = User::where('email', $ref_by)->first();
+                    if ($invite_user == null) {
+                        throw new \Exception('没有找到此邀请人');
+                    }
                     $ref_by = $invite_user->id;
                 }
                 $user = User::where('email', $email)->first();

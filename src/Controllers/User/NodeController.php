@@ -23,13 +23,17 @@ class NodeController extends UserController
         ->get();
 
         $class = Node::select('node_class')
+        ->orderBy('node_class', 'asc')
         ->distinct()
         ->get();
+
+        $min_node_class = min($class->toArray())['node_class'];
 
         return $response->write(
             $this->view()
                 ->assign('class', $class)
                 ->assign('servers', $servers)
+                ->assign('min_node_class', $min_node_class)
                 ->registerClass('URL', URL::class)
                 ->display('user/node/servers.tpl')
         );

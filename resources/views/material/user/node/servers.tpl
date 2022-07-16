@@ -62,7 +62,7 @@
                             {foreach $class as $grade}
                                 <li class="nav-item">
                                     <a href="#class-{$grade['node_class']}"
-                                        class="nav-link {if $grade['node_class'] == '0'}active{/if}" data-bs-toggle="tab">
+                                        class="nav-link {if $grade['node_class'] == $min_node_class}active{/if}" data-bs-toggle="tab">
                                         <i class="ti ti-box-multiple-{$grade['node_class']}"></i>&nbsp;
                                         等级 {$grade['node_class']}
                                     </a>
@@ -73,7 +73,7 @@
                             <div class="tab-content">
                                 {foreach $class as $grade}
                                     {$display_marker = '0'}
-                                    <div class="tab-pane {if $grade['node_class'] == '0'}active show{/if}"
+                                    <div class="tab-pane {if $grade['node_class'] == $min_node_class}active show{/if}"
                                         id="class-{$grade['node_class']}">
                                         <div class="row row-cards">
                                             {foreach $servers as $server}

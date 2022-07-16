@@ -327,7 +327,7 @@ class UserController extends AdminController
                     $ref_by = $invite_user->id;
                 }
                 $user = User::where('email', $email)->first();
-                $user->ref_by = $ref_by;
+                $user->ref_by = (int) $ref_by;
                 $user->save();
             }
         } catch (\Exception $e) {

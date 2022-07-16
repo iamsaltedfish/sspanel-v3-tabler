@@ -72,11 +72,36 @@
                         <div class="card-body">
                             <div class="tab-content">
                                 {foreach $class as $grade}
+                                    {$display_marker = '0'}
                                     <div class="tab-pane {if $grade['node_class'] == '0'}active show{/if}"
                                         id="class-{$grade['node_class']}">
                                         <div class="row row-cards">
                                             {foreach $servers as $server}
                                                 {if $server->node_class == $grade['node_class']}
+                                                    {if $user->class < $server->node_class}
+                                                        {if $display_marker == '0'}
+                                                            <div class="col-lg-12">
+                                                                <div class="card bg-primary-lt">
+                                                                    <div class="card-body">
+                                                                        <p class="text-muted">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-blue"
+                                                                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                                                stroke="currentColor" fill="none" stroke-linecap="round"
+                                                                                stroke-linejoin="round">
+                                                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                                                <circle cx="12" cy="12" r="9"></circle>
+                                                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                                                                <polyline points="11 12 12 12 12 16 13 16"></polyline>
+                                                                            </svg>
+                                                                            你当前的账户等级小于下列节点等级，因此仅能查看公开信息而无法使用。可前往 <a
+                                                                                href="/user/product">商店</a> 订购相应等级套餐
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            {$display_marker = $display_marker + 1}
+                                                        {/if}
+                                                    {/if}
                                                     <div class="col-md-4 col-sm-12">
                                                         <div class="card">
                                                             <div class="card-body">
@@ -122,11 +147,12 @@
                                                                                     <i class="ti ti-rocket"></i>&nbsp;
                                                                                     {$server->traffic_rate}x
                                                                                 </li>
-                                                                                {if $server->sort == '11'}
+                                                                                {if $server->sort == '11' && $user->class >= $server->node_class}
                                                                                     <li class="list-inline-item">
                                                                                         <a class="ti ti-copy"
                                                                                             data-clipboard-text="{URL::getV2Url($user, $server)}"
-                                                                                            style="text-decoration: none;"></a>
+                                                                                            style="text-decoration: none;">
+                                                                                        </a>
                                                                                     </li>
                                                                                 {/if}
                                                                                 <li class="list-inline-item">

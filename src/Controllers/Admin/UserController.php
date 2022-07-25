@@ -98,7 +98,7 @@ class UserController extends AdminController
                     'id' => 'ref_by',
                     'info' => '邀请人',
                     'type' => 'input',
-                    'placeholder' => '邀请人的注册邮箱或用户id',
+                    'placeholder' => '邀请人的注册邮箱或用户id，可留空',
                 ],
                 [
                     'id' => 'email_notify',

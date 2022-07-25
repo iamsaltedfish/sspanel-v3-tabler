@@ -22,6 +22,7 @@ use App\Models\User;
 use App\Models\UserSubscribeLog;
 use App\Services\Auth;
 use App\Services\Config;
+use App\Services\Mail;
 use App\Services\Payment;
 use App\Utils\Check;
 use App\Utils\ClientProfiles;
@@ -383,7 +384,7 @@ class UserController extends BaseController
             $order->paid_at = time();
             $order->save();
 
-            $product->stock -= 1; // 减库存
+            //$product->stock -= 1; // 减库存
             $product->sales += 1; // 加销量
             $product->save();
 
@@ -484,6 +485,19 @@ class UserController extends BaseController
             // 如果上面的代码执行成功，没有报错，再标记为已处理
             $order->execute_status = 1;
             $order->save();
+
+            // 告罄补货通知
+            if ($product->stock - $product->sales == 5 || $product->stock - $product->sales == 0) {
+                $admin_users = User::where('is_admin', '1')->get();
+                foreach ($admin_users as $admin) {
+                    Mail::send($admin->email, $_ENV['appName'] . ' - 商品缺货通知', 'news/warn.tpl',
+                        [
+                            'user' => $admin,
+                            'text' => '商品【' . $product->name . '】当前库存仅有 ' . ($product->stock - $product->sales) . ' 件，请注意及时补货',
+                        ], []
+                    );
+                }
+            }
         }
     }
 

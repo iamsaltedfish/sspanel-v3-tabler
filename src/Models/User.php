@@ -806,10 +806,11 @@ class User extends Model
      * @param string $ip
      * @param int    $type 登录失败为 1
      */
-    public function collectLoginIP(string $ip, int $type = 0): bool
+    public function collectLoginIP(string $ip, string $ua, int $type = 0): bool
     {
         $loginip = new LoginIp();
         $loginip->ip = $ip;
+        $loginip->ua = $ua;
         $loginip->attribution = Tools::getIpInfo($ip);
         $loginip->userid = $this->id;
         $loginip->datetime = time();

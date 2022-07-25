@@ -35,7 +35,7 @@ class AuthController extends BaseController
                 throw new \Exception('没有找到这个邮箱');
             }
             if (!Hash::checkPassword($user->pass, $passwd)) {
-                $user->collectLoginIP($_SERVER['REMOTE_ADDR'], 1);
+                $user->collectLoginIP($_SERVER['REMOTE_ADDR'], $request->getHeaderLine('User-Agent'), 1);
                 throw new \Exception('登录密码不正确');
             }
             if ($user->ga_enable == 1) {
@@ -53,7 +53,7 @@ class AuthController extends BaseController
 
             $time = 3600 * 24;
             Auth::login($user->id, $time);
-            $user->collectLoginIP($_SERVER['REMOTE_ADDR']);
+            $user->collectLoginIP($_SERVER['REMOTE_ADDR'], $request->getHeaderLine('User-Agent'));
         } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
@@ -316,7 +316,7 @@ class AuthController extends BaseController
 
         if ($auto_login) {
             Auth::login($user->id, 3600);
-            $user->collectLoginIP($_SERVER['REMOTE_ADDR']);
+            $user->collectLoginIP($_SERVER['REMOTE_ADDR'], $request->getHeaderLine('User-Agent'));
         }
     }
 

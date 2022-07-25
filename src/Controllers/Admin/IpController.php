@@ -23,6 +23,7 @@ class IpController extends AdminController
                 'id' => '#',
                 'userid' => '用户编号',
                 'ip' => '公网地址',
+                'ua' => '标识',
                 'attribution' => '归属地',
                 'datetime' => '登录时间',
                 'result' => '登录结果',
@@ -38,6 +39,13 @@ class IpController extends AdminController
                 [
                     'id' => 'ip',
                     'info' => '公网地址',
+                    'type' => 'input',
+                    'placeholder' => '模糊匹配',
+                    'exact' => false,
+                ],
+                [
+                    'id' => 'ua',
+                    'info' => '浏览器标识',
                     'type' => 'input',
                     'placeholder' => '模糊匹配',
                     'exact' => false,

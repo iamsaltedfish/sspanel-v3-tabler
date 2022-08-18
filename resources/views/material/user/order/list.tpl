@@ -78,19 +78,7 @@
                                                 <a href="/user/order/{$order->no}">详情</a>
                                             </td>
                                             <td>{$order->product_name}</td>
-                                            {if $order->order_status == 'paid'}
-                                                <td>已支付</td>
-                                            {else}
-                                                {if $order->order_status != 'abnormal'}
-                                                    {if time() > $order->expired_at}
-                                                        <td>超时</td>
-                                                    {else}
-                                                        <td>等待支付</td>
-                                                    {/if}
-                                                {else}
-                                                    <td>异常</td>
-                                                {/if}
-                                            {/if}
+                                            <td>{$order->judgmentOrderStatus($order->order_status, $order->expired_at, true)}</td>
                                             <td>{$order->order_payment}</td>
                                             <td>{$order->no}</td>
                                             <td>{$order->product_type}</td>
@@ -125,7 +113,7 @@
                     <div class="form-group mb-3 row">
                         <label class="form-label col-3 col-form-label">礼品卡</label>
                         <div class="col">
-                            <input id="card" type="text" class="form-control">
+                            <input id="card" type="text" class="form-control" placeholder="在此输入或粘贴礼品码">
                         </div>
                     </div>
                 </div>

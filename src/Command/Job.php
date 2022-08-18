@@ -84,6 +84,7 @@ class Job extends Command
         TelegramSession::where('datetime', '<', time() - 900)->delete();
         NodeOnlineLog::where('log_time', '<', time() - 86400 * 3)->delete();
         UserSubscribeLog::where('request_time', '<', $limit)->delete();
+        StatisticsModel::where('item', 'user_traffic')->where('created_at', '<', time() - 86400 * 14)->delete();
 
         // 重置自增ID
         $db = new DatatablesHelper();

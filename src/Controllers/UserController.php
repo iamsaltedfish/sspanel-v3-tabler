@@ -74,11 +74,13 @@ class UserController extends BaseController
             'other' => '其他商品',
         ];
 
+        $all_products = Product::where('status', '1')->get();
+
         $count = [
-            'tatp' => Product::where('status', '1')->where('type', 'tatp')->count(),
-            'time' => Product::where('status', '1')->where('type', 'time')->count(),
-            'traffic' => Product::where('status', '1')->where('type', 'traffic')->count(),
-            'other' => Product::where('status', '1')->where('type', 'other')->count(),
+            'tatp' => $all_products->where('type', 'tatp')->count(),
+            'time' => $all_products->where('type', 'time')->count(),
+            'traffic' => $all_products->where('type', 'traffic')->count(),
+            'other' => $all_products->where('type', 'other')->count(),
         ];
 
         return $response->write(
@@ -614,7 +616,7 @@ class UserController extends BaseController
         $totallogin = LoginIp::where('userid', $this->user->id)
             ->orderBy('datetime', 'desc')
             ->where('type', '0')
-            ->take(10)
+            ->take(8)
             ->get();
 
         return $response->write(
@@ -1191,7 +1193,7 @@ class UserController extends BaseController
 
         $chart_traffic_data = [];
         foreach ($last_seven_days as $traffic) {
-            $chart_traffic_data[] = round($traffic->value, 2);
+            $chart_traffic_data[] = round($traffic->value / 1024, 2);
         }
 
         $chart_date_data = [];

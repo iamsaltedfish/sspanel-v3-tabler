@@ -562,7 +562,7 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <h3 class="card-title">过去七日用量（单位：MB）</h3>
+                                    <h3 class="card-title">过去七日用量 (单位: GB)</h3>
                                     <div id="past-usage"></div>
                                 </div>
                             </div>

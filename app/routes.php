@@ -133,6 +133,7 @@ return function (SlimApp $app) {
 
         $this->get('/payback',                  App\Controllers\Admin\PaybackController::class . ':index');
         $this->post('/payback/ajax',            App\Controllers\Admin\PaybackController::class . ':ajaxQuery');
+        $this->put('/payback/{id}',             App\Controllers\Admin\PaybackController::class . ':amendmentReward');
         $this->delete('/payback/{id}',          App\Controllers\Admin\PaybackController::class . ':delete');
 
         // Node Mange

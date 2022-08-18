@@ -61,6 +61,7 @@
                                         <tr>
                                             <td>
                                                 <a class="text-red" href="#" onclick="deleteItem('{$log->id}')">删除</a>
+                                                <a class="text-blue" href="#" onclick="amendmentReward('{$log->id}')">修正</a>
                                             </td>
                                             {foreach $details['field'] as $key => $value}
                                                 <td>{$log->$key}</td>
@@ -253,8 +254,17 @@
 
         function deleteItem(id) {
             item_id = id;
+            http_method = 'DELETE';
 
             $('#notice-message').text('确定要删除此项么');
+            $('#notice-dialog').modal('show');
+        }
+
+        function amendmentReward(id) {
+            item_id = id;
+            http_method = 'PUT';
+
+            $('#notice-message').text('此功能仅适用于认定为欺诈的返利记录，确定要修正此结果吗');
             $('#notice-dialog').modal('show');
         }
 
@@ -275,6 +285,9 @@
                             str += "<tr><td>" +
                                 '<a class=\"text-red\" href="#" onclick="deleteItem(' + data
                                 .result[i].id + ')">删除</a>' +
+                                '&nbsp' +
+                                '<a class=\"text-blue\" href="#" onclick="amendmentReward(' + data
+                                .result[i].id + ')">修正</a>' +
                                 "</td><td>" + data.result[i].id +
                                 {foreach $details['field'] as $key => $value}
                                     {if $key != 'id'}
@@ -294,7 +307,7 @@
         $("#notice-confirm").click(function() {
             $.ajax({
                 url: "/admin/{$details['route']}/" + item_id,
-                type: 'DELETE',
+                type: http_method,
                 dataType: "json",
                 success: function(data) {
                     if (data.ret == 1) {

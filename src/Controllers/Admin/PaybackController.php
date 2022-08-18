@@ -1,8 +1,9 @@
 <?php
 namespace App\Controllers\Admin;
 
-use App\Models\Payback;
 use App\Controllers\AdminController;
+use App\Models\Payback;
+use App\Models\User;
 
 class PaybackController extends AdminController
 {
@@ -122,6 +123,34 @@ class PaybackController extends AdminController
         return $response->withJson([
             'ret' => 1,
             'msg' => '删除成功',
+        ]);
+    }
+
+    public function amendmentReward($request, $response, $args)
+    {
+        $item_id = $args['id'];
+        $reward = Payback::find($item_id);
+        $invite_sponsor = $reward->ref_by; // 邀请发起人（受益方）
+
+        if ($reward->getOriginal('fraud_detect') == 0) {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => '此功能仅适用于认定为欺诈的返利记录',
+            ]);
+        }
+
+        $invite_sponsor_user = User::find($invite_sponsor);
+        if ($invite_sponsor_user != null) {
+            $invite_sponsor_user->money += $reward->ref_get;
+            $invite_sponsor_user->save();
+        }
+
+        $reward->fraud_detect = 0;
+        $reward->save();
+
+        return $response->withJson([
+            'ret' => 1,
+            'msg' => '操作成功',
         ]);
     }
 }

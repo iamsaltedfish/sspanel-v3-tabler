@@ -85,6 +85,24 @@
                                             {/if}
                                         </div>
                                     </div>
+                                    {if $count == $total && $topic->getOriginal('closed_by') != null}
+                                        <div>
+                                            <div class="row">
+                                                <div class="col-auto">
+                                                    <span class="avatar"
+                                                        style="background-image: url(/theme/tabler/static/warning.png)"></span>
+                                                </div>
+                                                <div class="col">
+                                                    <div>
+                                                        此主题帖已关闭，如有需要请创建新工单
+                                                    </div>
+                                                    <div class="text-muted my-1">
+                                                        {date('Y-m-d H:i:s', $topic->getOriginal('closed_at'))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {/if}
                                 {/foreach}
                             </div>
                         </div>
@@ -103,10 +121,13 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <textarea id="reply-content" class="form-control" rows="8" placeholder="请输入回复内容"></textarea>
+                        <textarea id="reply-content" class="form-control" rows="10" placeholder="请输入回复内容"></textarea>
                     </div>
-                    <p>* 上传图片有助于帮助解决问题，请使用图床上传。可以前往 <a target="view_window"
-                            href="https://www.imgurl.org/">imgurl.org</a></p>
+                    <p>* 上传图片有助于帮助解决问题，请使用图床上传。可以前往
+                        <a target="view_window" href="https://www.imgurl.org/">
+                            imgurl.org
+                        </a>
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn me-auto" data-bs-dismiss="modal">取消</button>

@@ -1,4 +1,11 @@
 {include file='admin/tabler_admin_header.tpl'}
+
+<style>
+    table td {
+        white-space: nowrap;
+    }
+</style>
+
 <div class="page-wrapper">
     <div class="container-xl">
         <div class="page-header d-print-none text-white">
@@ -13,6 +20,33 @@
                 </div>
                 <div class="col-auto ms-auto d-print-none">
                     <div class="btn-list">
+                        <button href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal"
+                            data-bs-target="#historical_order">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-invoice"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                <line x1="9" y1="7" x2="10" y2="7"></line>
+                                <line x1="9" y1="13" x2="15" y2="13"></line>
+                                <line x1="13" y1="17" x2="15" y2="17"></line>
+                            </svg>
+                            历史订单
+                        </button>
+                        <button href="#" class="btn btn-primary d-sm-none btn-icon" data-bs-toggle="modal"
+                            data-bs-target="#historical_order">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-invoice"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                <line x1="9" y1="7" x2="10" y2="7"></line>
+                                <line x1="9" y1="13" x2="15" y2="13"></line>
+                                <line x1="13" y1="17" x2="15" y2="17"></line>
+                            </svg>
+                        </button>
                         <button href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal"
                             data-bs-target="#add-reply">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
@@ -115,6 +149,52 @@
         </div>
     </div>
 
+    <div class="modal modal-blur fade" id="historical_order" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">历史订单</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table class="table table-vcenter card-table">
+                                <thead>
+                                    <tr>
+                                        <th>状态</th>
+                                        <th>订单号</th>
+                                        <th>商品</th>
+                                        <th>商品售价</th>
+                                        <th>订单金额</th>
+                                        <th>支付方式</th>
+                                        <th>创建时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {foreach $orders as $order}
+                                        <tr>
+                                            <td>{$order->judgmentOrderStatus($order->order_status, $order->expired_at, true)}</td>
+                                            <td>{$order->no}</td>
+                                            <td>{$order->product_name}</td>
+                                            <td>{sprintf("%.2f", $order->product_price / 100)}</td>
+                                            <td>{sprintf("%.2f", $order->order_price / 100)}</td>
+                                            <td>{$order->order_payment}</td>
+                                            <td>{date('Y-m-d H:i:s', $order->created_at)}</td>
+                                        </tr>
+                                    {/foreach}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal modal-blur fade" id="add-reply" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
             <div class="modal-content">
@@ -126,8 +206,6 @@
                     <div class="mb-3">
                         <textarea id="reply-content" class="form-control" rows="12" placeholder="请输入回复内容"></textarea>
                     </div>
-                    <p>* 上传图片有助于帮助解决问题，请使用图床上传。可以前往 <a target="view_window"
-                            href="https://www.imgurl.org/">imgurl.org</a></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn me-auto" data-bs-dismiss="modal">取消</button>

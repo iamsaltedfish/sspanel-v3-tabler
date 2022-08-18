@@ -9,6 +9,7 @@ use App\Services\Mail;
 use App\Models\User;
 use App\Models\Setting;
 use App\Models\WorkOrder;
+use App\Models\ProductOrder;
 use voku\helper\AntiXSS;
 use App\Controllers\AdminController;
 
@@ -25,7 +26,7 @@ class TicketController extends AdminController
                 'tk_id' => '#',
                 'wait_reply' => '等待回复',
                 'title' => '主题',
-                'user_id' => '提交用户',
+                //'user_id' => '提交用户',
                 'created_at' => '创建时间',
                 'updated_at' => '更新时间',
                 'closed_at' => '关闭时间',
@@ -98,11 +99,15 @@ class TicketController extends AdminController
 
         $user = User::find($topic->user_id);
         $discussions = WorkOrder::where('tk_id', $tk_id)->get();
+        $orders = ProductOrder::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return $response->write(
             $this->view()
                 ->assign('tk_user', $user)
                 ->assign('topic', $topic)
+                ->assign('orders', $orders)
                 ->assign('discussions', $discussions)
                 ->display('admin/ticket/read.tpl')
         );

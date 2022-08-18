@@ -8,12 +8,12 @@ class WorkOrder extends Model
 
     public function getCreatedAtAttribute($value)
     {
-        return date('m-d H:i', $value);
+        return date('Y-m-d H:i:s', $value);
     }
 
     public function getUpdatedAtAttribute($value)
     {
-        return date('m-d H:i', $value);
+        return date('Y-m-d H:i:s', $value);
     }
 
     public function getClosedAtAttribute($value)
@@ -23,6 +23,6 @@ class WorkOrder extends Model
 
     public function getClosedByAttribute($value)
     {
-        return ($value == null) ? '开启中' : '已关闭';
+        return ($value == null) ? '<span class="status status-green">开启中</span>' : '<span class="status status-black">已关闭</span>';
     }
 }

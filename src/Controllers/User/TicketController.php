@@ -50,8 +50,14 @@ class TicketController extends UserController
             if ($title == '') {
                 throw new \Exception('请填写工单标题');
             }
+            if (strlen($title) > 20) {
+                throw new \Exception('工单标题应该简要概括问题，长度不得超过20字符');
+            }
             if ($content == '' && $ticket_client != 'reward_or_refund') {
                 throw new \Exception('请填写工单内容');
+                if (strlen($content) > 500) {
+                    throw new \Exception('工单内容长度不得超过500字符');
+                }
             }
             if ($ticket_client == '0') {
                 throw new \Exception('请选择有问题的设备系统类型');
@@ -136,6 +142,9 @@ class TicketController extends UserController
             $content = $request->getParam('content');
             if ($content == '') {
                 throw new \Exception('请撰写回复内容');
+                if (strlen($content) > 500) {
+                    throw new \Exception('工单内容长度不得超过500字符');
+                }
             }
             if (strpos($content, 'admin') !== false || strpos($content, 'user') !== false) {
                 throw new \Exception('回复内容不能包含关键词 admin 和 user');

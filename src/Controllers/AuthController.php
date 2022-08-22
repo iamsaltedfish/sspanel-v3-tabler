@@ -45,11 +45,13 @@ class AuthController extends BaseController
                 }
             }
 
-            $f = new Fingerprint;
-            $f->user_id = $user->id;
-            $f->fingerprint = (empty($fingerprint)) ? 'null' : $fingerprint;
-            $f->created_at = time();
-            $f->save();
+            if (strlen($fingerprint) === 32) {
+                $f = new Fingerprint();
+                $f->user_id = $user->id;
+                $f->fingerprint = $fingerprint;
+                $f->created_at = time();
+                $f->save();
+            }
 
             $time = 3600 * 24;
             Auth::login($user->id, $time);
@@ -306,8 +308,8 @@ class AuthController extends BaseController
         }
         $user->save();
 
-        if (!empty($fingerprint) && $fingerprint != 'null') {
-            $f = new Fingerprint;
+        if (strlen($fingerprint) === 32) {
+            $f = new Fingerprint();
             $f->user_id = $user->id;
             $f->fingerprint = $fingerprint;
             $f->created_at = time();

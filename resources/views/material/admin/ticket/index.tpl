@@ -289,7 +289,7 @@
                                 '&nbsp;<a class=\"text-orange\" href="#" onclick="closeItem(' + data
                                 .result[i].id + ')">关闭</a>' +
                                 '&nbsp;<a class=\"text-blue\" href="/admin/ticket/' + data
-                                .result[i].id + '/view">回复</a>' +
+                                .result[i].tk_id + '/view">回复</a>' +
                                 {foreach $details['field'] as $key => $value}
                                     {if $key != 'id'}
                                         "</td><td>" + data.result[i].{$key} +

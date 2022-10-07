@@ -194,6 +194,8 @@ class AuthController extends BaseController
                 throw new \Exception('仅开放邀请注册，请填写邀请码');
             }
             if ($reg_mode == 'invite') {
+                $split = explode('=', $code);
+                $code = (count($split) === 1) ? $code : end($split);
                 $reg_invite_code = InviteCode::where('code', $code)->first();
                 if ($reg_invite_code == null) {
                     throw new \Exception('没有找到这个邀请码');

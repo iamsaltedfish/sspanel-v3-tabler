@@ -210,7 +210,7 @@ class TicketController extends AdminController
         $ticket = WorkOrder::where('is_topic', '1')
         ->where('tk_id', $item_id)
         ->first();
-        if ($ticket->closed_by == '已关闭') {
+        if (isset($ticket->closed_by)) {
             return $response->withJson([
                 'ret' => 0,
                 'msg' => '工单已是关闭状态'

@@ -130,6 +130,29 @@ $_ENV['streaming_media_unlock_multiplexing'] = [
 ];
 
 /*
+    工单系统
+*/
+
+$_ENV['enable_ticket'] = true; // 是否开启工单系统
+$_ENV['mail_ticket'] = true; // 是否开启工单邮件提醒
+$_ENV['quick_fill_function'] = false; // 工单回复快速填充内容开关
+$_ENV['quick_fill_content'] = [
+    [
+        'id' => 'how_buy',
+        'title' => '如何购买',
+        'content' => '您可以前往 /user/product 页面选购商品',
+    ],
+    [
+        'id' => 'how_use',
+        'title' => '如何使用',
+        'content' => '您可以参考 docs.domain.com 页面的导航',
+    ]
+];
+$_ENV['img_bed_link'] = 'https://imgkr.com/'; // 提供的图床地址
+$_ENV['refund_method'] = '支付宝 / 微信 / USDT TRC20'; // 向用户声明支持的方式
+$_ENV['tips_content'] = '工单被回复时会邮件通知您，请留意注册邮箱的推送';
+
+/*
     注册用户行为限制
 */
 
@@ -142,8 +165,6 @@ $_ENV['checkinMin'] = 100; // 签到可获得的最低流量(MB)
 $_ENV['checkinMax'] = 300; // 签到可获得的最多流量(MB)
 $_ENV['checkin_add_time'] = false; // 签到是否增加时间
 $_ENV['checkin_add_time_hour'] = '4'; // 签到增加多长小时的时间
-$_ENV['enable_ticket'] = true; // 是否开启工单系统
-$_ENV['mail_ticket'] = true; // 是否开启工单邮件提醒
 $_ENV['gift_card_rebate'] = false; // 当用户兑换礼品卡添加余额时，是否执行返利
 $_ENV['clear_traffic_after_expire'] = false; // 当用户到期后，是否清空账号的剩余流量
 $_ENV['hide_old_server_list'] = false; // 是否隐藏旧的服务器列表入口

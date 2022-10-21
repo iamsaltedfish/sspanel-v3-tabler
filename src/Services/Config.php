@@ -66,6 +66,11 @@ class Config
             'hide_audit_rules_and_logs'     => $_ENV['hide_audit_rules_and_logs'],
             'invisible_livechat_users'      => $_ENV['invisible_livechat_users'],
             'show_live_chat_on_logout_page' => $_ENV['show_live_chat_on_logout_page'],
+            'quick_fill_function'           => $_ENV['quick_fill_function'],
+            'quick_fill_content'            => $_ENV['quick_fill_content'],
+            'img_bed_link'                  => $_ENV['img_bed_link'],
+            'refund_method'                 => $_ENV['refund_method'],
+            'tips_content'                  => $_ENV['tips_content'],
             // 其他
             'enable_checkin'          => $_ENV['enable_checkin'],
             'checkinMin'              => $_ENV['checkinMin'],

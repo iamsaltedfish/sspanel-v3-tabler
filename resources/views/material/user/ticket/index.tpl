@@ -45,36 +45,65 @@
         <div class="container-xl">
             <div class="row row-deck row-cards">
                 <div class="col-12">
-                    <div class="card">
-                        {if $tickets->count() != '0'}
-                            <div class="table-responsive">
-                                <table id="data_table" class="table card-table table-vcenter text-nowrap datatable">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>操作</th>
-                                            <th>标题</th>
-                                            <th>状态</th>
-                                            <th>创建时间</th>
-                                            <th>最后更新</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {foreach $tickets as $ticket}
-                                            <tr>
-                                                <td>{$ticket->tk_id}</td>
-                                                <td>
-                                                    <a href="/user/ticket/{$ticket->tk_id}/view">浏览</a>
-                                                </td>
-                                                <td>{$ticket->title}</td>
-                                                <td>{$ticket->closed_by}</td>
-                                                <td>{$ticket->created_at}</td>
-                                                <td>{$ticket->updated_at}</td>
-                                            </tr>
-                                        {/foreach}
-                                    </tbody>
-                                </table>
-                            </div>
+                    <div class="row row-cards row-deck">
+                        {if $tickets->count() !== 0}
+                            {foreach $tickets as $ticket}
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="card-stamp">
+                                                {$tk_status = $ticket->getTheWorkOrderStatus($ticket->tk_id)}
+                                                {if $tk_status !== 'closed'}
+                                                    <div class="card-stamp-icon bg-yellow">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="icon icon-tabler icon-tabler-clock" width="24" height="24"
+                                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                            stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <circle cx="12" cy="12" r="9"></circle>
+                                                            <polyline points="12 7 12 12 15 15"></polyline>
+                                                        </svg>
+                                                    </div>
+                                                {else}
+                                                    <div class="card-stamp-icon bg-green">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                            class="icon icon-tabler icon-tabler-check" width="24" height="24"
+                                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                            stroke-linecap="round" stroke-linejoin="round">
+                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                            <path d="M5 12l5 5l10 -10"></path>
+                                                        </svg>
+                                                    </div>
+                                                {/if}
+                                            </div>
+                                            <h3 class="card-title" style="font-size: 20px;">
+                                                #{$ticket->tk_id} {$ticket->title}
+                                            </h3>
+                                            <!--<p class="mb-3">
+                                                <span class="badge bg-red-lt">Waiting</span>
+                                            </p> -->
+                                            <p class="text-muted text-truncate" style="height: 100px;">
+                                                {nl2br($ticket->getTheLatestReply($ticket->tk_id))}
+                                            </p>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="d-flex">
+                                                {if $tk_status === 'closed'}
+                                                    <span class="status status-grey">已结单</span>
+                                                {/if}
+                                                {if $tk_status === 'open_wait_user'}
+                                                    <span class="status status-orange">等您回复</span>
+                                                {/if}
+                                                {if $tk_status === 'open_wait_admin'}
+                                                    <span class="status status-green">进行中</span>
+                                                {/if}
+                                                <a href="/user/ticket/{$ticket->tk_id}/view"
+                                                    class="btn btn-primary ms-auto">浏览</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {/foreach}
                         {else}
                             <div class="card">
                                 <div class="card-header">
@@ -97,16 +126,35 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="row row-cards mb-3">
+                        <div class="col-lg-12">
+                            <div class="card bg-primary-lt">
+                                <div class="card-body">
+                                    <p class="text-muted" style="line-height: 24px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-blue" width="24"
+                                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <circle cx="12" cy="12" r="9"></circle>
+                                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                            <polyline points="11 12 12 12 12 16 13 16"></polyline>
+                                        </svg>
+                                        {$config['tips_content']}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="mb-3">
                         <select id="ticket-client" class="form-select">
-                            <option value="0">请选择有问题的设备系统类型</option>
+                            <option value="0">请选择工单类型</option>
                             <option value="reward_or_refund">提现或退款</option>
-                            <option value="Windows">Windows</option>
+                            <!-- <option value="Windows">Windows</option>
                             <option value="Macos">Macos</option>
                             <option value="Android">Android</option>
                             <option value="IOS">IOS</option>
                             <option value="Route">路由器</option>
-                            <option value="Linux">Linux</option>
+                            <option value="Linux">Linux</option> -->
                             <option value="Other">其他</option>
                         </select>
                     </div>
@@ -120,18 +168,18 @@
                         <input id="associated-order" type="text" class="form-control" placeholder="退款请填写订单号；提现请填写金额">
                     </div>
                     <div class="mb-3">
-                        <input id="receiving-method" type="text" class="form-control" placeholder="请输入接收方式，如支付宝 / 微信">
+                        <input id="receiving-method" type="text" class="form-control"
+                            placeholder="请选择接收方式：{$config['refund_method']}">
                     </div>
                     <div class="mb-3">
                         <input id="receiving-account" type="text" class="form-control"
                             placeholder="请输入接收方式账户，如手机号 / 邮箱 / 收款码图片链接">
                     </div>
-                    <p>* 上传图片有助于帮助解决问题，请使用图床上传。可以前往
-                        <a target="view_window" href="https://www.imgurl.org/">
-                            imgurl.org
+                    <p>* 若需上传图片，请使用图床。上传完成后，将图片链接附在工单内容中。您可前往
+                        <a target="view_window" href="{$config['img_bed_link']}">
+                            {$config['img_bed_link']}
                         </a>
                     </p>
-                    <p>* 工单被回复时会邮件通知您</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn me-auto" data-bs-dismiss="modal">取消</button>

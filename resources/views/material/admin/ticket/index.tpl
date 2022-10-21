@@ -285,9 +285,9 @@
                         for (var i = 0; i < data.result.length; i++) {
                             str += "<tr><td>" +
                                 '<a class=\"text-red\" href="#" onclick="deleteItem(' + data
-                                .result[i].id + ')">删除</a>' +
+                                .result[i].tk_id + ')">删除</a>' +
                                 '&nbsp;<a class=\"text-orange\" href="#" onclick="closeItem(' + data
-                                .result[i].id + ')">关闭</a>' +
+                                .result[i].tk_id + ')">关闭</a>' +
                                 '&nbsp;<a class=\"text-blue\" href="/admin/ticket/' + data
                                 .result[i].tk_id + '/view">回复</a>' +
                                 {foreach $details['field'] as $key => $value}

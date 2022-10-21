@@ -20,6 +20,27 @@
                 </div>
                 <div class="col-auto ms-auto d-print-none">
                     <div class="btn-list">
+                        <button href="#" class="btn btn-red d-none d-sm-inline-block" data-bs-toggle="modal"
+                            data-bs-target="#close_ticket_confirm_dialog">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
+                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            关闭
+                        </button>
+                        <button href="#" class="btn btn-red d-sm-none btn-icon" data-bs-toggle="modal"
+                            data-bs-target="#close_ticket_confirm_dialog">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
+                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
                         <button href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal"
                             data-bs-target="#historical_order">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-invoice"
@@ -32,7 +53,7 @@
                                 <line x1="9" y1="13" x2="15" y2="13"></line>
                                 <line x1="13" y1="17" x2="15" y2="17"></line>
                             </svg>
-                            历史订单
+                            订单
                         </button>
                         <button href="#" class="btn btn-primary d-sm-none btn-icon" data-bs-toggle="modal"
                             data-bs-target="#historical_order">
@@ -56,7 +77,7 @@
                                 <line x1="12" y1="5" x2="12" y2="19" />
                                 <line x1="5" y1="12" x2="19" y2="12" />
                             </svg>
-                            添加回复
+                            回复
                         </button>
                         <button href="#" class="btn btn-primary d-sm-none btn-icon" data-bs-toggle="modal"
                             data-bs-target="#add-reply">
@@ -157,36 +178,41 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="card">
-                        <div class="table-responsive">
-                            <table class="table table-vcenter card-table">
-                                <thead>
-                                    <tr>
-                                        <th>状态</th>
-                                        <th>订单号</th>
-                                        <th>商品</th>
-                                        <th>商品售价</th>
-                                        <th>订单金额</th>
-                                        <th>支付方式</th>
-                                        <th>创建时间</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {foreach $orders as $order}
+                    {if $orders->count() !== 0}
+                        <div class="card">
+                            <div class="table-responsive">
+                                <table class="table table-vcenter card-table">
+                                    <thead>
                                         <tr>
-                                            <td>{$order->judgmentOrderStatus($order->order_status, $order->expired_at, true)}</td>
-                                            <td>{$order->no}</td>
-                                            <td>{$order->product_name}</td>
-                                            <td>{sprintf("%.2f", $order->product_price / 100)}</td>
-                                            <td>{sprintf("%.2f", $order->order_price / 100)}</td>
-                                            <td>{$order->order_payment}</td>
-                                            <td>{date('Y-m-d H:i:s', $order->created_at)}</td>
+                                            <th>状态</th>
+                                            <th>订单号</th>
+                                            <th>商品</th>
+                                            <th>商品售价</th>
+                                            <th>订单金额</th>
+                                            <th>支付方式</th>
+                                            <th>创建时间</th>
                                         </tr>
-                                    {/foreach}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {foreach $orders as $order}
+                                            <tr>
+                                                <td>{$order->judgmentOrderStatus($order->order_status, $order->expired_at, true)}
+                                                </td>
+                                                <td>{$order->no}</td>
+                                                <td>{$order->product_name}</td>
+                                                <td>{sprintf("%.2f", $order->product_price / 100)}</td>
+                                                <td>{sprintf("%.2f", $order->order_price / 100)}</td>
+                                                <td>{$order->order_payment}</td>
+                                                <td>{date('Y-m-d H:i:s', $order->created_at)}</td>
+                                            </tr>
+                                        {/foreach}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                    {else}
+                        <p>此账户下没有账单</p>
+                    {/if}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">确认</button>
@@ -206,10 +232,43 @@
                     <div class="mb-3">
                         <textarea id="reply-content" class="form-control" rows="12" placeholder="请输入回复内容"></textarea>
                     </div>
+                    {if $config['quick_fill_function'] === true}
+                        <div class="row g-2 align-items-center">
+                            {foreach $config['quick_fill_content'] as $item}
+                                <div class="col-6 col-sm-4 col-md-2 col-xl-auto py-3">
+                                    <button id="{$item['id']}" class="btn btn-blue w-100">
+                                        {$item['title']}
+                                    </button>
+                                </div>
+                            {/foreach}
+                        </div>
+                    {/if}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn me-auto" data-bs-dismiss="modal">取消</button>
                     <button id="reply" type="button" class="btn btn-primary" data-bs-dismiss="modal">回复</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modal-blur fade" id="close_ticket_confirm_dialog" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">关闭工单</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <p>
+                            关闭工单后，用户无法继续回复。此工单将归档
+                        <p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn me-auto" data-bs-dismiss="modal">取消</button>
+                    <button id="confirm_close" type="button" class="btn btn-primary" data-bs-dismiss="modal">确认</button>
                 </div>
             </div>
         </div>
@@ -296,6 +355,29 @@
                 }
             })
         });
+
+        $("#confirm_close").click(function() {
+            $.ajax({
+                url: "/admin/ticket/{$topic->tk_id}/close",
+                type: 'PUT',
+                dataType: "json",
+                success: function(data) {
+                    if (data.ret == 1) {
+                        $('#success-message').text(data.msg);
+                        $('#success-dialog').modal('show');
+                    } else {
+                        $('#fail-message').text(data.msg);
+                        $('#fail-dialog').modal('show');
+                    }
+                }
+            })
+        });
+
+        {foreach $config['quick_fill_content'] as $item}
+            $("#{$item['id']}").click(function() {
+                $("#reply-content").text("{$item['content']}");
+            });
+        {/foreach}
 
         $("#success-confirm").click(function() {
             location.reload();

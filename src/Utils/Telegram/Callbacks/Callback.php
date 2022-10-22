@@ -791,21 +791,10 @@ class Callback
                 $op_3 = $Operate[3];
                 switch ($op_3) {
                     case 'update':
-                        $this->User->sendDailyMail = ($this->User->sendDailyMail == 0 ? 1 : 0);
-                        if ($this->User->save()) {
-                            $text = '设置更改成功，每日邮件接收当前设置为：';
-                            $text .= '<strong>';
-                            $text .= ($this->User->sendDailyMail == 0 ? '不发送' : '发送');
-                            $text .= '</strong>';
-                        } else {
-                            $text = '发生错误.';
-                        }
+                        $text = '暂不支持修改此项目';
                         break;
                     default:
-                        $text = '每日邮件接收当前设置为：';
-                        $text .= '<strong>';
-                        $text .= ($this->User->sendDailyMail == 0 ? '不发送' : '发送');
-                        $text .= '</strong>';
+                        $text = '暂不支持查看此项目';
                         break;
                 }
                 $sendMessage = [

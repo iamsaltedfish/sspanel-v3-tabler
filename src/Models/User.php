@@ -40,7 +40,6 @@ class User extends Model
         'is_admin' => 'boolean',
         'is_multi_user' => 'int',
         'node_speedlimit' => 'float',
-        'sendDailyMail' => 'int',
         'ref_by' => 'int',
     ];
 
@@ -764,44 +763,6 @@ class User extends Model
     }
 
     /**
-     * 发送每日流量报告
-     *
-     * @param string $ann 公告
-     */
-    public function sendDailyNotification(string $ann = ''): void
-    {
-        $lastday = (($this->u + $this->d) - $this->last_day_t) / 1024 / 1024;
-        switch ($this->sendDailyMail) {
-            case 0:
-                return;
-            case 1:
-                echo 'Send daily mail to user: ' . $this->id;
-                $this->sendMail(
-                    $_ENV['appName'] . '-每日流量报告以及公告',
-                    'news/daily-traffic-report.tpl',
-                    [
-                        'user' => $this,
-                        'text' => '下面是系统中目前的公告:<br><br>' . $ann . '<br><br>晚安！',
-                        'lastday' => $lastday,
-                    ],
-                    []
-                );
-                break;
-            case 2:
-                echo 'Send daily Telegram message to user: ' . $this->id;
-                $text = date('Y-m-d') . ' 流量使用报告' . PHP_EOL . PHP_EOL;
-                $text .= '流量总计：' . $this->enableTraffic() . PHP_EOL;
-                $text .= '已用流量：' . $this->usedTraffic() . PHP_EOL;
-                $text .= '剩余流量：' . $this->unusedTraffic() . PHP_EOL;
-                $text .= '今日使用：' . $lastday . 'MB';
-                $this->sendTelegram(
-                    $text
-                );
-                break;
-        }
-    }
-
-    /**
      * 记录登录 IP
      *
      * @param string $ip
@@ -818,5 +779,11 @@ class User extends Model
         $loginip->type = $type;
 
         return $loginip->save();
+    }
+
+    public function getMailUnsubLink(): string
+    {
+        $item = MailPush::where('user_id', $this->id)->first();
+        return $item->access_token;
     }
 }

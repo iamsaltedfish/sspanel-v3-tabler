@@ -1008,35 +1008,6 @@ class UserController extends BaseController
             ->display('user/edit.tpl');
     }
 
-    public function updateMail($request, $response, $args)
-    {
-        $value = (int) $request->getParam('mail');
-        $scope = [0, 1, 2];
-
-        try {
-            if (!in_array($value, $scope)) {
-                throw new \Exception('请在给出的选项中选择一个');
-            }
-            if ($value == '2' && $_ENV['enable_telegram'] == false) {
-                throw new \Exception('当前无法使用 Telegram 接收每日报告');
-            }
-
-            $user = $this->user;
-            $user->sendDailyMail = $value;
-            $user->save();
-        } catch (\Exception $e) {
-            return $response->withJson([
-                'ret' => 0,
-                'msg' => $e->getMessage(),
-            ]);
-        }
-
-        return $response->withJson([
-            'ret' => 1,
-            'msg' => '修改成功',
-        ]);
-    }
-
     public function disable($request, $response, $args)
     {
         return $this->view()->display('user/disable.tpl');

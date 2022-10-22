@@ -280,7 +280,6 @@ class AuthController extends BaseController
         $user->d = 0;
         $user->transfer_enable = $_ENV['reg_default_traffic'] * 1024 * 1024 * 1024;
         $user->invite_num = $_ENV['reg_invite_num'];
-        $user->sendDailyMail = 0; // 默认不发送
         $user->obfs = $_ENV['reg_obfs'];
         $user->method = $_ENV['reg_method'];
         $user->protocol = $_ENV['reg_protocol'];

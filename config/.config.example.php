@@ -121,7 +121,7 @@ $_ENV['muKeyList'] = []; // 多key列表
 $_ENV['checkNodeIp'] = true; // 是否验证节点ip
 
 $_ENV['enableAdminApi'] = false; // 是否启用 Admin API, 如果不知道此项用途请保持为 false
-$_ENV['adminApiToken']  = '7cb4ddeaea0a1a7a42f351f71a28124a'; // Admin API 的 Token, 请生成为高强度的 Token
+$_ENV['adminApiToken'] = '7cb4ddeaea0a1a7a42f351f71a28124a'; // Admin API 的 Token, 请生成为高强度的 Token
 
 // 如下设置将使397，297号节点复用4号节点的流媒体解锁
 $_ENV['streaming_media_unlock_multiplexing'] = [
@@ -232,6 +232,7 @@ $_ENV['sendPageLimit'] = 50; // 发信分页数
 $_ENV['email_queue'] = true; // 邮件队列开关
 $_ENV['mail_filter'] = 0; // 0关闭; 1白名单模式; 2黑名单模式
 $_ENV['mail_filter_list'] = ['qq.com', 'vip.qq.com', 'foxmail.com'];
+$_ENV['mail_push_salt'] = 'c669c8b3277fa0415aaea21d78fccdd7';
 
 /*
     后端设置
@@ -357,7 +358,6 @@ $_ENV['theme'] = 'material'; // 默认主题
 $_ENV['timeZone'] = 'PRC'; // PRC / UTC
 $_ENV['jump_delay'] = 1200;
 $_ENV['enable_login_bind_ip'] = true; // 是否将登陆线程和IP绑定
-$_ENV['cookie_expiration_time'] = 1; // cookie 过期时间
 $_ENV['php_user_group'] = 'www:www';
 
 /*

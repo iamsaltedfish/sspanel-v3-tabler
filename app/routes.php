@@ -76,7 +76,6 @@ return function (SlimApp $app) {
         $this->post('/wechat',                  App\Controllers\UserController::class . ':updateWechat');
         $this->post('/ssr',                     App\Controllers\UserController::class . ':updateSSR');
         $this->post('/theme',                   App\Controllers\UserController::class . ':updateTheme');
-        $this->post('/mail',                    App\Controllers\UserController::class . ':updateMail');
         $this->post('/sspwd',                   App\Controllers\UserController::class . ':updateSsPwd');
         $this->post('/url_reset',               App\Controllers\UserController::class . ':resetURL');
         $this->post('/gacheck',                 App\Controllers\UserController::class . ':gaCheck');
@@ -294,6 +293,11 @@ return function (SlimApp $app) {
 
     $app->group('/link', function () {
         $this->get('/{token}',              App\Controllers\LinkController::class . ':GetContent');
+    });
+
+    $app->group('/mail', function () {
+        $this->get('/push/{token}',         App\Controllers\PushController::class . ':index');
+        $this->post('/push/{token}',        App\Controllers\PushController::class . ':update');
     });
 
     //通用訂閲

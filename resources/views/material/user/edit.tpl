@@ -420,24 +420,16 @@
                                                 <div class="card-body">
                                                     <h3 class="card-title">每日用量推送</h3>
                                                     <div class="mb-3">
-                                                        <select id="daily-report" class="form-select">
-                                                            <option value="0"
-                                                                {if $user->sendDailyMail == '0'}selected{/if}>不发送
-                                                            </option>
-                                                            <option value="1"
-                                                                {if $user->sendDailyMail == '1'}selected{/if}>邮件接收
-                                                            </option>
-                                                            <option value="2"
-                                                                {if $user->sendDailyMail == '2'}selected{/if}>Telegram
-                                                                Bot 接收
-                                                            </option>
-                                                        </select>
+                                                        <p>
+                                                            此功能的设置已经移动到新的地方。请前往 <a href="/mail/push/{$user->getMailUnsubLink()}">此页面</a> 管理邮件推送
+                                                        </p>
                                                     </div>
                                                 </div>
                                                 <div class="card-footer">
                                                     <div class="d-flex">
-                                                        <a id="modify-daily-report"
-                                                            class="btn btn-primary ms-auto">修改</a>
+                                                        <button class="btn btn-primary ms-auto" disabled>
+                                                            修改
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -645,26 +637,6 @@
                 dataType: "json",
                 data: {
                     theme: $('#user-theme').val()
-                },
-                success: function(data) {
-                    if (data.ret == 1) {
-                        $('#success-message').text(data.msg);
-                        $('#success-dialog').modal('show');
-                    } else {
-                        $('#fail-message').text(data.msg);
-                        $('#fail-dialog').modal('show');
-                    }
-                }
-            })
-        });
-
-        $("#modify-daily-report").click(function() {
-            $.ajax({
-                type: "POST",
-                url: "/user/mail",
-                dataType: "json",
-                data: {
-                    mail: $('#daily-report').val()
                 },
                 success: function(data) {
                     if (data.ret == 1) {

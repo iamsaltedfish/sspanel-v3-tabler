@@ -50,7 +50,7 @@ class User extends Model
     {
         $hash = md5(strtolower(trim($this->email)));
         //return 'https://sdn.geekzu.org/avatar/' . $hash . '?&d=identicon';
-        return 'https://cn.gravatar.com/avatar/' . $hash . '?&d=identicon';
+        return 'https://gravatar.loli.net/avatar/' . $hash . '?&d=identicon';
     }
 
     /**

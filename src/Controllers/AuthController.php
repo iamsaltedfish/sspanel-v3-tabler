@@ -239,7 +239,7 @@ class AuthController extends BaseController
                 }
             }
 
-            self::register_helper($name, $email, $passwd, $code, $imtype, $imvalue, 0, true, $fingerprint);
+            self::register_helper($name, $email, $passwd, $code, $imtype, $imvalue, 0, false, $fingerprint);
         } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,

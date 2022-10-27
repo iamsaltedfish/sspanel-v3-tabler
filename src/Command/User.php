@@ -3,6 +3,7 @@ namespace App\Command;
 
 use App\Controllers\AuthController;
 use App\Models\User as ModelsUser;
+use App\Services\Mail;
 use App\Utils\GA;
 use App\Utils\Hash;
 use App\Utils\Tools;
@@ -20,6 +21,8 @@ class User extends Command
         . '│ ├─ resetTraffic            - 重置所有用户流量' . PHP_EOL
         . '│ ├─ generateUUID            - 为所有用户生成新的 UUID' . PHP_EOL
         . '│ ├─ generateGa              - 为所有用户生成新的 Ga Secret' . PHP_EOL
+        . '│ ├─ sendAdminMail           - 向管理员发送通知邮件' . PHP_EOL
+        . '│ ├─ sendUserMail            - 向用户发送通知邮件' . PHP_EOL
         . '│ ├─ resetUserLevel          - 重置用户等级' . PHP_EOL;
 
     public function boot()
@@ -32,6 +35,46 @@ class User extends Command
                 $this->$methodName();
             } else {
                 echo '方法不存在.' . PHP_EOL;
+            }
+        }
+    }
+
+    public function sendAdminMail()
+    {
+        $admin_user = ModelsUser::where('is_admin', 1)->get();
+        foreach ($admin_user as $user) {
+            echo "send email to {$user->id}...\n";
+            Mail::send(
+                $user->email,
+                $_ENV['appName'],
+                'notice.tpl',
+                [
+                    'title' => 'title',
+                    'content' => 'content',
+                ],
+                []
+            );
+        }
+    }
+
+    public function sendUserMail()
+    {
+        $normal_user = ModelsUser::all();
+        foreach ($normal_user as $user) {
+            echo "send email to {$user->id}...\n";
+            try {
+                Mail::send(
+                    $user->email,
+                    $_ENV['appName'],
+                    'notice.tpl',
+                    [
+                        'title' => 'title',
+                        'content' => 'content',
+                    ],
+                    []
+                );
+            } catch (\Exception $e) {
+                echo "fail to send {$user->id}...\n";
             }
         }
     }

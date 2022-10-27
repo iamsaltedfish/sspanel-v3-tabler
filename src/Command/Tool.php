@@ -3,6 +3,7 @@ namespace App\Command;
 
 use App\Models\LoginIp;
 use App\Models\Setting;
+use App\Models\User;
 use App\Utils\QQWry;
 use App\Utils\Tools;
 
@@ -15,6 +16,7 @@ class Tool extends Command
         . '│ ├─ resetAllSettings              - 使用默认值覆盖设置中心设置' . PHP_EOL
         . '│ ├─ exportAllSettings             - 导出所有设置' . PHP_EOL
         . '│ ├─ importAllSettings             - 导入所有设置' . PHP_EOL
+        . '│ ├─ mailboxSuffixCount            - 统计注册用户邮箱域' . PHP_EOL
         . '│ ├─ supplementaryLoginAttribution - 补充登录日志归属' . PHP_EOL;
 
     public function boot()
@@ -159,5 +161,21 @@ class Tool extends Command
                 }
             }
         });
+    }
+
+    public function mailboxSuffixCount()
+    {
+        $set = [];
+        $users = User::all(['email']);
+        foreach ($users as $user) {
+            $mail = explode('@', $user->email);
+            if (!isset($set[$mail[1]])) {
+                $set[$mail[1]] = 1;
+            } else {
+                $set[$mail[1]] += 1;
+            }
+        }
+        arsort($set);
+        print(json_encode($set, JSON_PRETTY_PRINT) . PHP_EOL);
     }
 }

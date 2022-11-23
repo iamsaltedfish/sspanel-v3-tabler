@@ -28,7 +28,7 @@ class Password
             return false;
         }
         $subject  = $_ENV['appName'] . '重置密码';
-        $resetUrl = $_ENV['baseUrl'] . '/password/token/' . $pwdRst->token;
+        $resetUrl = $_ENV['mail_baseUrl'] . '/password/token/' . $pwdRst->token;
         try {
             Mail::send(
                 $email,

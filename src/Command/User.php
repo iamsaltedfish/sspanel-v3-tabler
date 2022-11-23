@@ -51,6 +51,7 @@ class User extends Command
                 [
                     'title' => 'title',
                     'content' => 'content',
+                    'concluding_remarks' => '此邮件由系统发送，回复邮件的内容无法被接收。',
                 ],
                 []
             );
@@ -70,6 +71,7 @@ class User extends Command
                     [
                         'title' => 'title',
                         'content' => 'content',
+                        'concluding_remarks' => '此邮件由系统发送，回复邮件的内容无法被接收。',
                     ],
                     []
                 );

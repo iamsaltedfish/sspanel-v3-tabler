@@ -8,6 +8,7 @@ $_ENV['debug'] = false; // 生产环境需设为false
 $_ENV['appName'] = 'sspanel-uim'; // 站点名称
 $_ENV['key'] = '32150285b345c48aa3492f9212f61ca2'; // 修改为随机字符串
 $_ENV['baseUrl'] = 'https://domain.com';// 站点地址
+$_ENV['mail_baseUrl'] = 'https://domain.com';// 邮件内使用的地址
 
 /*
     数据库设置

@@ -8,9 +8,9 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Services\Auth;
 use App\Services\Mail;
+use App\Utils\Check;
 use App\Utils\GA;
 use App\Utils\Hash;
-use App\Utils\Check;
 use App\Utils\Tools;
 use Ramsey\Uuid\Uuid;
 use voku\helper\AntiXSS;
@@ -181,6 +181,11 @@ class AuthController extends BaseController
             if (!Check::isEmailLegal($email)) {
                 throw new \Exception('不支持此邮箱域');
             }
+            // 阻止邮箱地址包含.和+号的邮箱
+            $split = explode('@', $email);
+            if (strpos($split[0], '.') !== false || strpos($split[0], '+') !== false) {
+                throw new \Exception('邮箱地址中包含不支持的字符');
+            }
             if (strlen($passwd) < 8) {
                 throw new \Exception('密码长度不足8位');
             }
@@ -260,8 +265,7 @@ class AuthController extends BaseController
     }
 
     public static function register_helper(
-        $name, $email, $passwd, $code, $imtype, $imvalue, $telegram_id, $auto_login = true, $fingerprint)
-    {
+        $name, $email, $passwd, $code, $imtype, $imvalue, $telegram_id, $auto_login = true, $fingerprint) {
         $ga = new GA();
         $user = new User();
         $antiXss = new AntiXSS();

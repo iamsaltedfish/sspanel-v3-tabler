@@ -21,6 +21,7 @@ class Config
             'version'                 => VERSION,
             'appName'                 => $_ENV['appName'],
             'baseUrl'                 => $_ENV['baseUrl'],
+            'mail_baseUrl'            => $_ENV['mail_baseUrl'],
             // 充值
             'active_payments'         => $_ENV['active_payments'],
             'code_payback'            => $public_configs['rebate_ratio'],

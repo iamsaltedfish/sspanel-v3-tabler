@@ -110,6 +110,36 @@ class UserController extends AdminController
                     ],
                 ],
             ],
+            'update_field' => [
+                'email',
+                'user_name',
+                'remark',
+                //'reset_user_passwd',
+                'money',
+                'is_multi_user',
+                //'is_admin',
+                //'enable',
+                //'ga_enable',
+                'transfer_enable',
+                'invite_num',
+                'ref_by',
+                'class_expire',
+                'expire_in',
+                'node_group',
+                'class',
+                'node_speedlimit',
+                'node_connector',
+                //ss
+                'port',
+                'passwd',
+                'method',
+                'protocol',
+                'protocol_param',
+                'obfs',
+                'obfs_param',
+                'forbidden_ip',
+                'forbidden_port',
+            ],
         ];
 
         return $details;
@@ -195,52 +225,47 @@ class UserController extends AdminController
         $user = User::find($args['id']);
         return $response->write(
             $this->view()
+                ->assign('field', self::page()['update_field'])
                 ->assign('edit_user', $user)
                 ->display('admin/user/edit.tpl')
         );
     }
 
+    public static function checkValidTime(string $datetime): bool
+    {
+        $timestamp = strtotime($datetime);
+        $to_datetime = date('Y-m-d H:i:s', $timestamp);
+        return ($datetime != $to_datetime) ? false : true;
+    }
+
     public function update($request, $response, $args)
     {
-        $id = $args['id'];
-        $user = User::find($id);
-        $user->email = $request->getParam('email');
-        $passwd = $request->getParam('passwd');
-        if ($request->getParam('pass') != '') {
-            $user->pass = Hash::passwordHash($request->getParam('pass'));
-            $user->clean_link();
-        }
-        $origin_port = $user->port;
-        $user->port = $request->getParam('port');
-        $user->passwd = $request->getParam('passwd');
-        $user->protocol = $request->getParam('protocol');
-        $user->protocol_param = $request->getParam('protocol_param');
-        $user->obfs = $request->getParam('obfs');
-        $user->obfs_param = $request->getParam('obfs_param');
-        $user->is_multi_user = $request->getParam('is_multi_user');
-        $user->transfer_enable = Tools::toGB($request->getParam('transfer_enable'));
-        $user->invite_num = $request->getParam('invite_num');
-        $user->method = $request->getParam('method');
-        $user->node_speedlimit = $request->getParam('node_speedlimit');
-        $user->node_connector = $request->getParam('node_connector');
-        $user->enable = $request->getParam('enable');
-        $user->is_admin = $request->getParam('is_admin');
-        $user->ga_enable = $request->getParam('ga_enable');
-        $user->node_group = $request->getParam('group');
-        $user->ref_by = $request->getParam('ref_by');
-        $user->remark = $request->getParam('remark');
-        $user->user_name = $request->getParam('user_name');
-        $user->money = $request->getParam('money');
-        $user->class = $request->getParam('class');
-        $user->class_expire = $request->getParam('class_expire');
-        $user->expire_in = $request->getParam('expire_in');
-        $user->forbidden_ip = str_replace(PHP_EOL, ',', $request->getParam('forbidden_ip'));
-        $user->forbidden_port = str_replace(PHP_EOL, ',', $request->getParam('forbidden_port'));
-
-        if (!$user->save()) {
+        try {
+            $id = $args['id'];
+            $user = User::find($id);
+            $field = self::page()['update_field'];
+            foreach ($field as $key) {
+                $user->$key = $request->getParam($key);
+            }
+            // 特殊处理一些字段
+            $user->transfer_enable = Tools::toGB($request->getParam('transfer_enable'));
+            $user->forbidden_ip = str_replace(PHP_EOL, ',', $request->getParam('forbidden_ip'));
+            $user->forbidden_port = str_replace(PHP_EOL, ',', $request->getParam('forbidden_port'));
+            $user->is_admin = ($request->getParam('is_admin') === 'true') ? 1 : 0; // 值为1时是管理员
+            $user->enable = ($request->getParam('enable') === 'true') ? 0 : 1; // 值为1时是正常状态
+            $user->ga_enable = ($request->getParam('ga_enable') === 'true') ? 1 : 0; // 值为0时是关闭状态
+            if ($request->getParam('reset_user_passwd') !== '') {
+                $user->pass = Hash::passwordHash($request->getParam('reset_user_passwd'));
+            }
+            // 检查字段
+            if (!self::checkValidTime($user->expire_in) || !self::checkValidTime($user->class_expire)) {
+                throw new \Exception('时间解析错误，请检查后重试');
+            }
+            $user->save();
+        } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => '修改失败',
+                'msg' => $e->getMessage(),
             ]);
         }
 

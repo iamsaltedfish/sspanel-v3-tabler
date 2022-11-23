@@ -106,11 +106,13 @@
                         {if $from['type'] == 'select'}
                             <div class="form-group mb-3 row">
                                 <label class="form-label col-3 col-form-label">{$from['info']}</label>
-                                <select id="search-{$from['id']}" class="col form-select">
-                                    {foreach $from['select'] as $key => $value}
-                                        <option value="{$key}">{$value}</option>
-                                    {/foreach}
-                                </select>
+                                <div class="col">
+                                    <select id="search-{$from['id']}" class="col form-select">
+                                        {foreach $from['select'] as $key => $value}
+                                            <option value="{$key}">{$value}</option>
+                                        {/foreach}
+                                    </select>
+                                </div>
                             </div>
                         {/if}
                     {/foreach}
@@ -287,7 +289,8 @@
                             str += "<tr><td>" +
                                 '<a class=\"text-red\" href="#" onclick="deleteItem(' + data
                                 .result[i].id + ')">删除</a>' +
-                                '&nbsp;<a class=\"text-blue\" href="#" onclick="markedAsProcessed(' + data
+                                '&nbsp;<a class=\"text-blue\" href="#" onclick="markedAsProcessed(' +
+                                data
                                 .result[i].id + ')">标记</a>' +
                                 "</td><td>" + data.result[i].id +
                                 {foreach $details['field'] as $key => $value}

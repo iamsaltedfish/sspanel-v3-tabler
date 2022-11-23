@@ -125,11 +125,13 @@
                         {if $from['type'] == 'select'}
                             <div class="form-group mb-3 row">
                                 <label class="form-label col-3 col-form-label">{$from['info']}</label>
-                                <select id="search-{$from['id']}" class="col form-select">
-                                    {foreach $from['select'] as $key => $value}
-                                        <option value="{$key}">{$value}</option>
-                                    {/foreach}
-                                </select>
+                                <div class="col">
+                                    <select id="search-{$from['id']}" class="col form-select">
+                                        {foreach $from['select'] as $key => $value}
+                                            <option value="{$key}">{$value}</option>
+                                        {/foreach}
+                                    </select>
+                                </div>
                             </div>
                         {/if}
                     {/foreach}
@@ -170,11 +172,13 @@
                         {if $from['type'] == 'select'}
                             <div class="form-group mb-3 row">
                                 <label class="form-label col-3 col-form-label">{$from['info']}</label>
-                                <select id="{$from['id']}" class="col form-select">
-                                    {foreach $from['select'] as $key => $value}
-                                        <option value="{$key}">{$value}</option>
-                                    {/foreach}
-                                </select>
+                                <div class="col">
+                                    <select id="{$from['id']}" class="col form-select">
+                                        {foreach $from['select'] as $key => $value}
+                                            <option value="{$key}">{$value}</option>
+                                        {/foreach}
+                                    </select>
+                                </div>
                             </div>
                         {/if}
                     {/foreach}

@@ -144,43 +144,51 @@
                     </div>
                     <div class="form-group mb-3 row">
                         <label class="form-label col-3 col-form-label">商品类型</label>
-                        <select id="product_type" class="col form-select">
-                            <option value="all">所有类型</option>
-                            <option value="recharge">账户充值</option>
-                            <option value="tatp">时间流量包</option>
-                            <option value="time">时间包</option>
-                            <option value="traffic">流量包</option>
-                            <option value="other">自定义商品</option>
-                            <option value="invite" disabled>邀请码（等待开发）</option>
-                            <option value="device" disabled>设备限制（等待开发）</option>
-                        </select>
+                        <div class="col">
+                            <select id="product_type" class="col form-select">
+                                <option value="all">所有类型</option>
+                                <option value="recharge">账户充值</option>
+                                <option value="tatp">时间流量包</option>
+                                <option value="time">时间包</option>
+                                <option value="traffic">流量包</option>
+                                <option value="other">自定义商品</option>
+                                <option value="invite" disabled>邀请码（等待开发）</option>
+                                <option value="device" disabled>设备限制（等待开发）</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group mb-3 row">
                         <label class="form-label col-3 col-form-label">支付方式</label>
-                        <select id="order_payment" class="col form-select">
-                            <option value="all">所有方式</option>
-                            <option value="balance">余额支付</option>
-                            {foreach $config['active_payments'] as $key => $value}
-                                <option value="{$value['name']}">{$value['name']}</option>
-                            {/foreach}
-                        </select>
+                        <div class="col">
+                            <select id="order_payment" class="col form-select">
+                                <option value="all">所有方式</option>
+                                <option value="balance">余额支付</option>
+                                {foreach $config['active_payments'] as $key => $value}
+                                    <option value="{$value['name']}">{$value['name']}</option>
+                                {/foreach}
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group mb-3 row">
                         <label class="form-label col-3 col-form-label">订单状态</label>
-                        <select id="order_status" class="col form-select">
-                            <option value="all">所有状态</option>
-                            <option value="paid">已支付</option>
-                            <option value="pending_payment">未支付</option>
-                            <option value="abnormal">异常</option>
-                        </select>
+                        <div class="col">
+                            <select id="order_status" class="col form-select">
+                                <option value="all">所有状态</option>
+                                <option value="paid">已支付</option>
+                                <option value="pending_payment">未支付</option>
+                                <option value="abnormal">异常</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group mb-3 row">
                         <label class="form-label col-3 col-form-label">执行状态</label>
-                        <select id="execute_status" class="col form-select">
-                            <option value="all">所有状态</option>
-                            <option value="1">已执行</option>
-                            <option value="0">未执行</option>
-                        </select>
+                        <div class="col">
+                            <select id="execute_status" class="col form-select">
+                                <option value="all">所有状态</option>
+                                <option value="1">已执行</option>
+                                <option value="0">未执行</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

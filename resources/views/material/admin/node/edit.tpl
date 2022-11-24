@@ -201,6 +201,18 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                流量用量 <span class="card-subtitle">源自近日的数据</span>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="total-traffic"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -295,5 +307,67 @@
         })
     });
 </script>
+
+{foreach $charts as $key => $value}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            window.ApexCharts && (new ApexCharts(document.getElementById('{$value['element_id']}'), {
+                chart: {
+                    type: "line",
+                    fontFamily: 'inherit',
+                    height: 300,
+                    parentHeightOffset: 0,
+                    toolbar: {
+                        show: false,
+                    },
+                    animations: {
+                        enabled: false
+                    },
+                },
+                fill: {
+                    opacity: 1,
+                },
+                stroke: {
+                    width: 2,
+                    lineCap: "round",
+                    curve: "smooth",
+                },
+                series: [{
+                    name: "{$value['series_name']}",
+                    data: [{implode(', ', $value['y'])}]
+                }],
+                grid: {
+                    padding: {
+                        top: -20,
+                        right: 0,
+                        left: -4,
+                        bottom: -4
+                    },
+                    strokeDashArray: 4,
+                },
+                xaxis: {
+                    labels: {
+                        padding: 0,
+                    },
+                    tooltip: {
+                        enabled: false
+                    },
+                },
+                yaxis: {
+                    labels: {
+                        padding: 4
+                    },
+                },
+                labels: [
+                    {implode(', ', $value['x'])}
+                ],
+                colors: ["#206bc4"],
+                legend: {
+                    show: false,
+                },
+            })).render();
+        });
+    </script>
+{/foreach}
 
 {include file='admin/tabler_admin_footer.tpl'}

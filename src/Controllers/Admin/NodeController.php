@@ -3,6 +3,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
 use App\Models\Node;
+use App\Models\Statistics;
 
 class NodeController extends AdminController
 {
@@ -225,13 +226,51 @@ class NodeController extends AdminController
         ]);
     }
 
+    public function encode(string $item, int $node_id, bool $offset = false): array
+    {
+        $items = Statistics::where('item', $item)
+            ->where('node_id', $node_id)
+            ->orderBy('created_at', 'desc')
+            ->limit(30)
+            ->get();
+
+        $chart_x = [];
+        $chart_y = [];
+
+        foreach ($items as $record) {
+            $timestamp = ($offset) ? $record->created_at - 86400 : $record->created_at;
+            $chart_x[] = "'" . date('m-d', $timestamp) . "'";
+            $chart_y[] = round($record->value / 1024, 2);
+        }
+
+        $result = [
+            'x' => array_reverse($chart_x),
+            'y' => array_reverse($chart_y),
+        ];
+
+        return $result;
+    }
+
     public function edit($request, $response, $args)
     {
         $id = $args['id'];
         $node = Node::find($id);
+        $traffic_chart = self::encode('node_traffic', $id, true);
+
+        $charts = [
+            'traffic' => [
+                'element_id' => 'total-traffic',
+                'series_name' => '流量',
+                'x' => $traffic_chart['x'],
+                'y' => $traffic_chart['y'],
+            ],
+        ];
+
         return $response->write(
             $this->view()
                 ->assign('node', $node)
+                ->assign('charts', $charts)
+                ->assign('traffic_chart', $traffic_chart)
                 ->assign('field', self::page()['update_field'])
                 ->display('admin/node/edit.tpl')
         );

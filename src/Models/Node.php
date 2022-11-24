@@ -17,7 +17,6 @@ namespace App\Models;
  * @property        float   $traffic_rate   Node traffic rate
  * @todo More property
  * @property        bool    $online     If node is online
- * @property        bool    $gfw_block  If node is blocked by GFW
  */
 
 use App\Services\Config;

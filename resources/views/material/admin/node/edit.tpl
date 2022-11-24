@@ -1,232 +1,299 @@
-{include file='admin/main.tpl'}
-
-<main class="content">
-    <div class="content-header ui-content-header">
-        <div class="container">
-            <h1 class="content-heading">编辑节点 #{$node->id}</h1>
+{include file='admin/tabler_admin_header.tpl'}
+<div class="page-wrapper">
+    <div class="container-xl">
+        <div class="page-header d-print-none text-white">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h2 class="page-title">
+                        <span class="home-title">#{$node->id}</span>
+                    </h2>
+                    <div class="page-pretitle">
+                        <span class="home-subtitle">节点编辑</span>
+                    </div>
+                </div>
+                <div class="col-auto ms-auto d-print-none">
+                    <div class="btn-list">
+                        <a id="save_changes" href="#" class="btn btn-primary d-none d-sm-inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"></path>
+                                <circle cx="12" cy="14" r="2"></circle>
+                                <polyline points="14 4 14 8 8 8 8 4"></polyline>
+                            </svg>
+                            保存
+                        </a>
+                        <a id="save_changes" href="#" class="btn btn-primary d-sm-none btn-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"></path>
+                                <circle cx="12" cy="14" r="2"></circle>
+                                <polyline points="14 4 14 8 8 8 8 4"></polyline>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="container">
-        <div class="col-lg-12 col-sm-12">
-            <section class="content-inner margin-top-no">
-                <form id="main_form">
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="row row-deck row-cards">
+                <div class="col-md-6 col-sm-12">
                     <div class="card">
-                        <div class="card-main">
-                            <div class="card-inner">
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="name">节点名称</label>
-                                    <input class="form-control maxwidth-edit" id="name" name="name" type="text"
-                                           value="{$node->name}">
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="server">节点地址</label>
-                                    <textarea class="form-control maxwidth-edit" id="server" name="server" rows="3" type="text">{$node->server}</textarea>
-                                    <p class="form-control-guide"><i class="material-icons">info</i>如果填写为域名，“节点IP”会自动设置为解析的IP</p>
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="server">节点IP</label>
-                                    <input class="form-control maxwidth-edit" id="node_ip" name="node_ip" type="text"
-                                           value="{$node->node_ip}">
-                                    <p class="form-control-guide"><i class="material-icons">info</i>如果“节点地址”填写为域名，则此处的值会被忽视
-                                    </p>
-                                </div>
-                                <div class="form-group">
-                                    <dev id="custom_config"></dev>
-                                    <p class="form-control-guide"><i class="material-icons">info</i>请参考 <a href="//wiki.sspanel.org/#/setup-custom-config" target="_blank">wiki.sspanel.org/#/setup-custom-config</a> 进行配置
-                                    </p>
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="rate">流量比例</label>
-                                    <input class="form-control maxwidth-edit" id="rate" name="rate" type="text"
-                                           value="{$node->traffic_rate}">
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label for="mu_only">
-                                        <label class="floating-label" for="sort">单端口多用户启用</label>
-                                        <select id="mu_only" class="form-control maxwidth-edit" name="is_multi_user">
-                                            <option value="-1" {if $node->mu_only==-1}selected{/if}>只启用普通端口</option>
-                                            <option value="1" {if $node->mu_only==1}selected{/if}>只启用单端口多用户</option>
-                                        </select>
-                                    </label>
+                        <div class="card-header card-header-light">
+                            <h3 class="card-title">基础信息</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">名称</label>
+                                <div class="col">
+                                    <input id="name" type="text" class="form-control" value="{$node->name}">
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-main">
-                            <div class="card-inner">
-                                <div class="form-group form-group-label">
-                                    <div class="checkbox switch">
-                                        <label for="type">
-                                            <input {if $node->type==1}checked{/if} class="access-hide" id="type"
-                                                   name="type" type="checkbox"><span class="switch-toggle"></span>是否显示
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">地址</label>
+                                <div class="col">
+                                    <textarea id="server" class="col form-control" rows="5">{$node->server}</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">公网地址</label>
+                                <div class="col">
+                                    <input id="node_ip" type="text" class="form-control" value="{$node->node_ip}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">流量倍率</label>
+                                <div class="col">
+                                    <input id="traffic_rate" type="text" class="form-control"
+                                        value="{$node->traffic_rate}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">接入类型</label>
+                                <div class="col">
+                                    <select id="sort" class="col form-select">
+                                        <option value="11">V2Ray</option>
+                                        <option value="14">Trojan</option>
+                                        <option value="0">ShadowSocks</option>
+                                        <option value="1">ShadowSocksR</option>
+                                        <option value="9">ShadowsocksR 单端口多用户（旧）</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">单端口多用户</label>
+                                <div class="col">
+                                    <select id="mu_only" class="col form-select">
+                                        <option value="-1">只启用普通端口</option>
+                                        <option value="1">只启用单端口多用户</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-text">
+                                <span>高级选项</span>
+                            </div>
+                            <div class="mb-3">
+                                <!-- <label class="form-label">Notification</label> -->
+                                <div class="divide-y">
+                                    <div>
+                                        <label class="row">
+                                            <span class="col">上线此节点</span>
+                                            <span class="col-auto">
+                                                <label class="form-check form-check-single form-switch">
+                                                    <input id="type" class="form-check-input" type="checkbox"
+                                                        {if $node->type == 1}checked="" {/if}>
+                                                </label>
+                                            </span>
                                         </label>
                                     </div>
                                 </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="status">节点状态</label>
-                                    <input class="form-control maxwidth-edit" id="status" name="status" type="text"
-                                           value="{$node->status}">
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="remark">节点备注（仅管理员可见）</label>
-                                    <input class="form-control maxwidth-edit" id="remark" type="text" name="remark"
-                                            value="{$node->remark}">
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <div class="form-group form-group-label">
-                                        <label class="floating-label" for="sort">节点类型</label>
-                                        <select id="sort" class="form-control maxwidth-edit" name="sort">
-                                            <option value="0" {if $node->sort==0}selected{/if}>Shadowsocks</option>
-                                            <option value="1" {if $node->sort==1}selected{/if}>Shadowsocksr</option>
-                                            <option value="9" {if $node->sort==9}selected{/if}>Shadowsocksr 单端口多用户（旧）</option>
-                                            <option value="11" {if $node->sort==11}selected{/if}>V2Ray</option>
-                                            <option value="14" {if $node->sort==14}selected{/if}>Trojan</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="info">节点描述</label>
-                                    <input class="form-control maxwidth-edit" id="info" name="info" type="text"
-                                           value="{$node->info}">
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="class">节点等级</label>
-                                    <input class="form-control maxwidth-edit" id="class" name="class" type="text"
-                                           value="{$node->node_class}">
-                                    <p class="form-control-guide"><i class="material-icons">info</i>不分级请填0，分级填写相应数字</p>
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="group">节点群组</label>
-                                    <input class="form-control maxwidth-edit" id="group" name="group" type="text"
-                                           value="{$node->node_group}">
-                                    <p class="form-control-guide"><i class="material-icons">info</i>分组为数字，不分组请填0</p>
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="node_bandwidth">节点已用流量（GB）</label>
-                                    <input class="form-control maxwidth-edit" id="node_bandwidth"
-                                           name="node_bandwidth" type="text"
-                                           value="{round($node->node_bandwidth /1024/1024/1024, 2)}">
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="node_bandwidth_limit">节点流量上限（GB）</label>
-                                    <input class="form-control maxwidth-edit" id="node_bandwidth_limit"
-                                           name="node_bandwidth_limit" type="text"
-                                           value="{$node->node_bandwidth_limit/1024/1024/1024}">
-                                    <p class="form-control-guide"><i class="material-icons">info</i>不设上限请填0</p>
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="bandwidthlimit_resetday">节点流量上限清空日</label>
-                                    <input class="form-control maxwidth-edit" id="bandwidthlimit_resetday"
-                                           name="bandwidthlimit_resetday" type="text"
-                                           value="{$node->bandwidthlimit_resetday}">
-                                </div>
-                                <div class="form-group form-group-label">
-                                    <label class="floating-label" for="node_speedlimit">节点限速（Mbps）</label>
-                                    <input class="form-control maxwidth-edit" id="node_speedlimit"
-                                           name="node_speedlimit" type="text" value="{$node->node_speedlimit}">
-                                    <p class="form-control-guide"><i class="material-icons">info</i>不限速填0，对于每个用户端口生效</p>
-                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
                     <div class="card">
-                        <div class="card-main">
-                            <div class="card-inner">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-10 col-md-push-1">
-                                            <button id="submit" type="submit"
-                                                    class="btn btn-block btn-brand waves-attach waves-light">修改
-                                            </button>
+                        <div class="card-header card-header-light">
+                            <h3 class="card-title">其他信息</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">私有备注</label>
+                                <div class="col">
+                                    <input id="remark" type="text" class="form-control" value="{$node->remark}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">公有备注</label>
+                                <div class="col">
+                                    <input id="info" type="text" class="form-control" value="{$node->info}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">等级</label>
+                                <div class="col">
+                                    <input id="node_class" type="text" class="form-control" value="{$node->node_class}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">组别</label>
+                                <div class="col">
+                                    <input id="node_group" type="text" class="form-control" value="{$node->node_group}">
+                                </div>
+                            </div>
+                            <div class="hr-text">
+                                <span>流量设置</span>
+                            </div>
+                            <!-- 避免除0 -->
+                            {if $node->node_bandwidth !== 0 && $node->node_bandwidth_limit !== 0}
+                                <div class="mb-3">
+                                    <!-- <label class="form-label">Progress</label> -->
+                                    <div class="progress mb-2">
+                                        <div class="progress-bar"
+                                            style="width: {round($node->node_bandwidth / $node->node_bandwidth_limit * 100, 2)}%"
+                                            role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100"
+                                            aria-label="38% Complete">
+                                            <span class="visually-hidden">38% Complete</span>
                                         </div>
                                     </div>
                                 </div>
+                            {/if}
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">已用流量 (GB)</label>
+                                <div class="col">
+                                    <input id="node_bandwidth" type="text" class="form-control"
+                                        value="{round($node->node_bandwidth / 1073741824, 2)}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">可用流量 (GB)</label>
+                                <div class="col">
+                                    <input id="node_bandwidth_limit" type="text" class="form-control"
+                                        value="{round($node->node_bandwidth_limit / 1073741824, 2)}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">流量重置日</label>
+                                <div class="col">
+                                    <input id="bandwidthlimit_resetday" type="text" class="form-control"
+                                        value="{$node->bandwidthlimit_resetday}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">速率限制 (Mbps)</label>
+                                <div class="col">
+                                    <input id="node_speedlimit" type="text" class="form-control"
+                                        value="{$node->node_speedlimit}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">设备限制</label>
+                                <div class="col">
+                                    <input id="node_connector" type="text" class="form-control"
+                                        value="{$node->node_connector}">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </form>
-                {include file='dialog.tpl'}
+                </div>
+            </div>
         </div>
     </div>
-</main>
+</div>
 
-{include file='admin/footer.tpl'}
+<div class="modal modal-blur fade" id="success-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-success"></div>
+            <div class="modal-body text-center py-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-green icon-lg" width="24" height="24"
+                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M9 12l2 2l4 -4" />
+                </svg>
+                <p id="success-message" class="text-muted">成功</p>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+                        <div class="col">
+                            <a id="success-confirm" href="#" class="btn btn-success w-100" data-bs-dismiss="modal">
+                                确认
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-blur fade" id="fail-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-danger"></div>
+            <div class="modal-body text-center py-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24"
+                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 9v2m0 4v.01" />
+                    <path
+                        d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
+                </svg>
+                <p id="fail-message" class="text-muted">失败</p>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+                        <div class="col">
+                            <a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal">
+                                确认
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-    const container = document.getElementById('custom_config');
-    var options = {
-        mode: 'tree'
-    };
-    const editor = new JSONEditor(container, options);
-    editor.set({$node->custom_config})
-{literal}
-    $('#main_form').validate({
-        ignore: ".jsoneditor *",
-        rules: {
-            name: {required: true},
-            server: {required: true},
-            rate: {required: true},
-            info: {required: true},
-            group: {required: true},
-            status: {required: true},
-            remark: {required: true},
-            node_speedlimit: {required: true},
-            sort: {required: true},
-            node_bandwidth: {required: true},
-            node_bandwidth_limit: {required: true},
-            bandwidthlimit_resetday: {required: true}
-        },
-        submitHandler: () => {
-            if ($$.getElementById('type').checked) {
-                var type = 1;
-            } else {
-                var type = 0;
-            }
-{/literal}
-            $.ajax({
-                type: "PUT",
-                url: "/admin/node/{$node->id}",
-                dataType: "json",
-{literal}
-                data: {
-                    name: $$getValue('name'),
-                    server: $$getValue('server'),
-                    custom_config: editor.get(),
-                    node_ip: $$getValue('node_ip'),
-                    rate: $$getValue('rate'),
-                    info: $$getValue('info'),
-                    type,
-                    group: $$getValue('group'),
-                    status: $$getValue('status'),
-                    remark: $$getValue('remark'),
-                    sort: $$getValue('sort'),
-                    node_speedlimit: $$getValue('node_speedlimit'),
-                    class: $$getValue('class'),
-                    node_bandwidth: $$getValue('node_bandwidth'),
-                    node_bandwidth_limit: $$getValue('node_bandwidth_limit'),
-                    bandwidthlimit_resetday: $$getValue('bandwidthlimit_resetday')
-{/literal},
-                    mu_only: $$getValue('mu_only')
-                },
-                success: (data) => {
-                    if (data.ret) {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                        window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
+    $("#mu_only").prop('value', '{$node->mu_only}');
+    $("#sort").prop('value', '{$node->sort}');
 
-                    } else {
-                        $("#result").modal();
-                        $$.getElementById('msg').innerHTML = data.msg;
-                    }
-                },
-{literal}
-                error: (jqXHR) => {
-                    $("#result").modal();
-                    $$.getElementById('msg').innerHTML = `发生错误：${jqXHR.status}`;
+    $("#save_changes").click(function() {
+        $.ajax({
+            url: '/admin/node/{$node->id}',
+            type: 'PUT',
+            dataType: "json",
+            data: {
+                {foreach $field as $key}
+                    {$key}: $('#{$key}').val(),
+                {/foreach}
+                type: $("#type").is(":checked"),
+            },
+            success: function(data) {
+                if (data.ret == 1) {
+                    $('#success-message').text(data.msg);
+                    $('#success-dialog').modal('show');
+                    window.setTimeout("location.href=top.document.referrer", {$config['jump_delay']});
+                } else {
+                    $('#fail-message').text(data.msg);
+                    $('#fail-dialog').modal('show');
                 }
-            });
-        }
+            }
+        })
     });
-{/literal}
 </script>
+
+{include file='admin/tabler_admin_footer.tpl'}

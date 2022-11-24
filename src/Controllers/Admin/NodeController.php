@@ -3,203 +3,274 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
 use App\Models\Node;
-use App\Utils\CloudflareDriver;
-use App\Utils\Tools;
-use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Request;
-use Slim\Http\Response;
 
 class NodeController extends AdminController
 {
-    /**
-     * 后台节点页面
-     *
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function index($request, $response, $args): ResponseInterface
+    public static function page()
     {
-        $table_config['total_column'] = array(
-            'op' => '操作',
-            'id' => 'ID',
-            'name' => '节点名称',
-            'type' => '显示与隐藏',
-            'sort' => '类型',
-            'server' => '节点地址',
-            'outaddress' => '出口地址',
-            'node_ip' => '节点IP',
-            'info' => '节点信息',
-            'status' => '状态',
-            'traffic_rate' => '流量比率',
-            'node_group' => '节点群组',
-            'node_class' => '节点等级',
-            'node_speedlimit' => '节点限速/Mbps',
-            'node_bandwidth' => '已走流量/GB',
-            'node_bandwidth_limit' => '流量限制/GB',
-            'bandwidthlimit_resetday' => '流量重置日',
-            'node_heartbeat' => '上一次活跃时间',
-            'mu_only' => '只启用单端口多用户',
-        );
-        $table_config['default_show_column'] = array('op', 'id', 'name', 'sort');
-        $table_config['ajax_url'] = 'node/ajax';
+        $details = [
+            'route' => 'node',
+            'title' => [
+                'title' => '节点列表',
+                'subtitle' => '系统中所有的节点',
+            ],
+            'field' => [
+                'id' => '#',
+                'name' => '名称',
+                'server' => '地址',
+                'sort' => '类型',
+                'traffic_rate' => '倍率',
+                'node_class' => '等级',
+                'node_group' => '组别',
+                'node_bandwidth_limit' => '流量限制',
+                'node_bandwidth' => '已用流量',
+                'bandwidthlimit_resetday' => '重置日',
+            ],
+            'create_dialog' => [
+                [
+                    'id' => 'name',
+                    'info' => '名称',
+                    'type' => 'input',
+                    'placeholder' => '',
+                ],
+                [
+                    'id' => 'server',
+                    'info' => '地址',
+                    'rows' => '5',
+                    'type' => 'textarea',
+                    'placeholder' => '',
+                ],
+                [
+                    'id' => 'node_ip',
+                    'info' => '节点IP',
+                    'type' => 'input',
+                    'placeholder' => '若留空, 将自动识别解析',
+                ],
+                [
+                    'id' => 'traffic_rate',
+                    'info' => '流量倍率',
+                    'type' => 'input',
+                    'default' => 1,
+                    'placeholder' => '',
+                ],
+                [
+                    'id' => 'mu_only',
+                    'info' => '单端口多用户',
+                    'type' => 'select',
+                    'select' => [
+                        '-1' => '只启用普通端口',
+                        '1' => '只启用单端口多用户',
+                    ],
+                ],
+                [
+                    'id' => 'type',
+                    'info' => '状态',
+                    'type' => 'select',
+                    'select' => [
+                        '1' => '显示',
+                        '0' => '隐藏',
+                    ],
+                ],
+                [
+                    'id' => 'remark',
+                    'info' => '私有备注',
+                    'type' => 'input',
+                    'placeholder' => '仅管理员可见',
+                ],
+                [
+                    'id' => 'info',
+                    'info' => '公有备注',
+                    'type' => 'input',
+                    'placeholder' => '用户可见',
+                ],
+                [
+                    'id' => 'sort',
+                    'info' => '节点类型',
+                    'type' => 'select',
+                    'select' => [
+                        '11' => 'V2Ray',
+                        '14' => 'Trojan',
+                        '0' => 'ShadowSocks',
+                        '1' => 'ShadowSocksR',
+                        '9' => 'ShadowsocksR 单端口多用户（旧）',
+                    ],
+                ],
+                [
+                    'id' => 'node_class',
+                    'info' => '等级',
+                    'type' => 'input',
+                    'default' => 0,
+                    'placeholder' => '',
+                ],
+                [
+                    'id' => 'node_group',
+                    'info' => '组别',
+                    'type' => 'input',
+                    'default' => 0,
+                    'placeholder' => '',
+                ],
+                [
+                    'id' => 'node_bandwidth_limit',
+                    'info' => '流量限制 (GB)',
+                    'type' => 'input',
+                    'default' => 0,
+                    'placeholder' => '',
+                ],
+                [
+                    'id' => 'bandwidthlimit_resetday',
+                    'info' => '流量重置日',
+                    'type' => 'input',
+                    'default' => date("d"),
+                    'placeholder' => '',
+                ],
+                [
+                    'id' => 'node_speedlimit',
+                    'info' => '速率限制 (Mbps)',
+                    'type' => 'input',
+                    'default' => 0,
+                    'placeholder' => '',
+                ],
+                [
+                    'id' => 'node_connector',
+                    'info' => '设备限制',
+                    'type' => 'input',
+                    'default' => 0,
+                    'placeholder' => '',
+                ],
+            ],
+            'update_field' => [
+                'name',
+                'server',
+                'node_ip',
+                'traffic_rate',
+                'sort',
+                'mu_only',
+                //'type', //checkbox
+                'remark',
+                'info',
+                'node_class',
+                'node_group',
+                'node_bandwidth',
+                'node_bandwidth_limit',
+                'bandwidthlimit_resetday',
+                'node_speedlimit',
+                'node_connector',
+            ],
+        ];
+
+        return $details;
+    }
+
+    public function index($request, $response, $args)
+    {
+        $logs = Node::orderBy('id', 'desc')->get();
 
         return $response->write(
             $this->view()
-                ->assign('table_config', $table_config)
+                ->assign('logs', $logs)
+                ->assign('details', self::page())
                 ->display('admin/node/index.tpl')
         );
     }
 
-    /**
-     * 后台创建节点页面
-     *
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function create($request, $response, $args): ResponseInterface
+    public function add($request, $response, $args)
     {
-        return $response->write(
-            $this->view()
-                ->display('admin/node/create.tpl')
-        );
-    }
-
-    /**
-     * 后台添加节点
-     *
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function add($request, $response, $args): ResponseInterface
-    {
-        $node = new Node();
-        $node->name = $request->getParam('name');
-        $node->server = trim($request->getParam('server'));
-        $node->mu_only = $request->getParam('mu_only');
-        $node->traffic_rate = $request->getParam('rate');
-        $node->info = $request->getParam('info');
-        $node->type = $request->getParam('type');
-        $node->node_group = $request->getParam('group');
-        $node->node_speedlimit = $request->getParam('node_speedlimit');
-        $node->status = $request->getParam('status');
-        $node->remark = $request->getParam('remark');
-        $node->sort = $request->getParam('sort');
-
-        if ($request->getParam('custom_config') != null) {
-            $node->custom_config = $request->getParam('custom_config');
-        } else {
+        try {
+            $node = new Node();
+            $field = self::page()['create_dialog'];
+            foreach ($field as $key) {
+                $k = $key['id'];
+                $node->$k = $request->getParam($k);
+            }
+            // 检查
+            if ($node->name === '') {
+                throw new \Exception('请设置名称');
+            }
+            if ($node->server === '') {
+                throw new \Exception('请设置节点地址');
+            }
+            if ($node->info === '') {
+                throw new \Exception('请设置公有备注');
+            }
+            if ($node->remark === '') {
+                throw new \Exception('请设置私有备注');
+            }
+            // 特殊处理一些字段
+            $node->node_bandwidth_limit *= 1073741824;
+            $node->server = trim($node->server);
             $node->custom_config = '{}';
-        }
-
-        $req_node_ip = trim($request->getParam('node_ip'));
-        $success = true;
-        $server_list = explode(';', $node->server);
-
-        if (Tools::is_ip($req_node_ip)) {
-            $success = $node->changeNodeIp($req_node_ip);
-        } else {
-            $success = $node->changeNodeIp($server_list[0]);
-        }
-
-        if (!$success) {
+            $node->status = 'running';
+            // 校验服务器地址
+            if ($node->node_ip === '') {
+                $split = explode(';', $node->server);
+                if (!$node->changeNodeIp($split[0])) {
+                    throw new \Exception('未能正确解析域名');
+                }
+            } else {
+                if (!$node->changeNodeIp($node->node_ip)) {
+                    throw new \Exception('未能正确解析域名或识别IP');
+                }
+            }
+            $node->save();
+        } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => '获取节点IP失败，请检查您输入的节点地址是否正确！',
+                'msg' => $e->getMessage(),
             ]);
-        }
-
-        $node->node_class = $request->getParam('class');
-        $node->node_bandwidth_limit = $request->getParam('node_bandwidth_limit') * 1024 * 1024 * 1024;
-        $node->bandwidthlimit_resetday = $request->getParam('bandwidthlimit_resetday');
-
-        $node->save();
-
-        if ($_ENV['cloudflare_enable'] == true) {
-            $domain_name = explode('.' . $_ENV['cloudflare_name'], $node->server);
-            CloudflareDriver::updateRecord($domain_name[0], $node->node_ip);
         }
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '节点添加成功',
-            'node_id' => $node->id,
+            'msg' => '添加成功',
         ]);
     }
 
-    /**
-     * 后台编辑指定节点页面
-     *
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function edit($request, $response, $args): ResponseInterface
+    public function edit($request, $response, $args)
     {
         $id = $args['id'];
         $node = Node::find($id);
         return $response->write(
             $this->view()
                 ->assign('node', $node)
+                ->assign('field', self::page()['update_field'])
                 ->display('admin/node/edit.tpl')
         );
     }
 
-    /**
-     * 后台更新指定节点内容
-     *
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function update($request, $response, $args): ResponseInterface
+    public function update($request, $response, $args)
     {
-        $id = $args['id'];
-        $node = Node::find($id);
-        $node->name = $request->getParam('name');
-        $node->node_group = $request->getParam('group');
-        $node->server = trim($request->getParam('server'));
-        $node->mu_only = $request->getParam('mu_only');
-        $node->traffic_rate = $request->getParam('rate');
-        $node->info = $request->getParam('info');
-        $node->node_speedlimit = $request->getParam('node_speedlimit');
-        $node->type = $request->getParam('type');
-        $node->sort = $request->getParam('sort');
-
-        if ($request->getParam('custom_config') != null) {
-            $node->custom_config = $request->getParam('custom_config');
-        } else {
-            $node->custom_config = '{}';
-        }
-
-        $req_node_ip = trim($request->getParam('node_ip'));
-
-        $success = true;
-        $server_list = explode(';', $node->server);
-
-        if (Tools::is_ip($req_node_ip)) {
-            $success = $node->changeNodeIp($req_node_ip);
-        } else {
-            $success = $node->changeNodeIp($server_list[0]);
-        }
-
-        if (!$success) {
+        try {
+            $id = $args['id'];
+            $node = Node::find($id);
+            $field = self::page()['update_field'];
+            foreach ($field as $key) {
+                $node->$key = $request->getParam($key);
+            }
+            // 检查
+            if ($node->name === '') {
+                throw new \Exception('请设置名称');
+            }
+            if ($node->server === '') {
+                throw new \Exception('请设置节点地址');
+            }
+            if ($node->info === '') {
+                throw new \Exception('请设置公有备注');
+            }
+            if ($node->remark === '') {
+                throw new \Exception('请设置私有备注');
+            }
+            // 特殊处理一些字段
+            $node->node_bandwidth *= 1073741824;
+            $node->node_bandwidth_limit *= 1073741824;
+            $node->server = trim($node->server);
+            $node->type = ($request->getParam('type') === 'true') ? 1 : 0;
+            $node->save();
+        } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => '更新节点IP失败，请检查您输入的节点地址是否正确！',
+                'msg' => $e->getMessage(),
             ]);
         }
-
-        $node->status = $request->getParam('status');
-        $node->remark = $request->getParam('remark');
-        $node->node_class = $request->getParam('class');
-        $node->node_bandwidth = $request->getParam('node_bandwidth') * 1024 * 1024 * 1024;
-        $node->node_bandwidth_limit = $request->getParam('node_bandwidth_limit') * 1024 * 1024 * 1024;
-        $node->bandwidthlimit_resetday = $request->getParam('bandwidthlimit_resetday');
-
-        $node->save();
 
         return $response->withJson([
             'ret' => 1,
@@ -207,14 +278,7 @@ class NodeController extends AdminController
         ]);
     }
 
-    /**
-     * 后台删除指定节点
-     *
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function delete($request, $response, $args): ResponseInterface
+    public function delete($request, $response, $args)
     {
         $id = $request->getParam('id');
         $node = Node::find($id);
@@ -232,60 +296,31 @@ class NodeController extends AdminController
         ]);
     }
 
-    /**
-     * 后台节点页面 AJAX
-     *
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function ajax($request, $response, $args): ResponseInterface
+    public function copy($request, $response, $args)
     {
-        $query = Node::getTableDataFromAdmin(
-            $request,
-            static function (&$order_field) {
-                if (in_array($order_field, ['op'])) {
-                    $order_field = 'id';
-                }
-                if (in_array($order_field, ['outaddress'])) {
-                    $order_field = 'server';
-                }
-            }
-        );
-
-        $data = [];
-        foreach ($query['datas'] as $value) {
-            /** @var Node $value */
-
-            $tempdata = [];
-            $tempdata['op'] = '<a class="btn btn-brand" href="/admin/node/' . $value->id . '/edit">编辑</a> <a class="btn btn-brand-accent" id="delete" value="' . $value->id . '" href="javascript:void(0);" onClick="delete_modal_show(\'' . $value->id . '\')">删除</a>';
-            $tempdata['id'] = $value->id;
-            $tempdata['name'] = $value->name;
-            $tempdata['type'] = $value->type();
-            $tempdata['sort'] = $value->sort();
-            $tempdata['server'] = $value->server;
-            $tempdata['outaddress'] = $value->get_out_address();
-            $tempdata['node_ip'] = $value->node_ip;
-            $tempdata['info'] = $value->info;
-            $tempdata['status'] = $value->status;
-            $tempdata['traffic_rate'] = $value->traffic_rate;
-            $tempdata['node_group'] = $value->node_group;
-            $tempdata['node_class'] = $value->node_class;
-            $tempdata['node_speedlimit'] = $value->node_speedlimit;
-            $tempdata['node_bandwidth'] = Tools::flowToGB($value->node_bandwidth);
-            $tempdata['node_bandwidth_limit'] = Tools::flowToGB($value->node_bandwidth_limit);
-            $tempdata['bandwidthlimit_resetday'] = $value->bandwidthlimit_resetday;
-            $tempdata['node_heartbeat'] = $value->node_heartbeat();
-            $tempdata['mu_only'] = $value->mu_only();
-
-            $data[] = $tempdata;
+        try {
+            $source_id = $request->getParam('id');
+            $source_node = Node::find($source_id);
+            $new_node = new Node();
+            // https://laravel.com/docs/9.x/eloquent#replicating-models
+            $new_node = $source_node->replicate([
+                'node_bandwidth',
+                'bandwidthlimit_resetday',
+            ]);
+            $new_node->name .= ' (副本)';
+            $new_node->node_bandwidth = 0;
+            $new_node->bandwidthlimit_resetday = date("d");
+            $new_node->save();
+        } catch (\Exception $e) {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => $e->getMessage(),
+            ]);
         }
 
         return $response->withJson([
-            'draw' => $request->getParam('draw'),
-            'recordsTotal' => Node::count(),
-            'recordsFiltered' => $query['count'],
-            'data' => $data,
+            'ret' => 1,
+            'msg' => '复制成功',
         ]);
     }
 }

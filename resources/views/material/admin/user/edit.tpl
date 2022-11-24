@@ -64,11 +64,12 @@
                             <div class="form-group mb-3 row">
                                 <label class="form-label col-3 col-form-label">私有备注</label>
                                 <div class="col">
-                                    <input id="remark" type="text" class="form-control" value="{$edit_user->remark}">
+                                    <input id="remark" type="text" class="form-control" value="{$edit_user->remark}"
+                                        placeholder="仅管理员可见">
                                 </div>
                             </div>
                             <div class="form-group mb-3 row">
-                                <label class="form-label col-3 col-form-label">重置新密码</label>
+                                <label class="form-label col-3 col-form-label">重置密码</label>
                                 <div class="col">
                                     <input id="reset_user_passwd" type="text" class="form-control"
                                         placeholder="若需为此用户重置密码, 填写此栏">
@@ -81,14 +82,21 @@
                                         value="{$edit_user->money}">
                                 </div>
                             </div>
+                            <div class="hr-text">
+                                <span>时间设置</span>
+                            </div>
                             <div class="form-group mb-3 row">
-                                <label class="form-label col-3 col-form-label">单端口多用户承载端口</label>
+                                <label class="form-label col-4 col-form-label">等级过期时间</label>
                                 <div class="col">
-                                    <select id="is_multi_user" class="col form-select">
-                                        <option value="0">非单端口多用户承载端口</option>
-                                        <option value="1">混淆式单端口多用户承载端口</option>
-                                        <option value="2">协议式单端口多用户承载端口</option>
-                                    </select>
+                                    <input id="class_expire" type="text" class="form-control"
+                                        value="{$edit_user->class_expire}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-4 col-form-label">账户过期时间</label>
+                                <div class="col">
+                                    <input id="expire_in" type="text" class="form-control"
+                                        value="{$edit_user->expire_in}">
                                 </div>
                             </div>
                             <div class="hr-text">
@@ -172,23 +180,9 @@
                                 </div>
                             </div>
                             <div class="hr-text">
-                                <span>划分与时间设置</span>
+                                <span>划分与使用限制</span>
                             </div>
-                            <div class="form-group mb-3 row">
-                                <label class="form-label col-4 col-form-label">等级过期时间</label>
-                                <div class="col">
-                                    <input id="class_expire" type="text" class="form-control"
-                                        value="{$edit_user->class_expire}">
-                                </div>
-                            </div>
-                            <div class="form-group mb-3 row">
-                                <label class="form-label col-4 col-form-label">账户过期时间</label>
-                                <div class="col">
-                                    <input id="expire_in" type="text" class="form-control"
-                                        value="{$edit_user->expire_in}">
-                                </div>
-                            </div>
-                            <div class="row">
+                            <!--<div class="row">
                                 <div class="form-group mb-3 col-6">
                                     <label class="form-label col-12 col-form-label">节点群组</label>
                                     <div class="col">
@@ -216,7 +210,34 @@
                                             value="{$edit_user->node_connector}">
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
+                            <div class="form-group mb-3 col-12">
+                                    <label class="form-label col-12 col-form-label">节点群组</label>
+                                    <div class="col">
+                                        <input id="node_group" type="text" class="form-control"
+                                            value="{$edit_user->node_group}">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3 col-12">
+                                    <label class="form-label col-12 col-form-label">账户等级</label>
+                                    <div class="col">
+                                        <input id="class" type="text" class="form-control" value="{$edit_user->class}">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3 col-12">
+                                    <label class="form-label col-12 col-form-label">速度限制 (Mbps)</label>
+                                    <div class="col">
+                                        <input id="node_speedlimit" type="text" class="form-control"
+                                            value="{$edit_user->node_speedlimit}">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3 col-12">
+                                    <label class="form-label col-12 col-form-label">链接设备限制</label>
+                                    <div class="col">
+                                        <input id="node_connector" type="text" class="form-control"
+                                            value="{$edit_user->node_connector}">
+                                    </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -269,6 +290,16 @@
                                 <div class="col">
                                     <input id="obfs_param" type="text" class="form-control"
                                         value="{$edit_user->obfs_param}">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">单端口多用户承载端口</label>
+                                <div class="col">
+                                    <select id="is_multi_user" class="col form-select">
+                                        <option value="0">非单端口多用户承载端口</option>
+                                        <option value="1">混淆式单端口多用户承载端口</option>
+                                        <option value="2">协议式单端口多用户承载端口</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="hr-text">

@@ -17,7 +17,8 @@ class Tool extends Command
         . '│ ├─ exportAllSettings             - 导出所有设置' . PHP_EOL
         . '│ ├─ importAllSettings             - 导入所有设置' . PHP_EOL
         . '│ ├─ mailboxSuffixCount            - 统计注册用户邮箱域' . PHP_EOL
-        . '│ ├─ supplementaryLoginAttribution - 补充登录日志归属' . PHP_EOL;
+        . '│ ├─ supplementaryLoginAttribution - 补充登录日志归属' . PHP_EOL
+        . '│ ├─ completeNickname              - 为空字符串昵称用户补全昵称' . PHP_EOL;
 
     public function boot()
     {
@@ -177,5 +178,20 @@ class Tool extends Command
         }
         arsort($set);
         print(json_encode($set, JSON_PRETTY_PRINT) . PHP_EOL);
+    }
+
+    public function completeNickname()
+    {
+        $users = User::where('user_name', '')
+            ->get(['id', 'email', 'user_name']);
+
+        foreach ($users as $user) {
+            $split = explode('@', $user->email);
+            //print("{$user->id} -> {$split[0]}") . PHP_EOL;
+            $user->user_name = $split[0];
+            $user->save();
+        }
+
+        echo "All tasks have been completed." . PHP_EOL;
     }
 }

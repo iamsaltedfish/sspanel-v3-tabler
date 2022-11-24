@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\EmailVerify;
 use App\Models\Fingerprint;
 use App\Models\InviteCode;
+use App\Models\MailPush;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Auth;
@@ -320,6 +321,22 @@ class AuthController extends BaseController
             $f->created_at = time();
             $f->save();
         }
+
+        $salt = $_ENV['mail_push_salt'] ?? 'c669c8b3277fa0415aaea21d78fccdd7'; // default salt
+        $config = new MailPush();
+        $config->user_id = $user->id;
+        $config->basic = 1;
+        $config->market = 1;
+        $config->due_reminder = 1;
+        $config->account_security = 1;
+        $config->work_order = 1;
+        $config->traffic_report = 0; // 默认不推送每日流量报告
+        $config->general_notice = 1;
+        $config->important_notice = 1;
+        $config->access_token = md5($user->id . $user->email . $salt);
+        $config->created_at = time();
+        $config->updated_at = time();
+        $config->save();
 
         if ($auto_login) {
             Auth::login($user->id, 3600);

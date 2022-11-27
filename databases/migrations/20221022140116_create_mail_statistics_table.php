@@ -22,7 +22,7 @@ final class CreateMailStatisticsTable extends AbstractMigration
         $table->addColumn('user_id', 'integer', ['comment' => '用户编号'])
             ->addColumn('type', 'text', ['comment' => '邮件类型'])
             ->addColumn('addr', 'text', ['comment' => '收件地址'])
-            ->addColumn('status', 'integer', ['comment' => '是否丢弃'])
+            ->addColumn('status', 'integer', ['comment' => '发送状态'])
             ->addColumn('created_at', 'integer', ['comment' => '创建时间'])
             ->create();
     }

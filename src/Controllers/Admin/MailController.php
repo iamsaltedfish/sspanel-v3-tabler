@@ -9,7 +9,7 @@ class MailController extends AdminController
     public static function page()
     {
         $details = [
-            'route' => 'mail',
+            'route' => 'mail/log',
             'title' => [
                 'title' => '邮件日志',
                 'subtitle' => '系统发送的邮件日志',

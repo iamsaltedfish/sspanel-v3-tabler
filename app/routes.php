@@ -178,7 +178,7 @@ return function (SlimApp $app) {
 
         // Mail Mange
         $this->get('/mail/log',                 App\Controllers\Admin\MailController::class . ':index');
-        $this->post('/mail/ajax',               App\Controllers\Admin\MailController::class . ':ajaxQuery');
+        $this->post('/mail/log/ajax',           App\Controllers\Admin\MailController::class . ':ajaxQuery');
 
         // Mail Block Mange
         $this->get('/mail/block',               App\Controllers\Admin\MailBlockController::class . ':index');

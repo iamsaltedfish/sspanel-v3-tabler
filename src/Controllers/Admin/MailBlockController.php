@@ -12,7 +12,7 @@ class MailBlockController extends AdminController
             'route' => 'mail/block',
             'title' => [
                 'title' => '邮箱黑名单',
-                'subtitle' => '浏览和管理邮箱黑名单',
+                'subtitle' => '浏览和管理针对具体地址的邮箱黑名单',
             ],
             'field' => [
                 'id' => '#',

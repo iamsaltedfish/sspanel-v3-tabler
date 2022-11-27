@@ -277,10 +277,10 @@
                                         <i class="ti ti-book-2"></i>&nbsp;
                                         日志
                                     </a>
-                                    <a class="dropdown-item" href="/admin/mail/analyze">
+                                    <!--<a class="dropdown-item" href="/admin/mail/analyze">
                                         <i class="ti ti-chart-donut-2"></i>&nbsp;
                                         统计
-                                    </a>
+                                    </a>-->
                                     <a class="dropdown-item" href="/admin/mail/block">
                                         <i class="ti ti-barrier-block"></i>&nbsp;
                                         黑名单

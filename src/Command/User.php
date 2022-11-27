@@ -48,6 +48,7 @@ class User extends Command
                 $user->email,
                 $_ENV['appName'],
                 'notice.tpl',
+                'important_notice',
                 [
                     'title' => 'title',
                     'content' => 'content',
@@ -68,6 +69,7 @@ class User extends Command
                     $user->email,
                     $_ENV['appName'],
                     'notice.tpl',
+                    'important_notice',
                     [
                         'title' => 'title',
                         'content' => 'content',

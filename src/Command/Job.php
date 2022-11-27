@@ -57,7 +57,14 @@ class Job extends Command
         EmailQueue::chunkById(1000, function ($email_queues) {
             foreach ($email_queues as $email_queue) {
                 try {
-                    Mail::send($email_queue->to_email, $email_queue->subject, $email_queue->template, json_decode($email_queue->array), []);
+                    Mail::send(
+                        $email_queue->to_email,
+                        $email_queue->subject,
+                        $email_queue->template,
+                        'system',
+                        json_decode($email_queue->array),
+                        []
+                    );
                 } catch (Exception $e) {
                     echo $e->getMessage();
                 }
@@ -180,7 +187,7 @@ class Job extends Command
                 if ($node->isNodeOnline() === false && $node->online == true) {
                     foreach ($adminUser as $user) {
                         echo 'Send offline mail to user: ' . $user->id . PHP_EOL;
-                        $user->sendMail($_ENV['appName'] . ' - 系统警告', 'news/warn.tpl',
+                        $user->sendMail($_ENV['appName'] . ' - 系统警告', 'news/warn.tpl', 'system',
                             [
                                 'text' => '管理员您好，系统发现节点 ' . $node->name . ' 掉线了，请您及时处理。',
                             ], [], $_ENV['email_queue']
@@ -192,7 +199,7 @@ class Job extends Command
                 } elseif ($node->isNodeOnline() === true && $node->online == false) {
                     foreach ($adminUser as $user) {
                         echo 'Send offline mail to user: ' . $user->id . PHP_EOL;
-                        $user->sendMail($_ENV['appName'] . ' - 系统提示', 'news/warn.tpl',
+                        $user->sendMail($_ENV['appName'] . ' - 系统提示', 'news/warn.tpl', 'system',
                             [
                                 'text' => '管理员您好，系统发现节点 ' . $node->name . ' 恢复上线了。',
                             ], [], $_ENV['email_queue']
@@ -228,7 +235,7 @@ class Job extends Command
                     $user->d = 0;
                     $user->last_day_t = 0;
                 }
-                $user->sendMail($_ENV['appName'] . ' - 您的用户账户已经过期了', 'news/warn.tpl',
+                $user->sendMail($_ENV['appName'] . ' - 您的用户账户已经过期了', 'news/warn.tpl', 'due_reminder',
                     [
                         'text' => '您好，系统发现您的账号已经过期了。',
                     ], [], $_ENV['email_queue']

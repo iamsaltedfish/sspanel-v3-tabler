@@ -63,6 +63,7 @@ class FinanceMail extends Command
             $user->sendMail(
                 $_ENV['appName'] . '-财务日报',
                 'news/finance.tpl',
+                'system',
                 [
                     'title' => '财务日报',
                     'text'  => $text_html
@@ -108,6 +109,7 @@ class FinanceMail extends Command
             $user->sendMail(
                 $_ENV['appName'] . '-财务周报',
                 'news/finance.tpl',
+                'system',
                 [
                     'title' => '财务周报',
                     'text'  => $text_html
@@ -151,6 +153,7 @@ class FinanceMail extends Command
             $user->sendMail(
                 $_ENV['appName'] . '-财务月报',
                 'news/finance.tpl',
+                'system',
                 [
                     'title' => '财务月报',
                     'text'  => $text_html

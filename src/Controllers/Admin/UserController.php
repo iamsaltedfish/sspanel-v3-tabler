@@ -311,7 +311,7 @@ class UserController extends AdminController
                     . '<br/>'
                     . '<br/>建议您登录后前往 <b>资料编辑</b> 页面重新设定登录密码。如需帮助，可通过工单系统联系我们'
                     . '<br/>';
-                Mail::send($email, $subject, 'newuser.tpl', [
+                Mail::send($email, $subject, 'newuser.tpl', 'system', [
                     'text' => $text,
                 ], []);
             }

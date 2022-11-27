@@ -34,6 +34,7 @@ class Password
                 $email,
                 $subject,
                 'password/reset.tpl',
+                'account_security',
                 [
                     'resetUrl' => $resetUrl
                 ],

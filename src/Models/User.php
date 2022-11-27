@@ -706,7 +706,7 @@ class User extends Model
      * @param array  $ary
      * @param array  $files
      */
-    public function sendMail(string $subject, string $template, array $ary = [], array $files = [], $is_queue = false): bool
+    public function sendMail(string $subject, string $template, string $type, array $ary = [], array $files = [], $is_queue = false): bool
     {
         $result = false;
         if ($is_queue) {
@@ -728,6 +728,7 @@ class User extends Model
                     $this->email,
                     $subject,
                     $template,
+                    $type,
                     array_merge(
                         [
                             'user' => $this,

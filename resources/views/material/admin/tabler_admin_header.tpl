@@ -187,13 +187,11 @@
                                     </span>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item"
-                                        href="/admin/chart/index">
+                                    <a class="dropdown-item" href="/admin/chart/index">
                                         <i class="ti ti-timeline"></i>&nbsp;
                                         总览
                                     </a>
-                                    <a class="dropdown-item"
-                                        href="/admin/chart/finance">
+                                    <a class="dropdown-item" href="/admin/chart/finance">
                                         <i class="ti ti-businessplan"></i>&nbsp;
                                         财务
                                     </a>
@@ -254,6 +252,38 @@
                                     <a class="dropdown-item" href="/admin/log">
                                         <i class="ti ti-book-download"></i>&nbsp;
                                         自定义
+                                    </a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown"
+                                    data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="icon icon-tabler icon-tabler-mail" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                                            <polyline points="3 7 12 13 21 7"></polyline>
+                                        </svg>
+                                    </span>
+                                    <span class="nav-link-title">
+                                        邮件
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="/admin/mail/log">
+                                        <i class="ti ti-book-2"></i>&nbsp;
+                                        日志
+                                    </a>
+                                    <a class="dropdown-item" href="/admin/mail/analyze">
+                                        <i class="ti ti-chart-donut-2"></i>&nbsp;
+                                        统计
+                                    </a>
+                                    <a class="dropdown-item" href="/admin/mail/block">
+                                        <i class="ti ti-barrier-block"></i>&nbsp;
+                                        黑名单
                                     </a>
                                 </div>
                             </li>

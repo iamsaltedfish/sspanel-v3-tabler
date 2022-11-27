@@ -176,6 +176,18 @@ return function (SlimApp $app) {
         $this->put('/log/{id}',                 App\Controllers\Admin\LogController::class . ':update');
         $this->delete('/log/{id}',              App\Controllers\Admin\LogController::class . ':delete');
 
+        // Mail Mange
+        $this->get('/mail/log',                 App\Controllers\Admin\MailController::class . ':index');
+        $this->post('/mail/ajax',               App\Controllers\Admin\MailController::class . ':ajaxQuery');
+
+        // Mail Block Mange
+        $this->get('/mail/block',               App\Controllers\Admin\MailBlockController::class . ':index');
+        $this->post('/mail/block/ajax',         App\Controllers\Admin\MailBlockController::class . ':ajaxQuery');
+        $this->put('/mail/block',               App\Controllers\Admin\MailBlockController::class . ':ajaxUpdate');
+
+        // Mail Analyze Mange
+        //$this->get('/mail/analyze',             App\Controllers\Admin\MailAnalyzeController::class . ':index');
+
         // Ann Mange
         $this->get('/announcement',             App\Controllers\Admin\AnnController::class . ':index');
         $this->get('/announcement/create',      App\Controllers\Admin\AnnController::class . ':create');
@@ -293,6 +305,10 @@ return function (SlimApp $app) {
     })->add(new Mod_Mu());
 
     $app->group('/link', function () {
+        $this->get('/{token}',              App\Controllers\NewLinkController::class . ':requestEntry');
+    });
+
+    $app->group('/oldlink', function () {
         $this->get('/{token}',              App\Controllers\LinkController::class . ':GetContent');
     });
 

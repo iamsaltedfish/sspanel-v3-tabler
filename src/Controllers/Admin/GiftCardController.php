@@ -145,7 +145,7 @@ class GiftCardController extends AdminController
             }
 
             if (Setting::obtain('mail_driver') != 'none') {
-                Mail::send($receive_mailbox, $_ENV['appName'] . '- 充值码', 'giftcard.tpl',
+                Mail::send($receive_mailbox, $_ENV['appName'] . '- 充值码', 'giftcard.tpl', 'system',
                     [
                         'text' => implode('<br/>', $cards),
                     ], []

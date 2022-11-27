@@ -111,6 +111,7 @@ class SettingController extends AdminController
                 $to,
                 '测试邮件',
                 'auth/test.tpl',
+                'system',
                 [],
                 []
             );

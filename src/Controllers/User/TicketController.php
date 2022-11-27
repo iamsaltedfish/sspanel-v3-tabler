@@ -104,7 +104,7 @@ class TicketController extends UserController
         if ($_ENV['mail_ticket']) {
             $admins = User::where('is_admin', 1)->get();
             foreach ($admins as $admin) {
-                $admin->sendMail($_ENV['appName'] . ' - 新的工单', 'news/warn.tpl',
+                $admin->sendMail($_ENV['appName'] . ' - 新的工单', 'news/warn.tpl', 'work_order',
                     [
                         'text' => '新工单：' . $anti_xss->xss_clean($title) . '<br />'
                         . nl2br($ticket_content),
@@ -176,7 +176,7 @@ class TicketController extends UserController
         if ($_ENV['mail_ticket']) {
             $admins = User::where('is_admin', 1)->get();
             foreach ($admins as $admin) {
-                $admin->sendMail($_ENV['appName'] . ' - 用户工单回复', 'news/warn.tpl',
+                $admin->sendMail($_ENV['appName'] . ' - 用户工单回复', 'news/warn.tpl', 'work_order',
                     [
                         'text' => '工单编号：#' . $tk_id .
                         '<br/>工单主题：' . $anti_xss->xss_clean($topic->title) .

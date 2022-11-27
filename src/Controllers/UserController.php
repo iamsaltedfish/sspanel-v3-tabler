@@ -492,7 +492,7 @@ class UserController extends BaseController
             if ($product->stock - $product->sales == 5 || $product->stock - $product->sales == 0) {
                 $admin_users = User::where('is_admin', '1')->get();
                 foreach ($admin_users as $admin) {
-                    Mail::send($admin->email, $_ENV['appName'] . ' - 商品缺货通知', 'news/warn.tpl',
+                    Mail::send($admin->email, $_ENV['appName'] . ' - 商品缺货通知', 'news/warn.tpl', 'system',
                         [
                             'user' => $admin,
                             'text' => '商品【' . $product->name . '】当前库存仅有 ' . ($product->stock - $product->sales) . ' 件，请注意及时补货',

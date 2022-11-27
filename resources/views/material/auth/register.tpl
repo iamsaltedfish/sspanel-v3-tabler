@@ -220,16 +220,13 @@
                     if (data.ret == 1) {
                         $('#success-message').text(data.msg);
                         $('#success-dialog').modal('show');
+                        setTimeout("window.location.href = '/auth/login'", 1500);
                     } else {
                         $('#fail-message').text(data.msg);
                         $('#fail-dialog').modal('show');
                     }
                 }
             })
-        });
-
-        $("#success-confirm").click(function() {
-            location.reload();
         });
     </script>
 </body>

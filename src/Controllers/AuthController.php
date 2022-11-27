@@ -125,7 +125,7 @@ class AuthController extends BaseController
             $ev->code = $code;
             $ev->save();
 
-            Mail::send($email, $_ENV['appName'] . ' - 验证邮件', 'auth/verify.tpl',
+            Mail::send($email, $_ENV['appName'] . ' - 验证邮件', 'auth/verify.tpl', 'basic',
                 [
                     'code' => $code,
                     'expire' => date('Y-m-d H:i:s', time() + $email_verify_ttl),

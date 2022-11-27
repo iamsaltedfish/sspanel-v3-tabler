@@ -1,6 +1,7 @@
 <?php
 namespace App\Command;
 
+use App\Models\MailStatistics;
 use App\Models\ProductOrder;
 use App\Models\Statistics as StatisticsModel;
 use App\Models\User;
@@ -33,7 +34,7 @@ class Statistics extends Command
     {
         // 记录每日签到用户数
         $sts = new Analytics();
-        $check_in = new StatisticsModel;
+        $check_in = new StatisticsModel();
         $check_in->item = 'checkin';
         $check_in->value = $sts->getTodayCheckinUser();
         $check_in->created_at = time();
@@ -47,7 +48,7 @@ class Statistics extends Command
         $stop = date('Y-m-d 00:00:00', strtotime("-0 day"));
         $start = date('Y-m-d 00:00:00', strtotime("-1 day"));
 
-        $log = new StatisticsModel;
+        $log = new StatisticsModel();
         $log->item = 'register';
         $log->value = (int) User::whereBetween('reg_date', [$start, $stop])->count();
         $log->created_at = strtotime($stop);
@@ -62,18 +63,39 @@ class Statistics extends Command
             ->where('product_type', '!=', 'recharge')
             ->sum('order_price');
 
-        $log = new StatisticsModel;
+        $log = new StatisticsModel();
         $log->item = 'order_amount';
         $log->value = $order_amount / 100;
         $log->created_at = strtotime($stop);
         $log->save();
 
-        $log = new StatisticsModel;
+        $log = new StatisticsModel();
         $log->item = 'deal_amount';
         $log->value = $deal_amount / 100;
         $log->created_at = strtotime($stop);
         $log->save();
         echo "Count yesterday's order amount has been completed." . PHP_EOL;
+
+        // 统计邮件
+        $mail_data = MailStatistics::whereBetween('created_at', [strtotime($start), strtotime($stop)])->get();
+        $count = [
+            'basic' => $mail_data->where('type', 'basic')->count(),
+            'system' => $mail_data->where('type', 'system')->count(),
+            'market' => $mail_data->where('type', 'market')->count(),
+            'work_order' => $mail_data->where('type', 'work_order')->count(),
+            'due_reminder' => $mail_data->where('type', 'due_reminder')->count(),
+            'traffic_report' => $mail_data->where('type', 'traffic_report')->count(),
+            'general_notice' => $mail_data->where('type', 'general_notice')->count(),
+            'important_notice' => $mail_data->where('type', 'important_notice')->count(),
+            'account_security' => $mail_data->where('type', 'account_security')->count(),
+        ];
+
+        $mail = new StatisticsModel();
+        $mail->item = 'mail_count';
+        $mail->value = json_encode($count);
+        $mail->created_at = strtotime($stop);
+        $mail->save();
+        echo "The statistics of yesterday s email sending have been completed." . PHP_EOL;
     }
 
     public function CountHistoryRegister()
@@ -87,7 +109,7 @@ class Statistics extends Command
                 $stop = date('Y-m-d 00:00:00', strtotime("-{$stop_day} day"));
                 $number = User::whereBetween('reg_date', [$start, $stop])->count();
 
-                $log = new StatisticsModel;
+                $log = new StatisticsModel();
                 $log->item = 'register';
                 $log->value = $number;
                 $log->created_at = strtotime($stop);
@@ -113,13 +135,13 @@ class Statistics extends Command
                     ->where('product_type', '!=', 'recharge')
                     ->sum('order_price');
 
-                $log = new StatisticsModel;
+                $log = new StatisticsModel();
                 $log->item = 'order_amount';
                 $log->value = $order_amount / 100;
                 $log->created_at = $stop;
                 $log->save();
 
-                $log = new StatisticsModel;
+                $log = new StatisticsModel();
                 $log->item = 'deal_amount';
                 $log->value = $deal_amount / 100;
                 $log->created_at = $stop;

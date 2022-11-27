@@ -158,7 +158,7 @@ class TicketController extends AdminController
         if ($_ENV['mail_ticket']) {
             $anti_xss = new AntiXSS();
             $user = User::find($topic->user_id);
-            $user->sendMail($_ENV['appName'] . ' - 工单被回复', 'news/warn.tpl',
+            $user->sendMail($_ENV['appName'] . ' - 工单被回复', 'news/warn.tpl', 'work_order',
                 [
                     'text' => '工单主题：' . $anti_xss->xss_clean($topic->title) .
                     '<br/>' . '新添回复：' . $anti_xss->xss_clean($content)
@@ -224,7 +224,7 @@ class TicketController extends AdminController
         /* if ($_ENV['mail_ticket']) {
             $anti_xss = new AntiXSS();
             $user = User::find($ticket->user_id);
-            $user->sendMail($_ENV['appName'] . ' - 工单被关闭', 'news/warn.tpl',
+            $user->sendMail($_ENV['appName'] . ' - 工单被关闭', 'news/warn.tpl', 'work_order',
                 [
                     'text' => '工单主题：' . $anti_xss->xss_clean($ticket->title)
                 ], []

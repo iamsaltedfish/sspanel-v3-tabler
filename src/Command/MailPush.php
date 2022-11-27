@@ -3,6 +3,7 @@ namespace App\Command;
 
 use App\Models\MailPush as MailPushModel;
 use App\Models\User;
+use Dariuszp\CliProgressBar;
 
 class MailPush extends Command
 {
@@ -30,7 +31,13 @@ class MailPush extends Command
         $users = User::all(['id', 'email']);
         $salt = $_ENV['mail_push_salt'] ?? 'c669c8b3277fa0415aaea21d78fccdd7'; // default salt
 
+        $bar = new CliProgressBar($users->count());
+        $bar->setBarLength(50);
+        $bar->display();
+        $bar->setColorToYellow();
+
         foreach ($users as $user) {
+            $bar->progress();
             $config = new MailPushModel();
             $config->user_id = $user->id;
             $config->basic = 1;
@@ -46,6 +53,10 @@ class MailPush extends Command
             $config->updated_at = time();
             $config->save();
         }
+
+        $bar->setColorToGreen();
+        $bar->display();
+        $bar->end();
 
         echo "All user generated customize mail receiving configuration is complete.\n";
     }

@@ -8,7 +8,7 @@ use App\Models\Statistics;
 
 class ChartController extends AdminController
 {
-    public function encode($item, $offset = false)
+    public static function encode($item, $offset = false)
     {
         $items = Statistics::where('item', $item)
             ->orderBy('created_at', 'desc')

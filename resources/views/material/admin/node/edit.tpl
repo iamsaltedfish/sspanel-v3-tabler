@@ -42,7 +42,7 @@
     <div class="page-body">
         <div class="container-xl">
             <div class="row row-deck row-cards">
-                <div class="col-md-6 col-sm-12">
+                <div class="col-md-4 col-sm-12">
                     <div class="card">
                         <div class="card-header card-header-light">
                             <h3 class="card-title">基础信息</h3>
@@ -86,6 +86,16 @@
                                 </div>
                             </div>
                             <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">解析模式</label>
+                                <div class="col">
+                                    <select id="parsing_mode" class="col form-select">
+                                        <option value="v2ray_ws">v2ray_ws</option>
+                                        <option value="v2ray_ws_tls">v2ray_ws_tls</option>
+                                        <option value="trojan_grpc">trojan_grpc</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
                                 <label class="form-label col-3 col-form-label">单端口多用户</label>
                                 <div class="col">
                                     <select id="mu_only" class="col form-select">
@@ -113,10 +123,26 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="mb-3">
+                                <!-- <label class="form-label">Notification</label> -->
+                                <div class="divide-y">
+                                    <div>
+                                        <label class="row">
+                                            <span class="col">是否加入直连订阅 (适用于仅直连, 或有中转配置但仍需保留直连入口时启用)</span>
+                                            <span class="col-auto">
+                                                <label class="form-check form-check-single form-switch">
+                                                    <input id="add_in" class="form-check-input" type="checkbox"
+                                                        {if $node->add_in == 1}checked="" {/if}>
+                                                </label>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-sm-12">
+                <div class="col-md-4 col-sm-12">
                     <div class="card">
                         <div class="card-header card-header-light">
                             <h3 class="card-title">其他信息</h3>
@@ -201,6 +227,39 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="card">
+                        <div class="card-header card-header-light">
+                            <h3 class="card-title">高级功能</h3>
+                            <a id="function_description" class="card-subtitle"
+                                style="text-decoration: none;">&nbsp;功能说明</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <!-- <label class="form-label">Notification</label> -->
+                                <div class="divide-y">
+                                    <div>
+                                        <label class="row">
+                                            <span class="col">启用单节点多入口功能</span>
+                                            <span class="col-auto">
+                                                <label class="form-check form-check-single form-switch">
+                                                    <input id="transit_enable" class="form-check-input" type="checkbox"
+                                                        {if $node->transit_enable == 1}checked="" {/if}>
+                                                </label>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 row">
+                                <div class="col">
+                                    <textarea id="transit_json" class="col form-control"
+                                        rows="26">{$node->transit_json}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
@@ -279,7 +338,38 @@
     </div>
 </div>
 
+<div class="modal modal-blur fade" id="function_description_dialog" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">单节点多入口</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>此功能使用 json 格式配置，会在订阅时生成相应的链接入口，以下是模板：</p>
+                <div>
+                    <pre><code>[{
+    "display_name": "a",
+    "connect_addr": "chinamobile.com",
+    "connect_port": 5269,
+    "sni_instruction": "singapore.com"
+}, {
+    "display_name": "a",
+    "connect_addr": "chinaunicom.com",
+    "connect_port": 5269,
+    "sni_instruction": "singapore.com"
+}]</code></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    $("#parsing_mode").prop('value', '{$node->parsing_mode}');
     $("#mu_only").prop('value', '{$node->mu_only}');
     $("#sort").prop('value', '{$node->sort}');
 
@@ -293,6 +383,8 @@
                     {$key}: $('#{$key}').val(),
                 {/foreach}
                 type: $("#type").is(":checked"),
+                add_in: $("#add_in").is(":checked"),
+                transit_enable: $("#transit_enable").is(":checked"),
             },
             success: function(data) {
                 if (data.ret == 1) {
@@ -306,66 +398,70 @@
             }
         })
     });
+
+    $("#function_description").click(function() {
+        $('#function_description_dialog').modal('show');
+    });
 </script>
 
 {foreach $charts as $key => $value}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            window.ApexCharts && (new ApexCharts(document.getElementById('{$value['element_id']}'), {
-                chart: {
-                    type: "line",
-                    fontFamily: 'inherit',
-                    height: 300,
-                    parentHeightOffset: 0,
-                    toolbar: {
-                        show: false,
-                    },
-                    animations: {
-                        enabled: false
-                    },
-                },
-                fill: {
-                    opacity: 1,
-                },
-                stroke: {
-                    width: 2,
-                    lineCap: "round",
-                    curve: "smooth",
-                },
-                series: [{
-                    name: "{$value['series_name']}",
-                    data: [{implode(', ', $value['y'])}]
-                }],
-                grid: {
-                    padding: {
-                        top: -20,
-                        right: 0,
-                        left: -4,
-                        bottom: -4
-                    },
-                    strokeDashArray: 4,
-                },
-                xaxis: {
-                    labels: {
-                        padding: 0,
-                    },
-                    tooltip: {
-                        enabled: false
-                    },
-                },
-                yaxis: {
-                    labels: {
-                        padding: 4
-                    },
-                },
-                labels: [
-                    {implode(', ', $value['x'])}
-                ],
-                colors: ["#206bc4"],
-                legend: {
-                    show: false,
-                },
-            })).render();
+        window.ApexCharts && (new ApexCharts(document.getElementById('{$value['element_id']}'), {
+        chart: {
+            type: "line",
+            fontFamily: 'inherit',
+            height: 300,
+            parentHeightOffset: 0,
+            toolbar: {
+                show: false,
+            },
+            animations: {
+                enabled: false
+            },
+        },
+        fill: {
+            opacity: 1,
+        },
+        stroke: {
+            width: 2,
+            lineCap: "round",
+            curve: "smooth",
+        },
+        series: [{
+            name: "{$value['series_name']}",
+            data: [{implode(', ', $value['y'])}]
+        }],
+        grid: {
+            padding: {
+                top: -20,
+                right: 0,
+                left: -4,
+                bottom: -4
+            },
+            strokeDashArray: 4,
+        },
+        xaxis: {
+            labels: {
+                padding: 0,
+            },
+            tooltip: {
+                enabled: false
+            },
+        },
+        yaxis: {
+            labels: {
+                padding: 4
+            },
+        },
+        labels: [
+            {implode(', ', $value['x'])}
+        ],
+        colors: ["#206bc4"],
+        legend: {
+            show: false,
+        },
+        })).render();
         });
     </script>
 {/foreach}

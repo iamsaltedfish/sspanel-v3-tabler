@@ -97,6 +97,16 @@ class NodeController extends AdminController
                     ],
                 ],
                 [
+                    'id' => 'parsing_mode',
+                    'info' => '解析模式',
+                    'type' => 'select',
+                    'select' => [
+                        'v2ray_ws' => 'v2ray_ws',
+                        'v2ray_ws_tls' => 'v2ray_ws_tls',
+                        'trojan_grpc' => 'trojan_grpc',
+                    ],
+                ],
+                [
                     'id' => 'node_class',
                     'info' => '等级',
                     'type' => 'input',
@@ -145,6 +155,7 @@ class NodeController extends AdminController
                 'node_ip',
                 'traffic_rate',
                 'sort',
+                'parsing_mode',
                 'mu_only',
                 //'type', //checkbox
                 'remark',
@@ -156,6 +167,7 @@ class NodeController extends AdminController
                 'bandwidthlimit_resetday',
                 'node_speedlimit',
                 'node_connector',
+                'transit_json',
             ],
         ];
 
@@ -226,7 +238,7 @@ class NodeController extends AdminController
         ]);
     }
 
-    public function encode(string $item, int $node_id, bool $offset = false): array
+    public static function encode(string $item, int $node_id, bool $offset = false): array
     {
         $items = Statistics::where('item', $item)
             ->where('node_id', $node_id)
@@ -270,7 +282,6 @@ class NodeController extends AdminController
             $this->view()
                 ->assign('node', $node)
                 ->assign('charts', $charts)
-                ->assign('traffic_chart', $traffic_chart)
                 ->assign('field', self::page()['update_field'])
                 ->display('admin/node/edit.tpl')
         );
@@ -298,11 +309,22 @@ class NodeController extends AdminController
             if ($node->remark === '') {
                 throw new \Exception('请设置私有备注');
             }
+            $configs = json_decode($node->transit_json, true);
+            $decode_error = json_last_error(); // 解码正常时会输出 int(0)
+            $node->transit_enable = ($request->getParam('transit_enable') === 'true') ? 1 : 0;
+            if ($decode_error !== 0 && $node->transit_enable === 1) {
+                throw new \Exception('未能正确解析单节点多入口 JSON 配置');
+            }
             // 特殊处理一些字段
             $node->node_bandwidth *= 1073741824;
             $node->node_bandwidth_limit *= 1073741824;
             $node->server = trim($node->server);
             $node->type = ($request->getParam('type') === 'true') ? 1 : 0;
+            $node->add_in = ($request->getParam('add_in') === 'true') ? 1 : 0;
+            // 避免订阅时冲突
+            if ($node->add_in === 0 && $node->transit_enable === 0) {
+                throw new \Exception('是否加入直连订阅 与 启用单节点多入口功能 按钮不能同时关闭');
+            }
             $node->save();
         } catch (\Exception $e) {
             return $response->withJson([

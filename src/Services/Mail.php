@@ -64,7 +64,7 @@ class Mail
 
         // check user setting
         if (isset($user->id)) {
-            $record->status = (MailPush::allow($type, $user_id)) ? 0 : 1; // 0表示正常 1表示用户设置拒收 2表示收信地址在黑名单
+            $record->status = (MailPush::allow($type, $user->id)) ? 0 : 1; // 0表示正常 1表示用户设置拒收 2表示收信地址在黑名单
         } else {
             $record->status = 0;
         }
@@ -75,9 +75,9 @@ class Mail
         // save recode
         $record->save();
         // quit
-        if ($record->status !== 0) {
+        /* if ($record->status !== 0) {
             return;
-        }
+        } */
 
         $text = self::genHtml($template, $ary);
         return self::getClient()->send($to, $subject, $text, $files);

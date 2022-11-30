@@ -26,12 +26,17 @@ class NewLinkController extends BaseController
         $nodes = Node::where('node_group', $user->node_group) // 筛选出与用户组别相同的节点
             ->where('node_class', '<=', $user->class) // 筛选出在用户等级之下（含此等级）的节点
             ->where('type', 1) // 筛选出上线的节点
-            ->orderBy('name', 'desc') // 按名称倒序
+            ->orderBy('name', 'asc')
             ->get();
 
         $client = self::detectTheSubscribingClient($user_agent);
         if ($_ENV['subscribeLog'] === true) {
             self::LoggingSubscriptions($user, $client, $user_agent);
+        }
+
+        $specified = $request->getParam('clash');
+        if ($specified == 1) {
+            return self::clashClient($nodes, $user);
         }
 
         switch ($client) {

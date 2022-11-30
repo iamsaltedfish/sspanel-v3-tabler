@@ -2,6 +2,7 @@
 namespace App\Command;
 
 use App\Models\LoginIp;
+use App\Models\Node;
 use App\Models\Setting;
 use App\Models\User;
 use App\Utils\QQWry;
@@ -18,7 +19,8 @@ class Tool extends Command
         . '│ ├─ importAllSettings             - 导入所有设置' . PHP_EOL
         . '│ ├─ mailboxSuffixCount            - 统计注册用户邮箱域' . PHP_EOL
         . '│ ├─ supplementaryLoginAttribution - 补充登录日志归属' . PHP_EOL
-        . '│ ├─ completeNickname              - 为空字符串昵称用户补全昵称' . PHP_EOL;
+        . '│ ├─ completeNickname              - 为空字符串昵称用户补全昵称' . PHP_EOL
+        . '│ ├─ conversionTransferConfig      - 转换中转配置' . PHP_EOL;
 
     public function boot()
     {
@@ -193,5 +195,44 @@ class Tool extends Command
         }
 
         echo "All tasks have been completed." . PHP_EOL;
+    }
+
+    public static function parsingAdditionalParameters(string $text): array
+    {
+        $result = [];
+        $str = explode('|', $text);
+        foreach ($str as $k => $v) {
+            $content = explode('=', $v);
+            $result[$content[0]] = $content[1];
+        }
+
+        return $result;
+    }
+
+    public function conversionTransferConfig()
+    {
+        $nodes = Node::where('server', 'like', '%relayserver%')
+            ->where('type', 1)
+            ->where('sort', 11)
+            ->get();
+
+        foreach ($nodes as $node) {
+            $split = explode(';', $node->server);
+            $params = self::parsingAdditionalParameters($split[5]);
+            $array = [
+                [
+                    'display_name' => $node->name,
+                    'connect_addr' => $params['relayserver'],
+                    'connect_port' => $params['outside_port'],
+                    'sni_instruction' => $split[0],
+                ],
+            ];
+            $node->add_in = 0;
+            $node->transit_enable = 1;
+            $node->transit_json = json_encode($array, 320);
+            $node->save();
+        }
+
+        echo "Total {$nodes->count()} has been process." . PHP_EOL;
     }
 }

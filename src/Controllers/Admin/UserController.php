@@ -29,6 +29,7 @@ class UserController extends AdminController
                 'transfer_enable' => '流量限制',
                 'last_day_t' => '累计用量',
                 'class' => '等级',
+                'invite_num' => '邀请数',
                 'reg_date' => '注册时间',
                 'expire_in' => '账户过期',
                 'class_expire' => '等级过期',
@@ -154,6 +155,7 @@ class UserController extends AdminController
         foreach ($logs as $log) {
             $log->transfer_enable = round($log->transfer_enable / 1073741824, 2);
             $log->last_day_t = round($log->last_day_t / 1073741824, 2);
+            $log->invite_num = User::where('ref_by', $log->id)->count();
         }
 
         $products = Product::where('type', '!=', 'other')->get();
@@ -194,6 +196,7 @@ class UserController extends AdminController
         foreach ($results as $result) {
             $result->transfer_enable = round($result->transfer_enable / 1073741824, 2);
             $result->last_day_t = round($result->last_day_t / 1073741824, 2);
+            $result->invite_num = User::where('ref_by', $result->id)->count();
         }
 
         return $response->withJson([

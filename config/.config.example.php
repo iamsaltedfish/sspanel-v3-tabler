@@ -174,6 +174,15 @@ $_ENV['show_live_chat_on_logout_page'] = false; // 是否在未登录页面显�
 $_ENV['invisible_livechat_users'] = ['0']; // 不可见livechat的用户id列表
 
 /*
+    邀请权限设置
+*/
+
+$_ENV['registration_duration_switch'] = false; // 根据注册时长限制邀请权限
+$_ENV['registration_duration'] = 90; // 注册多少天才能邀请人
+$_ENV['consumption_amount_switch'] = false; // 根据消费金额限制邀请权限
+$_ENV['consumption_amount'] = 60; // 消费多少元才能邀请人
+
+/*
     页面自定义
 */
 

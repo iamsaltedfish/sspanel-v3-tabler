@@ -213,6 +213,9 @@ class AuthController extends BaseController
                 if ($invite_user->invite_num == 0) {
                     throw new \Exception('邀请码可用次数不足');
                 }
+                if (!InviteCode::invitationPermissionCheck($invite_user->id)) {
+                    throw new \Exception('邀请人暂无邀请权限');
+                }
             }
             if ($_ENV['enable_reg_im']) {
                 $imtype = $request->getParam('im_type');

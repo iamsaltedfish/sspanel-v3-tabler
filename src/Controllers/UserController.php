@@ -630,23 +630,24 @@ class UserController extends BaseController
 
     public function invite($request, $response, $args)
     {
-        $code = InviteCode::where('user_id', $this->user->id)->first();
+        $user_id = $this->user->id;
+        $code = InviteCode::where('user_id', $user_id)->first();
         if ($code == null) {
             $this->user->addInviteCode();
-            $code = InviteCode::where('user_id', $this->user->id)->first();
+            $code = InviteCode::where('user_id', $user_id)->first();
         }
 
-        $paybacks = Payback::where('ref_by', $this->user->id)->get();
-        $paybacks_sum = Payback::where('ref_by', $this->user->id)
-            ->where('fraud_detect', 0) // 不统计被判定为欺诈的
+        $paybacks = Payback::where('ref_by', $user_id)->get();
+        $paybacks_sum = $paybacks->where('fraud_detect', 0) // 不统计被判定为欺诈的
             ->sum('ref_get');
         $invite_url = $_ENV['baseUrl'] . '/auth/register?code=' . $code->code;
 
         return $this->view()
             ->assign('code', $code)
             ->assign('paybacks', $paybacks)
-            ->assign('paybacks_sum', $paybacks_sum)
             ->assign('invite_url', $invite_url)
+            ->assign('paybacks_sum', $paybacks_sum)
+            ->assign('invite_permissions', InviteCode::invitationPermissionCheck($user_id))
             ->display('user/invite.tpl');
     }
 
@@ -1135,30 +1136,9 @@ class UserController extends BaseController
     public function index($request, $response, $args)
     {
         $user = $this->user;
-        $t_e = $user->transfer_enable;
-        $user_group = ($user->node_group != 0 ? [0, $user->node_group] : [0]);
-        $data = [
-            'today_traffic_usage' => ($t_e == 0) ? 0 : ($user->u + $user->d - $user->last_day_t) / $t_e * 100,
-            'past_traffic_usage' => ($t_e == 0) ? 0 : $user->last_day_t / $t_e * 100,
-            'residual_flow' => ($t_e == 0) ? 0 : ($t_e - ($user->u + $user->d)) / $t_e * 100,
-        ];
-        $text = [
-            'ss' => URL::get_NewAllUrl($user, ['type' => 'ss']) . PHP_EOL,
-            'ssr' => URL::get_NewAllUrl($user, ['type' => 'ssr']) . PHP_EOL,
-            'v2ray' => URL::get_NewAllUrl($user, ['type' => 'vmess']) . PHP_EOL,
-        ];
-
-        $servers = Node::where('type', 1)
-            ->where('sort', '!=', '9') // 我也不懂为什么
-            ->whereIn('node_group', $user_group) // 筛选用户所在分组的服务器
-            ->get(['sort']);
-
-        $user_token = LinkController::GenerateSSRSubCode($user->id);
-        $qt_url = base64_encode($_ENV['subUrl'] . $user_token . '?list=quantumult');
-
         $last_seven_days = Statistics::where('item', 'user_traffic')
             ->where('user_id', $user->id)
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->limit(7)
             ->get();
 
@@ -1176,14 +1156,10 @@ class UserController extends BaseController
 
         return $response->write(
             $this->view()
-                ->assign('data', $data)
-                ->assign('text', $text)
-                ->assign('qt_url', $qt_url)
-                ->assign('servers', $servers)
+                ->assign('ann', Ann::orderBy('id', 'desc')->first())
+                ->assign('subInfo', LinkController::getSubinfo($this->user, 0))
                 ->assign('chart_date_data', array_reverse($chart_date_data))
                 ->assign('chart_traffic_data', array_reverse($chart_traffic_data))
-                ->assign('ann', Ann::orderBy('date', 'desc')->first())
-                ->assign('subInfo', LinkController::getSubinfo($this->user, 0))
                 ->display('user/index.tpl')
         );
     }

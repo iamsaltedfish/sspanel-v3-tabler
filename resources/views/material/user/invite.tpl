@@ -36,19 +36,36 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="card">
-                        <div class="card-body">
-                            <h3 class="card-title">邀请链接</h3>
-                            {if $user->invite_num >= 0}
-                                <p>邀请链接可用次数：<code>{$user->invite_num}</code></p>
-                            {/if}
-                            <input class="form-control" value="{$invite_url}" disabled />
-                        </div>
-                        <div class="card-footer">
-                            <div class="d-flex">
-                                <a id="reset-url" class="btn text-red btn-link">重置</a>
-                                <a data-clipboard-text="{$invite_url}" class="copy btn btn-primary ms-auto">复制</a>
+                        {if $invite_permissions === true}
+                            <div class="card-body">
+                                <h3 class="card-title">邀请链接</h3>
+                                {if $user->invite_num >= 0}
+                                    <p>邀请链接可用次数：<code>{$user->invite_num}</code></p>
+                                {/if}
+                                <input class="form-control" value="{$invite_url}" disabled />
                             </div>
-                        </div>
+                            <div class="card-footer">
+                                <div class="d-flex">
+                                    <a id="reset-url" class="btn text-red btn-link">重置</a>
+                                    <a data-clipboard-text="{$invite_url}" class="copy btn btn-primary ms-auto">复制</a>
+                                </div>
+                            </div>
+                        {else}
+                            <div class="card-body">
+                                <h3 class="card-title">邀请链接</h3>
+                                <p>您因为不满足下列条件，所以暂无邀请权限。过段时间再来看看吧</p>
+                                <ul>
+                                    <li>注册时长未满足设置条件</li>
+                                    <li>消费金额未满足设置条件</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex">
+                                    <button class="btn text-red btn-link" disabled>重置</button>
+                                    <button class="btn btn-primary ms-auto" disabled>复制</button>
+                                </div>
+                            </div>
+                        {/if}
                     </div>
                 </div>
                 <div class="col-12">
@@ -115,8 +132,8 @@
                     <div class="w-100">
                         <div class="row">
                             <div class="col">
-                                <a href="#" class="btn w-100" data-bs-dismiss="modal">
-                                    好
+                                <a id="success-confirm" href="#" class="btn w-100" data-bs-dismiss="modal">
+                                    确认
                                 </a>
                             </div>
                         </div>
@@ -165,6 +182,10 @@
         clipboard.on('success', function(e) {
             $('#success-message').text('已复制到剪切板');
             $('#success-dialog').modal('show');
+        });
+
+        $("#success-confirm").click(function() {
+            location.reload();
         });
 
         $("#reset-url").click(function() {

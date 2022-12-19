@@ -235,7 +235,7 @@
                     {if $config['quick_fill_function'] === true}
                         <div class="row g-2 align-items-center">
                             {foreach $config['quick_fill_content'] as $item}
-                                <div class="col-6 col-sm-4 col-md-2 col-xl-auto py-3">
+                                <div class="col-4 col-sm-4 col-md-2 col-xl-auto py-3">
                                     <button id="{$item['id']}" class="btn btn-blue w-100">
                                         {$item['title']}
                                     </button>

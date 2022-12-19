@@ -143,7 +143,7 @@
                                 <label class="form-label col-4 col-form-label">流量限制 (GB)</label>
                                 <div class="col">
                                     <input id="transfer_enable" type="text" class="form-control"
-                                        value="{$edit_user->enableTrafficInGB()}">
+                                        value="{round($edit_user->enableTrafficInGB(), 2)}">
                                 </div>
                             </div>
                             <div class="form-group mb-3 row">

@@ -1,21 +1,16 @@
 <?php
 namespace App\Controllers\Admin;
 
-use App\Services\Auth;
-use Slim\Http\Request;
-use Slim\Http\Response;
-use App\Utils\Tools;
-use App\Services\Mail;
-use App\Models\User;
-use App\Models\Setting;
-use App\Models\WorkOrder;
-use App\Models\ProductOrder;
-use voku\helper\AntiXSS;
 use App\Controllers\AdminController;
+use App\Models\ProductOrder;
+use App\Models\User;
+use App\Models\WorkOrder;
+use voku\helper\AntiXSS;
 
 class TicketController extends AdminController
 {
-    public static function page(){
+    public static function page()
+    {
         $details = [
             'route' => 'ticket',
             'title' => [
@@ -48,11 +43,11 @@ class TicketController extends AdminController
                     'exact' => false,
                 ],
                 /* [
-                    'id' => 'content',
-                    'info' => '工单回复内容',
-                    'type' => 'input',
-                    'placeholder' => '请输入',
-                    'exact' => false,
+                'id' => 'content',
+                'info' => '工单回复内容',
+                'type' => 'input',
+                'placeholder' => '请输入',
+                'exact' => false,
                 ], */
                 [
                     'id' => 'closed_by',
@@ -74,9 +69,9 @@ class TicketController extends AdminController
     public function index($request, $response, $args)
     {
         $logs = WorkOrder::where('is_topic', 1)
-        ->whereNull('closed_by')
-        ->orderBy('id', 'desc')
-        ->get();
+            ->whereNull('closed_by')
+            ->orderBy('id', 'desc')
+            ->get();
 
         return $response->write(
             $this->view()
@@ -90,8 +85,8 @@ class TicketController extends AdminController
     {
         $tk_id = $args['id'];
         $topic = WorkOrder::where('tk_id', $tk_id)
-        ->where('is_topic', '1')
-        ->first();
+            ->where('is_topic', '1')
+            ->first();
 
         if ($topic == null) {
             return null;
@@ -122,8 +117,8 @@ class TicketController extends AdminController
                 throw new \Exception('回复的主题帖不存在');
             }
             $topic = WorkOrder::where('tk_id', $tk_id)
-            ->where('is_topic', '1')
-            ->first();
+                ->where('is_topic', '1')
+                ->first();
             if ($topic->closed_by == '已关闭') {
                 throw new \Exception('此主题帖已关闭');
             }
@@ -151,7 +146,7 @@ class TicketController extends AdminController
         } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => $e->getMessage()
+                'msg' => $e->getMessage(),
             ]);
         }
 
@@ -161,14 +156,14 @@ class TicketController extends AdminController
             $user->sendMail($_ENV['appName'] . ' - 工单被回复', 'news/warn.tpl', 'work_order',
                 [
                     'text' => '工单主题：' . $anti_xss->xss_clean($topic->title) .
-                    '<br/>' . '新添回复：' . $anti_xss->xss_clean($content)
+                    '<br/>' . '新添回复：' . $anti_xss->xss_clean($content),
                 ], []
             );
         }
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '回复成功'
+            'msg' => '回复成功',
         ]);
     }
 
@@ -176,15 +171,14 @@ class TicketController extends AdminController
     {
         $condition = [];
         $details = self::page();
-        foreach ($details['search_dialog'] as $from)
-        {
+        foreach ($details['search_dialog'] as $from) {
             $field = $from['id'];
             $keyword = $request->getParam($field);
             if ($from['type'] == 'input') {
                 if ($from['exact']) {
                     ($keyword != '') && array_push($condition, [$field, '=', $keyword]);
                 } else {
-                    ($keyword != '') && array_push($condition, [$field, 'like', '%'.$keyword.'%']);
+                    ($keyword != '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
                 }
             }
             if ($from['type'] == 'select') {
@@ -193,14 +187,14 @@ class TicketController extends AdminController
         }
 
         $results = WorkOrder::orderBy('id', 'desc')
-        ->where('is_topic', '1')
-        ->where($condition)
-        ->limit($_ENV['page_load_data_entry'])
-        ->get();
+            ->where('is_topic', '1')
+            ->where($condition)
+            ->limit($_ENV['page_load_data_entry'])
+            ->get();
 
         return $response->withJson([
             'ret' => 1,
-            'result' => $results
+            'result' => $results,
         ]);
     }
 
@@ -208,12 +202,12 @@ class TicketController extends AdminController
     {
         $item_id = $args['id'];
         $ticket = WorkOrder::where('is_topic', '1')
-        ->where('tk_id', $item_id)
-        ->first();
+            ->where('tk_id', $item_id)
+            ->first();
         if (isset($ticket->closed_by)) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => '工单已是关闭状态'
+                'msg' => '工单已是关闭状态',
             ]);
         }
 
@@ -222,18 +216,18 @@ class TicketController extends AdminController
         $ticket->save();
 
         /* if ($_ENV['mail_ticket']) {
-            $anti_xss = new AntiXSS();
-            $user = User::find($ticket->user_id);
-            $user->sendMail($_ENV['appName'] . ' - 工单被关闭', 'news/warn.tpl', 'work_order',
-                [
-                    'text' => '工单主题：' . $anti_xss->xss_clean($ticket->title)
-                ], []
-            );
+        $anti_xss = new AntiXSS();
+        $user = User::find($ticket->user_id);
+        $user->sendMail($_ENV['appName'] . ' - 工单被关闭', 'news/warn.tpl', 'work_order',
+        [
+        'text' => '工单主题：' . $anti_xss->xss_clean($ticket->title)
+        ], []
+        );
         } */
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '已关闭此工单'
+            'msg' => '已关闭此工单',
         ]);
     }
 
@@ -244,7 +238,7 @@ class TicketController extends AdminController
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '删除成功'
+            'msg' => '删除成功',
         ]);
     }
 }

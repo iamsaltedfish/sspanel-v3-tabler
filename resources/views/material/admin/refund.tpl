@@ -178,7 +178,7 @@
         });
 
         $("#success-confirm").click(function() {
-            window.location.href = '/admin/order';
+            location.href = top.document.referrer;
         });
     </script>
 

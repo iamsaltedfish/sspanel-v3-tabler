@@ -112,6 +112,7 @@ class TicketController extends AdminController
     {
         try {
             $tk_id = $args['id'];
+            $close_together = $request->getParam('close_together');
             $ticket = WorkOrder::where('tk_id', $tk_id)->first();
             if ($ticket == null) {
                 throw new \Exception('回复的主题帖不存在');
@@ -142,6 +143,10 @@ class TicketController extends AdminController
 
             $topic->updated_at = time();
             $topic->wait_reply = 'user';
+            if ($close_together === 'true') {
+                $topic->closed_at = time();
+                $topic->closed_by = 'admin';
+            }
             $topic->save();
         } catch (\Exception $e) {
             return $response->withJson([
@@ -216,13 +221,13 @@ class TicketController extends AdminController
         $ticket->save();
 
         /* if ($_ENV['mail_ticket']) {
-        $anti_xss = new AntiXSS();
-        $user = User::find($ticket->user_id);
-        $user->sendMail($_ENV['appName'] . ' - 工单被关闭', 'news/warn.tpl', 'work_order',
-        [
-        'text' => '工单主题：' . $anti_xss->xss_clean($ticket->title)
-        ], []
-        );
+            $anti_xss = new AntiXSS();
+            $user = User::find($ticket->user_id);
+            $user->sendMail($_ENV['appName'] . ' - 工单被关闭', 'news/warn.tpl', 'work_order',
+                [
+                    'text' => '工单主题：' . $anti_xss->xss_clean($ticket->title),
+                ], []
+            );
         } */
 
         return $response->withJson([

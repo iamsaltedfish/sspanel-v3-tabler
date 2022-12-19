@@ -184,6 +184,7 @@
                                 <table class="table table-vcenter card-table">
                                     <thead>
                                         <tr>
+                                            <th>操作</th>
                                             <th>状态</th>
                                             <th>订单号</th>
                                             <th>商品</th>
@@ -196,6 +197,7 @@
                                     <tbody>
                                         {foreach $orders as $order}
                                             <tr>
+                                                <td><a href="/admin/order/refund/{$order->no}">退款</a></td>
                                                 <td>{$order->judgmentOrderStatus($order->order_status, $order->expired_at, true)}
                                                 </td>
                                                 <td>{$order->no}</td>
@@ -231,6 +233,14 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <textarea id="reply-content" class="form-control" rows="12" placeholder="请输入回复内容"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-check">
+                            <input id="close_together" type="checkbox" class="form-check-input" />
+                            <span class="form-check-label">
+                                回复的同时关闭工单
+                            </span>
+                        </label>
                     </div>
                     {if $config['quick_fill_function'] === true}
                         <div class="row g-2 align-items-center">
@@ -342,7 +352,8 @@
                 type: 'PUT',
                 dataType: "json",
                 data: {
-                    content: $('#reply-content').val()
+                    content: $('#reply-content').val(),
+                    close_together: $('#close_together').prop('checked'), // true / false (string)
                 },
                 success: function(data) {
                     if (data.ret == 1) {

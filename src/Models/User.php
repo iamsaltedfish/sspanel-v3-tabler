@@ -782,7 +782,7 @@ class User extends Model
         return $loginip->save();
     }
 
-    public function getMailUnsubLink(): string
+    public function getMailUnsubToken(): string
     {
         $item = MailPush::where('user_id', $this->id)->first();
         return $item->access_token;

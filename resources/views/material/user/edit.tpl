@@ -421,7 +421,7 @@
                                                     <h3 class="card-title">每日用量推送</h3>
                                                     <div class="mb-3">
                                                         <p>
-                                                            此功能的设置已经移动到新的地方。请前往 <a href="/mail/push/{$user->getMailUnsubLink()}">此页面</a> 管理邮件推送
+                                                            此功能的设置已经移动到新的地方。请前往 <a href="/mail/push/{$user->getMailUnsubToken()}">此页面</a> 管理邮件推送
                                                         </p>
                                                     </div>
                                                 </div>

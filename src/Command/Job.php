@@ -5,10 +5,12 @@ use App\Models\DetectLog;
 use App\Models\EmailQueue;
 use App\Models\EmailVerify;
 use App\Models\Ip;
+use App\Models\MailPush;
 use App\Models\Node;
 use App\Models\NodeInfoLog;
 use App\Models\NodeOnlineLog;
 use App\Models\PasswordReset;
+use App\Models\Setting;
 use App\Models\Statistics as StatisticsModel;
 use App\Models\StreamMedia;
 use App\Models\TelegramSession;
@@ -18,6 +20,8 @@ use App\Models\UserSubscribeLog;
 use App\Services\Mail;
 use App\Utils\DatatablesHelper;
 use App\Utils\Tools;
+use Carbon\Carbon;
+use Dariuszp\CliProgressBar;
 use Exception;
 
 class Job extends Command
@@ -225,27 +229,53 @@ class Job extends Command
 
     public function UserJob()
     {
-        $users = User::all();
-        foreach ($users as $user) {
-            // 账户过期检测
-            if (strtotime($user->expire_in) < time() && $user->expire_notified == false) {
-                if ($_ENV['clear_traffic_after_expire']) {
-                    $user->transfer_enable = 0;
-                    $user->u = 0;
-                    $user->d = 0;
-                    $user->last_day_t = 0;
-                }
-                $user->sendMail($_ENV['appName'] . ' - 您的用户账户已经过期了', 'news/warn.tpl', 'due_reminder',
-                    [
-                        'text' => '您好，系统发现您的账号已经过期了。',
-                    ], [], $_ENV['email_queue']
-                );
-                $user->expire_notified = true;
-                $user->save();
-            } elseif (strtotime($user->expire_in) > time() && $user->expire_notified == true) {
-                $user->expire_notified = false;
-                $user->save();
+        $time_interval = [14, 7, 3, 0, -3]; // 分别在到期的前多少天发送邮件提醒 填负数就是在到期后的第几天发送邮件提醒
+        foreach ($time_interval as $interval) {
+            if (Setting::obtain('mail_driver') == 'none') {
+                echo "This feature is not available because no mail sending configuration is configured." . PHP_EOL;
+                break;
             }
+            // https://9iphp.com/web/laravel/php-datetime-package-carbon.html
+            $from = date("Y-m-d H:00:00", strtotime(Carbon::now()->addDays($interval)->toDateTimeString()));
+            $to = date("Y-m-d H:00:00", strtotime(Carbon::now()->addDays($interval)->addHours(1)->toDateTimeString()));
+            // https://stackoverflow.com/questions/33361628/how-to-query-between-two-dates-using-laravel-and-eloquent
+            $users = User::whereBetween('expire_in', [$from, $to])->get();
+            if ($users->count() === 0) {
+                continue;
+            }
+            $text = ($interval > 0) ? "您的账户还有 {$interval} 天就要到期了，" : "您的账户已经到期 " . abs($interval) . " 天了，";
+            if ($interval === 0) {
+                $text = '';
+            }
+
+            /* var_dump(($interval > 0));
+            echo $from . PHP_EOL . $to . PHP_EOL . $interval . PHP_EOL . '-------' . PHP_EOL; */
+
+            // 进度条
+            $bar = new CliProgressBar($users->count());
+            $bar->setBarLength(50);
+            $bar->display();
+            $bar->setColorToYellow();
+
+            foreach ($users as $user) {
+                $bar->progress();
+                if (MailPush::allow('due_reminder', $user->id)) {
+                    $mail_baseUrl = $_ENV['mail_baseUrl'];
+                    $unsub_link = $_ENV['mail_baseUrl'] . '/mail/push/' . $user->getMailUnsubToken();
+                    $user->sendMail($_ENV['appName'] . ' - 服务到期提醒', 'notice.tpl', 'due_reminder',
+                        [
+                            'title' => (time() > strtotime($user->expire_in)) ? '您的服务已到期' : '您的服务即将到期',
+                            'content' => $text . '为避免影响您的正常使用，建议您及时在商店选购适合您需求的商品。如果需要帮助，可以通过工单系统，或在用户中心右下角在线对话小组件与我们沟通'
+                            . "<p>当前的用户中心地址是 <a href=\"{$mail_baseUrl}\">{$mail_baseUrl}</a></p>",
+                            'concluding_remarks' => "此邮件由系统自动发送。取消此类通知推送，请前往 <a href=\"{$unsub_link}\">邮件推送</a> 页面设置",
+                        ], []
+                    );
+                }
+            }
+
+            $bar->setColorToGreen();
+            $bar->display();
+            $bar->end();
         }
     }
 }

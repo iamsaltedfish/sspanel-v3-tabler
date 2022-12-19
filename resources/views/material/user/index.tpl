@@ -432,7 +432,7 @@
                                             &nbsp;Linux
                                         </a>
                                     </li>
-                                    <li class="nav-item">
+                                    <!-- <li class="nav-item">
                                         <a href="#config" class="nav-link" data-bs-toggle="tab">
                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                 class="icon icon-tabler icon-tabler-file-text" width="24" height="24"
@@ -449,7 +449,7 @@
                                             </svg>
                                             &nbsp;Config
                                         </a>
-                                    </li>
+                                    </li> -->
                                 </ul>
                                 <div class="card-body">
                                     <div class="tab-content">
@@ -523,33 +523,9 @@
                                                 class="btn btn-primary ms-auto">
                                                 导入 Shadowrocket
                                             </a>
-                                            <a href="quantumult://configuration?server={$qt_url}"
-                                                class="btn btn-primary ms-auto my-1">
-                                                导入 Quantumult
-                                            </a>
                                         </div>
                                         <div class="tab-pane" id="linux">
                                             <div>紧张准备中...</div>
-                                        </div>
-                                        <div class="tab-pane" id="config">
-                                            {if $servers->where('sort', '0')->count() > '0'}
-                                                <button data-clipboard-text="{$text['ss']}"
-                                                    class="copy btn btn-primary ms-auto">
-                                                    复制 SS 文本配置
-                                                </button>
-                                            {/if}
-                                            {if $servers->where('sort', '1')->count() > '0'}
-                                                <button data-clipboard-text="{$text['ssr']}"
-                                                    class="copy btn btn-primary ms-auto">
-                                                    复制 SSR 文本配置
-                                                </button>
-                                            {/if}
-                                            {if $servers->where('sort', '11')->count() > '0'}
-                                                <button data-clipboard-text="{$text['v2ray']}"
-                                                    class="copy btn btn-primary ms-auto">
-                                                    复制 V2ray 文本配置
-                                                </button>
-                                            {/if}
                                         </div>
                                     </div>
                                 </div>

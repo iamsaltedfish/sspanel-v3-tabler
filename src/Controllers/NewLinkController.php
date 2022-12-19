@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use App\Models\Link;
 use App\Models\Node;
+use App\Models\User;
 use App\Models\UserSubscribeLog;
 use Symfony\Component\Yaml\Yaml;
 use voku\helper\AntiXSS;
@@ -117,7 +118,8 @@ class NewLinkController extends BaseController
     public static function urlSafeBase64Encode(string $string): string
     {
         $data = base64_encode($string);
-        $data = str_replace(array('+', '/', '='), array('-', '_', ''), $data);
+        // v2rayn 客户端不能正确解码故注释掉
+        //$data = str_replace(array('+', '/', '='), array('-', '_', ''), $data);
         return $data;
     }
 
@@ -160,6 +162,7 @@ class NewLinkController extends BaseController
     {
         $text = '';
         $split = explode(';', $node->server);
+        // 如果你见到此提示 说明某一节点的 parsing_mode 没有正确设置
         $params = self::parsingAdditionalParameters($split[5]);
         // 编码结构
         $array = [
@@ -189,6 +192,16 @@ class NewLinkController extends BaseController
                 $array['add'] = $config['connect_addr'];
                 $array['port'] = $config['connect_port'];
                 $array['sni'] = $config['sni_instruction'];
+                if ($config['display_name'] === 'DISPLAY_EXPIRE_TIME') {
+                    $user = User::where('uuid', $user_uuid)->first();
+                    $diff = round((strtotime($user->expire_in) - time()) / 86400);
+                    $array['ps'] = (strtotime($user->expire_in) > time()) ? "剩余 ${diff} ({$user->expire_in})" : '您账户已过期，请续费后使用';
+                }
+                if ($config['display_name'] === 'DISPLAY_TRAFFIC') {
+                    $user = User::where('uuid', $user_uuid)->first();
+                    $diff = round((strtotime($user->expire_in) - time()) / 86400);
+                    $array['ps'] = "剩余 {$user->unusedTraffic()} 流量";
+                }
                 $text .= 'vmess://' . self::urlSafeBase64Encode(json_encode($array, 320)) . PHP_EOL;
             }
         }

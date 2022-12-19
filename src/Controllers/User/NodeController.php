@@ -1,14 +1,15 @@
 <?php
 namespace App\Controllers\User;
 
+use App\Controllers\NewLinkController;
+use App\Controllers\UserController;
 use App\Models\Node;
 use App\Models\User;
 use App\Utils\Tools;
 use App\Utils\URL;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use Psr\Http\Message\ResponseInterface;
-use App\Controllers\UserController;
 
 class NodeController extends UserController
 {
@@ -16,25 +17,48 @@ class NodeController extends UserController
     {
         $user = $this->user;
         $user_group = ($user->node_group != 0 ? [0, $user->node_group] : [0]);
-        $servers = Node::where('type' ,1)
-        ->where('sort', '!=', '9') // 我也不懂为什么
-        ->whereIn('node_group', $user_group) // 筛选用户所在分组的服务器
-        ->orderBy('name', 'asc')
-        ->get();
+        $servers = Node::where('type', 1)
+            ->where('sort', '!=', '9') // 我也不懂为什么
+            ->whereIn('node_group', $user_group) // 筛选用户所在分组的服务器
+            ->orderBy('name', 'asc')
+            ->get();
 
         $class = Node::select('node_class')
-        ->orderBy('node_class', 'asc')
-        ->distinct()
-        ->get();
+            ->orderBy('node_class', 'asc')
+            ->distinct()
+            ->get();
 
         $min_node_class = min($class->toArray())['node_class'];
+
+        $copy_content = [];
+        $all_v2ray_node = '';
+        $all_trojan_node = '';
+        foreach ($servers as $server) {
+            switch ($server->parsing_mode) {
+                case 'v2ray_ws':
+                case 'v2ray_ws_tls':
+                    $is_tls = ($server->parsing_mode === 'v2ray_ws') ? false : true;
+                    $encode_content = NewLinkController::parseV2rayWebSocket($server, $user->uuid, $is_tls);
+                    $all_v2ray_node .= $encode_content;
+                    break;
+                case 'trojan_grpc':
+                    $encode_content = NewLinkController::parseTrojanGrpc($server, $user->uuid);
+                    $all_trojan_node .= $encode_content;
+                    break;
+            }
+
+            $copy_content[$server->id] = $encode_content;
+        }
+
+        $copy_content['all_v2ray_node'] = $all_v2ray_node;
+        $copy_content['all_trojan_node'] = $all_trojan_node;
 
         return $response->write(
             $this->view()
                 ->assign('class', $class)
                 ->assign('servers', $servers)
+                ->assign('copy_content', $copy_content)
                 ->assign('min_node_class', $min_node_class)
-                ->registerClass('URL', URL::class)
                 ->display('user/node/servers.tpl')
         );
     }
@@ -46,32 +70,32 @@ class NodeController extends UserController
      */
     public function user_node_page($request, $response, $args): ResponseInterface
     {
-        $user  = $this->user;
+        $user = $this->user;
         $query = Node::query();
         $query->where('type', 1)->whereNotIn('sort', [9]);
         if (!$user->is_admin) {
             $group = ($user->node_group != 0 ? [0, $user->node_group] : [0]);
             $query->whereIn('node_group', $group);
         }
-        $nodes    = $query->orderBy('node_class')->orderBy('name')->get();
+        $nodes = $query->orderBy('node_class')->orderBy('name')->get();
         $all_node = [];
         foreach ($nodes as $node) {
             /** @var Node $node */
 
-            $array_node                   = [];
-            $array_node['id']             = $node->id;
-            $array_node['name']           = $node->name;
-            $array_node['class']          = $node->node_class;
-            $array_node['info']           = $node->info;
-            $array_node['flag']           = 'unknown.png';
-            $array_node['online_user']    = $node->get_node_online_user_count();
-            $array_node['online']         = $node->get_node_online_status();
-            $array_node['latest_load']    = $node->get_node_latest_load_text();
-            $array_node['traffic_rate']   = $node->traffic_rate;
-            $array_node['status']         = $node->status;
-            $array_node['traffic_used']   = (int) Tools::flowToGB($node->node_bandwidth);
-            $array_node['traffic_limit']  = (int) Tools::flowToGB($node->node_bandwidth_limit);
-            $array_node['bandwidth']      = $node->get_node_speedlimit();
+            $array_node = [];
+            $array_node['id'] = $node->id;
+            $array_node['name'] = $node->name;
+            $array_node['class'] = $node->node_class;
+            $array_node['info'] = $node->info;
+            $array_node['flag'] = 'unknown.png';
+            $array_node['online_user'] = $node->get_node_online_user_count();
+            $array_node['online'] = $node->get_node_online_status();
+            $array_node['latest_load'] = $node->get_node_latest_load_text();
+            $array_node['traffic_rate'] = $node->traffic_rate;
+            $array_node['status'] = $node->status;
+            $array_node['traffic_used'] = (int) Tools::flowToGB($node->node_bandwidth);
+            $array_node['traffic_limit'] = (int) Tools::flowToGB($node->node_bandwidth_limit);
+            $array_node['bandwidth'] = $node->get_node_speedlimit();
 
             $all_connect = [];
             if (in_array($node->sort, [0])) {
@@ -113,9 +137,9 @@ class NodeController extends UserController
      */
     public function user_node_ajax($request, $response, $args): ResponseInterface
     {
-        $id           = $args['id'];
-        $point_node   = Node::find($id);
-        $prefix       = explode(' - ', $point_node->name);
+        $id = $args['id'];
+        $point_node = Node::find($id);
+        $prefix = explode(' - ', $point_node->name);
         return $response->write(
             $this->view()
                 ->assign('point_node', $point_node)
@@ -156,12 +180,12 @@ class NodeController extends UserController
                 );
             case 11:
                 $server = $node->getV2RayItem($user);
-                $nodes  = [
-                    'url'  => URL::getV2Url($user, $node),
+                $nodes = [
+                    'url' => URL::getV2Url($user, $node),
                     'info' => [
                         '连接地址：' => $server['add'],
                         '连接端口：' => $server['port'],
-                        'UUID：'    => $user->uuid,
+                        'UUID：' => $user->uuid,
                         'AlterID：' => $server['aid'],
                         '传输协议：' => $server['net'],
                     ],
@@ -184,8 +208,8 @@ class NodeController extends UserController
             case 13:
                 $server = $node->getV2RayPluginItem($user);
                 if ($server != null) {
-                    $nodes  = [
-                        'url'  => URL::getItemUrl($server, 1),
+                    $nodes = [
+                        'url' => URL::getItemUrl($server, 1),
                         'info' => [
                             '连接地址：' => $server['address'],
                             '连接端口：' => $server['port'],
@@ -196,8 +220,8 @@ class NodeController extends UserController
                         ],
                     ];
                 } else {
-                    $nodes  = [
-                        'url'  => '',
+                    $nodes = [
+                        'url' => '',
                         'info' => [
                             '您的加密方式非 AEAD 系列' => '无法使用此节点.',
                         ],
@@ -210,8 +234,8 @@ class NodeController extends UserController
                 );
             case 14:
                 $server = $node->getTrojanItem($user);
-                $nodes  = [
-                    'url'  => URL::get_trojan_url($user, $node),
+                $nodes = [
+                    'url' => URL::get_trojan_url($user, $node),
                     'info' => [
                         '连接地址：' => $server['address'],
                         '连接端口：' => $server['port'],

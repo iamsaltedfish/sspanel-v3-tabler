@@ -62,7 +62,8 @@
                             {foreach $class as $grade}
                                 <li class="nav-item">
                                     <a href="#class-{$grade['node_class']}"
-                                        class="nav-link {if $grade['node_class'] == $min_node_class}active{/if}" data-bs-toggle="tab">
+                                        class="nav-link {if $grade['node_class'] == $min_node_class}active{/if}"
+                                        data-bs-toggle="tab">
                                         <i class="ti ti-box-multiple-{$grade['node_class']}"></i>&nbsp;
                                         等级 {$grade['node_class']}
                                     </a>
@@ -147,10 +148,10 @@
                                                                                     <i class="ti ti-rocket"></i>&nbsp;
                                                                                     {$server->traffic_rate}x
                                                                                 </li>
-                                                                                {if $server->sort == '11' && $user->class >= $server->node_class}
+                                                                                {if $user->class >= $server->node_class}
                                                                                     <li class="list-inline-item">
-                                                                                        <a class="ti ti-copy"
-                                                                                            data-clipboard-text="{URL::getV2Url($user, $server)}"
+                                                                                        <a class="ti copy-function"
+                                                                                            data-clipboard-text="{$copy_content[$server->id]}"
                                                                                             style="text-decoration: none;">
                                                                                         </a>
                                                                                     </li>
@@ -238,6 +239,16 @@
                             </table>
                         </div>
                     </div>
+                    <p></p>
+                    <p class="mb-3" style="color: red;">需要点击两次复制按钮，才能成功复制</p>
+                    <button data-clipboard-text="{$copy_content['all_v2ray_node']}"
+                        class="copy-function btn btn-primary ms-auto">
+                        复制 V2ray 文本配置
+                    </button>
+                    <button data-clipboard-text="{$copy_content['all_trojan_node']}"
+                        class="copy-function btn btn-primary ms-auto">
+                        复制 Trojan 文本配置
+                    </button>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">确认</button>
@@ -277,7 +288,7 @@
     </div>
 
     <script>
-        var clipboard = new ClipboardJS('.ti-copy');
+        var clipboard = new ClipboardJS('.copy-function');
         clipboard.on('success', function(e) {
             $('#success-message').text('已复制到剪切板');
             $('#success-dialog').modal('show');

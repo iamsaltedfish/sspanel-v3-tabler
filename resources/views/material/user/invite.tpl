@@ -29,6 +29,7 @@
                                 <li>请不要注册小号来自己邀请自己，相关订单返利可能会被认定为欺诈</li>
                                 <li>具体邀请返利规则请查看公告，或通过工单系统询问管理员</li>
                                 <li>部分商品的返利比例可能不遵循上面的比例</li>
+                                <li>若邀请注册的用户申请退款，返利金额也将撤销</li>
                             </ul>
                             <p>您目前通过邀请好友获得的总返利为 <code>{$paybacks_sum}</code> 元</p>
                         </div>
@@ -82,6 +83,7 @@
                                             <th>邀请用户昵称</th>
                                             <th>返利金额</th>
                                             <th>结算审核</th>
+                                            <th>关联订单状态</th>
                                             <th>返利时间</th>
                                         </tr>
                                     </thead>
@@ -96,6 +98,7 @@
                                                 {/if}
                                                 <td>{$payback->ref_get} 元</td>
                                                 <td>{$payback->fraud_detect}</td>
+                                                <td>{($payback->associated_order_status === 1) ? '未退' : '已退'}</td>
                                                 <td>{$payback->datetime}</td>
                                             </tr>
                                         {/foreach}
@@ -176,6 +179,8 @@
 
     <script>
         $("td:contains('通过')").css("color", "green");
+        $("td:contains('未退')").css("color", "green");
+        $("td:contains('已退')").css("color", "purple");
         $("td:contains('欺诈')").css("color", "red");
 
         var clipboard = new ClipboardJS('.copy');

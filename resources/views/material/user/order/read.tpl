@@ -20,7 +20,7 @@
         <div class="container-xl">
             <div class="card card-md">
                 <div class="card-stamp">
-                    {if time() > $order->expired_at && $order->order_status != 'paid' && $order->order_status != 'abnormal'}
+                    {if time() > $order->expired_at && $order->order_status != 'paid' && $order->order_status != 'abnormal' && $order->order_status != 'refunded'}
                         <div class="card-stamp-icon bg-red">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="24"
                                 height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -61,6 +61,18 @@
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <circle cx="12" cy="12" r="9"></circle>
                                 <line x1="5.7" y1="5.7" x2="18.3" y2="18.3"></line>
+                            </svg>
+                        </div>
+                    {/if}
+                    {if $order->order_status == 'refunded'}
+                        <div class="card-stamp-icon bg-purple">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-receipt-refund"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16l-3 -2l-2 2l-2 -2l-2 2l-2 -2l-3 2">
+                                </path>
+                                <path d="M15 14v-2a2 2 0 0 0 -2 -2h-4l2 -2m0 4l-2 -2"></path>
                             </svg>
                         </div>
                     {/if}
@@ -128,19 +140,35 @@
                     </table>
                     {if time() > $order->expired_at && $order->order_status != 'paid'}
                         {if $order->order_status != 'abnormal'}
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="mb-3 my-5">
-                                        <div class="card">
-                                            <div class="card-status-top bg-danger"></div>
-                                            <div class="card-body">
-                                                <h3 class="card-title">账单已过期</h3>
-                                                <p class="text-muted">这个账单过期了。如有需要，请前往 <a href="/user/product">商店</a> 重新下单</p>
+                            {if $order->order_status == 'refunded'}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="mb-3 my-5">
+                                            <div class="card">
+                                                <div class="card-status-top bg-purple"></div>
+                                                <div class="card-body">
+                                                    <h3 class="card-title">账单已退款</h3>
+                                                    <p class="text-muted">商品内容已从您的账户中撤销。如有需要，请前往 <a href="/user/product">商店</a> 重新下单</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            {else}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="mb-3 my-5">
+                                            <div class="card">
+                                                <div class="card-status-top bg-danger"></div>
+                                                <div class="card-body">
+                                                    <h3 class="card-title">账单已过期</h3>
+                                                    <p class="text-muted">这个账单过期了。如有需要，请前往 <a href="/user/product">商店</a> 重新下单</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {/if}
                         {else}
                             <div class="row">
                                 <div class="col-12">

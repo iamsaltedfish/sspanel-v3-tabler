@@ -51,6 +51,7 @@
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>操作</th>
                                         <th>订单号</th>
                                         <th>提交用户</th>
                                         <th>名称</th>
@@ -70,6 +71,9 @@
                                     {foreach $logs as $log}
                                         <tr>
                                             <td>{$log->id}</td>
+                                            <td>
+                                                <a href="/admin/order/refund/{$log->no}">退款</a>
+                                            </td>
                                             <td>{$log->no}</td>
                                             <td>{$log->user_id}</td>
                                             <td>{$log->product_name}</td>
@@ -78,27 +82,11 @@
                                             <td>{(empty($log->order_coupon)) ? 'null' : $log->order_coupon}</td>
                                             <td>{sprintf("%.2f", $log->order_price / 100)}</td>
                                             <td>{sprintf("%.2f", $log->balance_payment / 100)}</td>
-                                            {if $log->order_status == 'paid'}
-                                                <td>已支付</td>
-                                            {else}
-                                                {if $log->order_status != 'abnormal'}
-                                                    {if time() > $log->expired_at}
-                                                        <td>超时</td>
-                                                    {else}
-                                                        <td>等待支付</td>
-                                                    {/if}
-                                                {else}
-                                                    <td>异常</td>
-                                                {/if}
-                                            {/if}
+                                            <td>{$log->translateOrderStatus($log->order_status, $log->expired_at)}</td>
                                             <td>{$log->order_payment}</td>
                                             <td>{date('Y-m-d H:i:s', $log->created_at)}</td>
-                                            {if $log->order_status == 'paid'}
-                                                <td>{date('Y-m-d H:i:s', $log->paid_at)}</td>
-                                            {else}
-                                                <td>null</td>
-                                            {/if}
-                                            <td>{($log->execute_status == '0') ? '未执行' : '已执行'}</td>
+                                            <td>{($log->order_status == 'paid') ? date('Y-m-d H:i:s', $log->paid_at) : 'null'}</td>
+                                            <td>{($log->execute_status == '0') ? '未执行' : (($log->order_status == 'refunded') ? '已撤销' : '已执行')}</td>
                                         </tr>
                                     {/foreach}
                                 </tbody>
@@ -176,6 +164,7 @@
                                 <option value="all">所有状态</option>
                                 <option value="paid">已支付</option>
                                 <option value="pending_payment">未支付</option>
+                                <option value="refunded">已退款</option>
                                 <option value="abnormal">异常</option>
                             </select>
                         </div>
@@ -240,10 +229,12 @@
 
         function adjustStyle() {
             $("td:contains('已支付')").css("color", "green");
+            $("td:contains('已退款')").css("color", "purple");
             $("td:contains('异常')").css("color", "red");
             $("td:contains('等待支付')").css("color", "orange");
             $("td:contains('已执行')").css("color", "green");
             $("td:contains('未执行')").css("color", "orange");
+            $("td:contains('已撤销')").css("color", "purple");
             $("td:contains('null')").css("font-style", "italic");
         }
 
@@ -269,6 +260,8 @@
                         var str = '';
                         for (var i = 0; i < data.result.length; i++) {
                             str += "<tr><td>" + data.result[i].id +
+                                "</td><td>" + '<a href="/admin/order/refund/' + data.result[i].no +
+                                '">退款</a>' +
                                 "</td><td>" + data.result[i].no +
                                 "</td><td>" + data.result[i].user_id +
                                 "</td><td>" + data.result[i].product_name +

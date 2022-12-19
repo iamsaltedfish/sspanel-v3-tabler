@@ -162,6 +162,8 @@ return function (SlimApp $app) {
 
         // Order Mange
         $this->get('/order',                    App\Controllers\Admin\OrderController::class . ':index');
+        $this->get('/order/refund/{no}',        App\Controllers\Admin\OrderController::class . ':refundPreview');
+        $this->post('/order/refund/{no}',       App\Controllers\Admin\OrderController::class . ':refundExecution');
         $this->post('/order/ajax',              App\Controllers\Admin\OrderController::class . ':ajaxQuery');
 
         // Gift Card

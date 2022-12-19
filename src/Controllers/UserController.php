@@ -639,6 +639,7 @@ class UserController extends BaseController
 
         $paybacks = Payback::where('ref_by', $user_id)->get();
         $paybacks_sum = $paybacks->where('fraud_detect', 0) // 不统计被判定为欺诈的
+            ->where('associated_order_status', 1) // 不统计邀请用户已退款的
             ->sum('ref_get');
         $invite_url = $_ENV['baseUrl'] . '/auth/register?code=' . $code->code;
 

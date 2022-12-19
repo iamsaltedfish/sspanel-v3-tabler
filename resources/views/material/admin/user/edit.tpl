@@ -119,6 +119,17 @@
                                     </div>
                                     <div>
                                         <label class="row">
+                                            <span class="col">限制下单</span>
+                                            <span class="col-auto">
+                                                <label class="form-check form-check-single form-switch">
+                                                    <input id="limit_order" class="form-check-input" type="checkbox"
+                                                        {if $edit_user->limit_order == 1}checked="" {/if}>
+                                                </label>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label class="row">
                                             <span class="col">两步认证</span>
                                             <span class="col-auto">
                                                 <label class="form-check form-check-single form-switch">
@@ -394,9 +405,10 @@
                     {$key}: $('#{$key}').val(),
                 {/foreach}
                 reset_user_passwd: $('#reset_user_passwd').val(),
-                is_admin: $("#is_admin").is(":checked"),
                 enable: $("#enable").is(":checked"),
+                is_admin: $("#is_admin").is(":checked"),
                 ga_enable: $("#ga_enable").is(":checked"),
+                limit_order: $("#limit_order").is(":checked"),
             },
             success: function(data) {
                 if (data.ret == 1) {

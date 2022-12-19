@@ -147,6 +147,9 @@ class UserController extends BaseController
             if ($product->stock - $product->sales <= 0) {
                 throw new \Exception('商品已经告罄，建议发工单提醒补货');
             }
+            if ($user->limit_order === 1) {
+                throw new \Exception('内部服务器错误');
+            }
             if ($coupon_code != '') {
                 $coupon = Coupon::where('coupon', $coupon_code)->first();
                 if ($coupon == null) {

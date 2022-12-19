@@ -257,6 +257,7 @@ class UserController extends AdminController
             $user->is_admin = ($request->getParam('is_admin') === 'true') ? 1 : 0; // 值为1时是管理员
             $user->enable = ($request->getParam('enable') === 'true') ? 0 : 1; // 值为1时是正常状态
             $user->ga_enable = ($request->getParam('ga_enable') === 'true') ? 1 : 0; // 值为0时是关闭状态
+            $user->limit_order = ($request->getParam('limit_order') === 'true') ? 1 : 0; // 值为1时限制下单
             if ($request->getParam('reset_user_passwd') !== '') {
                 $user->pass = Hash::passwordHash($request->getParam('reset_user_passwd'));
             }

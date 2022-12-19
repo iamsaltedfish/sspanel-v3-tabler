@@ -229,7 +229,7 @@ class Job extends Command
 
     public function UserJob()
     {
-        $time_interval = [14, 7, 3, 0, -3]; // 分别在到期的前多少天发送邮件提醒 填负数就是在到期后的第几天发送邮件提醒
+        $time_interval = [3, 0, -3]; // 分别在到期的前多少天发送邮件提醒 填负数就是在到期后的第几天发送邮件提醒
         foreach ($time_interval as $interval) {
             if (Setting::obtain('mail_driver') == 'none') {
                 echo "This feature is not available because no mail sending configuration is configured." . PHP_EOL;

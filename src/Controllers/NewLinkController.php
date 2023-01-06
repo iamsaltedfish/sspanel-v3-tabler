@@ -41,10 +41,7 @@ class NewLinkController extends BaseController
         }
         $quantumult_specified = $request->getParam('quantumult');
         if ($quantumult_specified == 1) {
-            // 由于 quantumult 不支持trojan节点
-            // 所以当 v2raynClient 方法的第三个参数为 true 时
-            // 会排除 trojan 节点输出
-            return self::v2raynClient($nodes, $user->uuid, true);
+            return self::quantumultClient($nodes, $user);
         }
 
         switch ($client) {
@@ -67,7 +64,7 @@ class NewLinkController extends BaseController
     }
 
     // 服务v2rayn客户端订阅
-    public static function v2raynClient(object $nodes, string $user_uuid, bool $is_quantumult = false): string
+    public static function v2raynClient(object $nodes, string $user_uuid): string
     {
         $sub_content = '';
         foreach ($nodes as $node) {
@@ -78,9 +75,7 @@ class NewLinkController extends BaseController
                     $sub_content .= self::parseV2rayWebSocket($node, $user_uuid, $is_tls);
                     break;
                 case 'trojan_grpc':
-                    if (!$is_quantumult) {
-                        $sub_content .= self::parseTrojanGrpc($node, $user_uuid);
-                    }
+                    $sub_content .= self::parseTrojanGrpc($node, $user_uuid);
                     break;
             }
         }
@@ -121,6 +116,20 @@ class NewLinkController extends BaseController
         header("Subscription-Userinfo: ${sub_details}");
         // http://www.symfonychina.com/doc/current/components/yaml.html
         return Yaml::dump($wait_encode, 3, 1);
+    }
+
+    public static function quantumultClient(object $nodes, object $user): string
+    {
+        $sub_content = '';
+        foreach ($nodes as $node) {
+            switch ($node->parsing_mode) {
+                case 'v2ray_ws':
+                    $sub_content .= self::parseQuantumultV2rayWebSocket($node, $user);
+                    break;
+            }
+        }
+
+        return self::urlSafeBase64Encode($sub_content);
     }
 
     // 安全的base64编码 https://developer.aliyun.com/article/506076
@@ -212,6 +221,37 @@ class NewLinkController extends BaseController
                     $array['ps'] = "剩余 {$user->unusedTraffic()} 流量";
                 }
                 $text .= 'vmess://' . self::urlSafeBase64Encode(json_encode($array, 320)) . PHP_EOL;
+            }
+        }
+
+        return $text;
+    }
+
+    public static function parseQuantumultV2rayWebSocket(object $node, object $user)
+    {
+        $text = '';
+        $split = explode(';', $node->server);
+        // 如果你见到此提示 说明某一节点的 parsing_mode 没有正确设置
+        $params = self::parsingAdditionalParameters($split[5]);
+        $path = isset($params['path']) ? $params['path'] : '/failToParsePath';
+        if ($node->add_in === 1) {
+            $wait = "{$node->name} = vmess, {$split[0]}, {$split[1]}, none, \"{$user->uuid}\", over-tls=false, tls-host={$split[0]}, certificate=1, obfs=ws, obfs-path=\"{$path}\", obfs-header=\"Host: {$split[0]}[Rr][Nn]User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 11_2_6 like Mac OS X) AppleWebKit/604.5.6 (KHTML, like Gecko) Mobile/15D100\"";
+            $text .= 'vmess://' . self::urlSafeBase64Encode($wait) . PHP_EOL;
+        }
+        if ($node->transit_enable === 1) {
+            $configs = json_decode($node->transit_json, true);
+            foreach ($configs as $config) {
+                // 覆写配置
+                $display_name = $config['display_name'];
+                if ($config['display_name'] === 'DISPLAY_EXPIRE_TIME') {
+                    $diff = round((strtotime($user->expire_in) - time()) / 86400);
+                    $display_name = (strtotime($user->expire_in) > time()) ? "剩余 ${diff} ({$user->expire_in})" : '您账户已过期，请续费后使用';
+                }
+                if ($config['display_name'] === 'DISPLAY_TRAFFIC') {
+                    $display_name = "剩余 {$user->unusedTraffic()} 流量";
+                }
+                $wait = "{$display_name} = vmess, {$config['connect_addr']}, {$config['connect_port']}, none, \"{$user->uuid}\", over-tls=false, tls-host={$config['sni_instruction']}, certificate=1, obfs=ws, obfs-path=\"{$path}\", obfs-header=\"Host: {$config['sni_instruction']}[Rr][Nn]User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 11_2_6 like Mac OS X) AppleWebKit/604.5.6 (KHTML, like Gecko) Mobile/15D100\"";
+                $text .= 'vmess://' . self::urlSafeBase64Encode($wait) . PHP_EOL;
             }
         }
 

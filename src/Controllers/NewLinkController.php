@@ -39,6 +39,13 @@ class NewLinkController extends BaseController
         if ($specified == 1) {
             return self::clashClient($nodes, $user);
         }
+        $quantumult_specified = $request->getParam('quantumult');
+        if ($quantumult_specified == 1) {
+            // 由于 quantumult 不支持trojan节点
+            // 所以当 v2raynClient 方法的第三个参数为 true 时
+            // 会排除 trojan 节点输出
+            return self::v2raynClient($nodes, $user->uuid, true);
+        }
 
         switch ($client) {
             case 'clash':
@@ -60,7 +67,7 @@ class NewLinkController extends BaseController
     }
 
     // 服务v2rayn客户端订阅
-    public static function v2raynClient(object $nodes, string $user_uuid): string
+    public static function v2raynClient(object $nodes, string $user_uuid, bool $is_quantumult = false): string
     {
         $sub_content = '';
         foreach ($nodes as $node) {
@@ -71,7 +78,9 @@ class NewLinkController extends BaseController
                     $sub_content .= self::parseV2rayWebSocket($node, $user_uuid, $is_tls);
                     break;
                 case 'trojan_grpc':
-                    $sub_content .= self::parseTrojanGrpc($node, $user_uuid);
+                    if (!$is_quantumult) {
+                        $sub_content .= self::parseTrojanGrpc($node, $user_uuid);
+                    }
                     break;
             }
         }

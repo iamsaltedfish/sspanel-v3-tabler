@@ -523,6 +523,10 @@
                                                 class="btn btn-primary ms-auto">
                                                 导入 Shadowrocket
                                             </a>
+                                            <a href="quantumult://configuration?server={base64_encode($subInfo['quantumult'])}"
+                                                class="btn btn-primary ms-auto">
+                                                导入 Quantumult
+                                            </a>
                                         </div>
                                         <div class="tab-pane" id="linux">
                                             <div>紧张准备中...</div>

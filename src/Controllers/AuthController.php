@@ -262,6 +262,14 @@ class AuthController extends BaseController
             $invite_user->save();
         }
 
+        if ($_ENV['disposable_invite_code']) {
+            // 一次性邀请码，开启时，用户的邀请码会在每次使用后随机一个新的
+            if (isset($reg_invite_code)) {
+                $reg_invite_code->code = Tools::genRandomChar(10);
+                $reg_invite_code->save();
+            }
+        }
+
         return $response->withJson([
             'ret' => 1,
             'msg' => '注册成功',

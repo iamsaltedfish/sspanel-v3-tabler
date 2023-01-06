@@ -45,6 +45,7 @@ class Config
             'register_mode'           => $public_configs['reg_mode'],
             'enable_email_verify'     => $public_configs['reg_email_verify'],
             'enable_reg_im'           => $_ENV['enable_reg_im'],
+            'disposable_invite_code'  => $_ENV['disposable_invite_code'],
             // 订阅
             'subscribeLog'            => $_ENV['subscribeLog'],
             'subscribeLog_show'       => $_ENV['subscribeLog_show'],

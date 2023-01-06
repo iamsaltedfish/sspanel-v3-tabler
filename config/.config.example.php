@@ -323,6 +323,7 @@ $_ENV['Surfboard_DefaultProfiles'] = 'default'; // Surfboard 默认配置方案
 $_ENV['random_group'] = '0'; // 注册时随机分配到的分组，英文半角逗号分隔
 $_ENV['enable_reg_im'] = true; // 注册时是否要求用户输入IM联系方式
 $_ENV['reg_invite_num'] = '100'; // 注册时默认的邀请码可用次数，开放注册模式下不扣减邀请码次数，仅在仅允许邀请注册的情况下扣减
+$_ENV['disposable_invite_code'] = false; // 一次性邀请码，开启时，用户的邀请码会在每次使用后随机一个新的
 $_ENV['reg_money'] = 0; // 注册时默认的账户余额，可以设置一个数，然后引导用户在商店购买试用套餐
 $_ENV['reg_default_traffic'] = '20'; // 注册时赠送的流量，单位gb
 $_ENV['reg_default_time'] = '24'; // 注册时赠送的账户时长，单位hour

@@ -43,6 +43,9 @@
                                 {if $user->invite_num >= 0}
                                     <p>邀请链接可用次数：<code>{$user->invite_num}</code></p>
                                 {/if}
+                                {if $config['disposable_invite_code'] === true}
+                                    <p style="color: red">当前邀请链接为一次性，使用后，请在此页面查看新的邀请链接</p>
+                                {/if}
                                 <input class="form-control" value="{$invite_url}" disabled />
                             </div>
                             <div class="card-footer">

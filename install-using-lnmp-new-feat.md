@@ -171,7 +171,7 @@ rm .user.ini
 ```
 拉取到本地
 ```
-git clone -b new-feat https://github.com/Anankke/SSPanel-Uim.git .
+git clone https://github.com/iamsaltedfish/sspanel-v3-tabler .
 ```
 然后继续
 ```

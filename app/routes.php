@@ -188,7 +188,7 @@ return function (SlimApp $app) {
         $this->put('/mail/block',               App\Controllers\Admin\MailBlockController::class . ':ajaxUpdate');
 
         // Mail Analyze Mange
-        //$this->get('/mail/analyze',             App\Controllers\Admin\MailAnalyzeController::class . ':index');
+        $this->get('/mail/analyze',             App\Controllers\Admin\MailAnalyzeController::class . ':index');
 
         // Ann Mange
         $this->get('/announcement',             App\Controllers\Admin\AnnController::class . ':index');

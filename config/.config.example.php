@@ -226,12 +226,13 @@ $_ENV['faqs'] = [
     ]
 ];
 $_ENV['statistics_range'] = [
-    'checkin' => '30',
-    'traffic' => '30',
-    'register' => '30',
-    'sale' => '30', // sale, deal_amount, order_amount 需保持一致
-    'deal_amount' => '30',
-    'order_amount' => '30',
+    'checkin' => 30,
+    'traffic' => 30,
+    'register' => 30,
+    'sale' => 30, // sale, deal_amount, order_amount 需保持一致
+    'deal_amount' => 30,
+    'order_amount' => 30,
+    'mail_count' => 30,
 ];
 
 /*

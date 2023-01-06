@@ -164,10 +164,10 @@
                                         <i class="ti ti-book-2"></i>&nbsp;
                                         邮件日志
                                     </a>
-                                    <!--<a class="dropdown-item" href="/admin/mail/analyze">
+                                    <a class="dropdown-item" href="/admin/mail/analyze">
                                         <i class="ti ti-chart-donut-2"></i>&nbsp;
                                         邮件统计
-                                    </a>-->
+                                    </a>
                                     <a class="dropdown-item" href="/admin/mail/block">
                                         <i class="ti ti-barrier-block"></i>&nbsp;
                                         邮件黑名单

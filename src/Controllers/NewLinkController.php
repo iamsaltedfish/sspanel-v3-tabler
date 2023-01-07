@@ -195,7 +195,7 @@ class NewLinkController extends BaseController
             'host' => isset($params['host']) ? $params['host'] : 'fail.to.parse.host.com',
             'path' => isset($params['path']) ? $params['path'] : '/failToParsePath',
             'tls' => ($is_tls) ? 'tls' : '',
-            'sni' => isset($params['sni']) ? $params['sni'] : isset($params['host']) ? $params['host'] : 'fail.to.parse.sni.com',
+            'sni' => isset($params['sni']) ? $params['sni'] : (isset($params['host']) ? $params['host'] : 'fail.to.parse.sni.com'),
         ];
         // 是否加入直连订阅 (适用于仅直连, 或有中转配置但仍需保留直连入口时启用)
         if ($node->add_in === 1) {
@@ -302,7 +302,7 @@ class NewLinkController extends BaseController
             'cipher' => 'auto',
             'tls' => $is_tls,
             'skip-cert-verify' => true,
-            'servername' => isset($params['sni']) ? $params['sni'] : isset($params['host']) ? $params['host'] : 'fail.to.parse.sni.com',
+            'servername' => isset($params['sni']) ? $params['sni'] : (isset($params['host']) ? $params['host'] : 'fail.to.parse.sni.com'),
             'network' => $split[3],
             'ws-opts' => [
                 'path' => isset($params['path']) ? $params['path'] : '/failToParsePath',

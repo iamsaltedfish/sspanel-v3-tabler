@@ -1,10 +1,8 @@
 <?php
 namespace App\Controllers\Admin;
 
-use Slim\Http\Request;
-use Slim\Http\Response;
-use App\Models\Coupon;
 use App\Controllers\AdminController;
+use App\Models\Coupon;
 
 class CouponController extends AdminController
 {
@@ -26,7 +24,7 @@ class CouponController extends AdminController
 
         return $response->withJson([
             'ret' => 1,
-            'data' => $coupon
+            'data' => $coupon,
         ]);
     }
 
@@ -88,13 +86,13 @@ class CouponController extends AdminController
         } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => $e->getMessage()
+                'msg' => $e->getMessage(),
             ]);
         }
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '添加成功'
+            'msg' => '添加成功',
         ]);
     }
 
@@ -144,13 +142,13 @@ class CouponController extends AdminController
         } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => $e->getMessage()
+                'msg' => $e->getMessage(),
             ]);
         }
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '更新成功'
+            'msg' => '更新成功',
         ]);
     }
 
@@ -161,7 +159,7 @@ class CouponController extends AdminController
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '删除成功'
+            'msg' => '删除成功',
         ]);
     }
 }

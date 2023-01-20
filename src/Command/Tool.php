@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Command;
 
 use App\Models\LoginIp;
@@ -43,7 +44,7 @@ class Tool extends Command
             $telegram = new \Telegram\Bot\Api($_ENV['telegram_token']);
             $telegram->removeWebhook();
             if ($telegram->setWebhook(['url' => $WebhookUrl])) {
-                echo ('New Bot @' . $telegram->getMe()->getUsername() . ' 设置成功！' . PHP_EOL);
+                echo 'New Bot @' . $telegram->getMe()->getUsername() . ' 设置成功！' . PHP_EOL;
             }
         } else {
             $bot = new \TelegramBot\Api\BotApi($_ENV['telegram_token']);
@@ -54,14 +55,14 @@ class Tool extends Command
             $deleteWebhookReturn = json_decode(curl_exec($ch));
             curl_close($ch);
             if ($deleteWebhookReturn->ok && $deleteWebhookReturn->result && $bot->setWebhook($_ENV['baseUrl'] . '/telegram_callback?token=' . $_ENV['telegram_request_token']) == 1) {
-                echo ('Old Bot 设置成功！' . PHP_EOL);
+                echo 'Old Bot 设置成功！' . PHP_EOL;
             }
         }
     }
 
     public function initQQWry()
     {
-        echo ('正在下载或更新纯真ip数据库...') . PHP_EOL;
+        echo '正在下载或更新纯真ip数据库...' . PHP_EOL;
         $path = BASE_PATH . '/storage/qqwry.dat';
         $qqwry = file_get_contents('https://qqwry.mirror.noc.one/QQWry.Dat?from=sspanel_uim');
         if ($qqwry != '') {
@@ -72,7 +73,7 @@ class Tool extends Command
             if ($fp) {
                 fwrite($fp, $qqwry);
                 fclose($fp);
-                echo ('纯真ip数据库下载成功.') . PHP_EOL;
+                echo '纯真ip数据库下载成功.' . PHP_EOL;
                 $iplocation = new QQWry();
                 $location = $iplocation->getlocation('8.8.8.8');
                 $Userlocation = $location['country'];
@@ -83,10 +84,10 @@ class Tool extends Command
                     }
                 }
             } else {
-                echo ('纯真ip数据库保存失败，请检查权限') . PHP_EOL;
+                echo '纯真ip数据库保存失败，请检查权限' . PHP_EOL;
             }
         } else {
-            echo ('纯真ip数据库下载失败，请检查下载地址') . PHP_EOL;
+            echo '纯真ip数据库下载失败，请检查下载地址' . PHP_EOL;
         }
     }
 
@@ -124,14 +125,14 @@ class Tool extends Command
         $json_settings = file_get_contents('./config/settings.json');
         $settings = json_decode($json_settings, true);
         $number = count($settings);
-        $counter = '0';
+        $counter = 0;
 
         for ($i = 0; $i < $number; $i++) {
             $item = $settings[$i]['item'];
             $object = Setting::where('item', $item)->first();
 
-            if ($object == null) {
-                $new_item = new Setting;
+            if ($object === null) {
+                $new_item = new Setting();
                 $new_item->id = null;
                 $new_item->item = $settings[$i]['item'];
                 $new_item->value = $settings[$i]['value'];
@@ -142,13 +143,13 @@ class Tool extends Command
                 $new_item->mark = $settings[$i]['mark'];
                 $new_item->save();
 
-                echo "添加新设置：$item" . PHP_EOL;
+                echo "添加新设置：${item}" . PHP_EOL;
                 $counter += 1;
             }
         }
 
-        if ($counter != '0') {
-            echo "总计添加了 $counter 条新设置." . PHP_EOL;
+        if ($counter !== 0) {
+            echo "总计添加了 ${counter} 条新设置." . PHP_EOL;
         } else {
             echo "没有任何新设置需要添加." . PHP_EOL;
         }
@@ -156,9 +157,9 @@ class Tool extends Command
 
     public function supplementaryLoginAttribution()
     {
-        LoginIp::chunkById(1000, function ($logs) {
+        LoginIp::chunkById(1000, static function ($logs) {
             foreach ($logs as $log) {
-                if (empty($log->attribution)) {
+                if (!isset($log->attribution)) {
                     $log->attribution = Tools::getIpInfo($log->ip);
                     $log->save();
                 }
@@ -179,7 +180,7 @@ class Tool extends Command
             }
         }
         arsort($set);
-        print(json_encode($set, JSON_PRETTY_PRINT) . PHP_EOL);
+        echo json_encode($set, JSON_PRETTY_PRINT) . PHP_EOL;
     }
 
     public function completeNickname()

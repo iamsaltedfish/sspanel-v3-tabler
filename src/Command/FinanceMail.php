@@ -3,8 +3,8 @@
 namespace App\Command;
 
 use App\Models\User;
-use App\Utils\Telegram;
 use App\Utils\DatatablesHelper;
+use App\Utils\Telegram;
 use Ozdemir\Datatables\Datatables;
 
 class FinanceMail extends Command
@@ -66,7 +66,7 @@ class FinanceMail extends Command
                 'system',
                 [
                     'title' => '财务日报',
-                    'text'  => $text_html
+                    'text' => $text_html,
                 ],
                 []
             );
@@ -112,7 +112,7 @@ class FinanceMail extends Command
                 'system',
                 [
                     'title' => '财务周报',
-                    'text'  => $text_html
+                    'text' => $text_html,
                 ],
                 []
             );
@@ -156,7 +156,7 @@ class FinanceMail extends Command
                 'system',
                 [
                     'title' => '财务月报',
-                    'text'  => $text_html
+                    'text' => $text_html,
                 ],
                 []
             );

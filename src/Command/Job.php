@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Command;
 
 use App\Models\DetectLog;
@@ -58,7 +59,7 @@ class Job extends Command
         fwrite($myfile, $txt);
         fclose($myfile);
         // 分块处理，节省内存
-        EmailQueue::chunkById(1000, function ($email_queues) {
+        EmailQueue::chunkById(1000, static function ($email_queues) {
             foreach ($email_queues as $email_queue) {
                 try {
                     Mail::send(
@@ -109,7 +110,7 @@ class Job extends Command
             // 累加总用量
             $lastday_total += (($user->u + $user->d) - $user->last_day_t);
             // 记录单用量
-            $traffic = new StatisticsModel;
+            $traffic = new StatisticsModel();
             $traffic->item = 'user_traffic';
             $usage = (($user->u + $user->d) - $user->last_day_t) / 1048576; // to mb
             $traffic->value = round($usage, 2);
@@ -121,7 +122,7 @@ class Job extends Command
             $user->save();
         }
 
-        $traffic = new StatisticsModel;
+        $traffic = new StatisticsModel();
         $traffic->item = 'traffic';
         $traffic->value = round($lastday_total / 1073741824, 2); // to gb
         $traffic->created_at = time();
@@ -136,10 +137,10 @@ class Job extends Command
                 ->orderBy('id', 'desc')
                 ->first();
 
-            $before_usage_v = (empty($before_usage)) ? '0' : $before_usage->value;
+            $before_usage_v = (!isset($before_usage)) ? 0 : $before_usage->value;
 
             if ($timestamp_limit > time()) {
-                $traffic = new StatisticsModel;
+                $traffic = new StatisticsModel();
                 $traffic->item = 'node_traffic_log';
                 $traffic->value = $node->node_bandwidth;
                 $traffic->node_id = $node->id;
@@ -147,8 +148,8 @@ class Job extends Command
                 $traffic->save();
             }
 
-            if ($before_usage_v != '0') {
-                $usage = new StatisticsModel;
+            if ($before_usage_v !== 0) {
+                $usage = new StatisticsModel();
                 $usage->item = 'node_traffic';
                 // today_usage 记录的实际上是昨天的，因为今天才开始统计
                 $today_usage = round(($node->node_bandwidth - $before_usage_v) / 1048576, 2); // to mb
@@ -173,7 +174,7 @@ class Job extends Command
         Node::where('bandwidthlimit_resetday', date('d'))->update(['node_bandwidth' => 0]);
 
         // 更新 IP 库
-        if (date('d') == '1' || date('d') == '10' || date('d') == '20') {
+        if (date('d') === '1' || date('d') === '10' || date('d') === '20') {
             (new Tool($this->argv))->initQQWry();
         }
 
@@ -183,7 +184,7 @@ class Job extends Command
     public function CheckJob()
     {
         //节点掉线检测
-        if ($_ENV['enable_detect_offline'] == true) {
+        if ($_ENV['enable_detect_offline'] === true) {
             echo '节点掉线检测开始' . PHP_EOL;
             $adminUser = User::where('is_admin', '=', '1')->get();
             $nodes = Node::all();
@@ -191,10 +192,15 @@ class Job extends Command
                 if ($node->isNodeOnline() === false && $node->online == true) {
                     foreach ($adminUser as $user) {
                         echo 'Send offline mail to user: ' . $user->id . PHP_EOL;
-                        $user->sendMail($_ENV['appName'] . ' - 系统警告', 'news/warn.tpl', 'system',
+                        $user->sendMail(
+                            $_ENV['appName'] . ' - 系统警告',
+                            'news/warn.tpl',
+                            'system',
                             [
                                 'text' => '管理员您好，系统发现节点 ' . $node->name . ' 掉线了，请您及时处理。',
-                            ], [], $_ENV['email_queue']
+                            ],
+                            [],
+                            $_ENV['email_queue']
                         );
                     }
 
@@ -203,10 +209,15 @@ class Job extends Command
                 } elseif ($node->isNodeOnline() === true && $node->online == false) {
                     foreach ($adminUser as $user) {
                         echo 'Send offline mail to user: ' . $user->id . PHP_EOL;
-                        $user->sendMail($_ENV['appName'] . ' - 系统提示', 'news/warn.tpl', 'system',
+                        $user->sendMail(
+                            $_ENV['appName'] . ' - 系统提示',
+                            'news/warn.tpl',
+                            'system',
                             [
                                 'text' => '管理员您好，系统发现节点 ' . $node->name . ' 恢复上线了。',
-                            ], [], $_ENV['email_queue']
+                            ],
+                            [],
+                            $_ENV['email_queue']
                         );
                     }
 
@@ -231,7 +242,7 @@ class Job extends Command
     {
         $time_interval = [3, 0, -3]; // 分别在到期的前多少天发送邮件提醒 填负数就是在到期后的第几天发送邮件提醒
         foreach ($time_interval as $interval) {
-            if (Setting::obtain('mail_driver') == 'none') {
+            if (Setting::obtain('mail_driver') === 'none') {
                 echo "This feature is not available because no mail sending configuration is configured." . PHP_EOL;
                 break;
             }
@@ -262,13 +273,17 @@ class Job extends Command
                 if (MailPush::allow('due_reminder', $user->id)) {
                     $mail_baseUrl = $_ENV['mail_baseUrl'];
                     $unsub_link = $_ENV['mail_baseUrl'] . '/mail/push/' . $user->getMailUnsubToken();
-                    $user->sendMail($_ENV['appName'] . ' - 服务到期提醒', 'notice.tpl', 'due_reminder',
+                    $user->sendMail(
+                        $_ENV['appName'] . ' - 服务到期提醒',
+                        'notice.tpl',
+                        'due_reminder',
                         [
                             'title' => (time() > strtotime($user->expire_in)) ? '您的服务已到期' : '您的服务即将到期',
                             'content' => $text . '为避免影响您的正常使用，建议您及时在商店选购适合您需求的商品。如果需要帮助，可以通过工单系统，或在用户中心右下角在线对话小组件与我们沟通'
                             . "<p>当前的用户中心地址是 <a href=\"{$mail_baseUrl}\">{$mail_baseUrl}</a></p>",
                             'concluding_remarks' => "此邮件由系统自动发送。取消此类通知推送，请前往 <a href=\"{$unsub_link}\">邮件推送</a> 页面设置",
-                        ], []
+                        ],
+                        []
                     );
                 }
             }

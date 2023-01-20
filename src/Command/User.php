@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Command;
 
 use App\Controllers\AuthController;
@@ -8,7 +9,6 @@ use App\Utils\GA;
 use App\Utils\Hash;
 use App\Utils\Tools;
 use Exception;
-use Ramsey\Uuid\Uuid;
 
 class User extends Command
 {
@@ -200,14 +200,14 @@ class User extends Command
             fwrite(STDOUT, '(1/3) 请输入管理员邮箱：') . PHP_EOL;
             // get input
             $email = trim(fgets(STDIN));
-            if ($email == null) {
+            if ($email === null) {
                 die("必须输入管理员邮箱.\r\n");
             }
 
             // write input back
             fwrite(STDOUT, "(2/3) 请输入管理员账户密码：") . PHP_EOL;
             $passwd = trim(fgets(STDIN));
-            if ($passwd == null) {
+            if ($passwd === null) {
                 die("必须输入管理员密码.\r\n");
             }
 
@@ -218,7 +218,7 @@ class User extends Command
             $y = 'y';
         }
 
-        if (strtolower($y) == 'y') {
+        if (strtolower($y) === 'y') {
             try {
                 AuthController::register_helper('admin', $email, $passwd, '', '1', '', 0, false, 'null');
                 $last_user = ModelsUser::where('email', $email)->first();
@@ -228,7 +228,7 @@ class User extends Command
                 $error_msg = $e->getMessage();
             }
 
-            if (!empty($error_msg)) {
+            if (isset($error_msg)) {
                 echo PHP_EOL . '创建失败，以下是错误信息：' . PHP_EOL;
                 die($error_msg);
             }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Command;
 
 use App\Models\MailStatistics;
@@ -103,7 +104,7 @@ class Statistics extends Command
         $day_limit = '90';
 
         for ($i = 0; $i <= $day_limit; $i++) {
-            if ($i != 0) {
+            if ($i !== 0) {
                 $stop_day = $i - 1;
                 $start = date('Y-m-d 00:00:00', strtotime("-{$i} day"));
                 $stop = date('Y-m-d 00:00:00', strtotime("-{$stop_day} day"));
@@ -123,7 +124,7 @@ class Statistics extends Command
         $day_limit = '30';
 
         for ($i = 0; $i <= $day_limit; $i++) {
-            if ($i != 0) {
+            if ($i !== 0) {
                 $stop_day = $i - 1;
                 $start = strtotime(date('Y-m-d 00:00:00', strtotime("-{$i} day")));
                 $stop = strtotime(date('Y-m-d 00:00:00', strtotime("-{$stop_day} day")));

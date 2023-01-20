@@ -69,11 +69,11 @@ class DetectLogController extends AdminController
         foreach ($query['datas'] as $value) {
             /** @var DetectLog $value */
 
-            if ($value->rule() == null) {
+            if ($value->rule() === null) {
                 DetectLog::rule_is_null($value);
                 continue;
             }
-            if ($value->node() == null) {
+            if ($value->node() === null) {
                 DetectLog::node_is_null($value);
                 continue;
             }

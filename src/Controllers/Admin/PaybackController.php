@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
@@ -92,15 +93,15 @@ class PaybackController extends AdminController
         foreach ($details['search_dialog'] as $from) {
             $field = $from['id'];
             $keyword = $request->getParam($field);
-            if ($from['type'] == 'input') {
+            if ($from['type'] === 'input') {
                 if ($from['exact']) {
-                    ($keyword != '') && array_push($condition, [$field, '=', $keyword]);
+                    ($keyword !== '') && array_push($condition, [$field, '=', $keyword]);
                 } else {
-                    ($keyword != '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
+                    ($keyword !== '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
                 }
             }
-            if ($from['type'] == 'select') {
-                ($keyword != 'all') && array_push($condition, [$field, '=', $keyword]);
+            if ($from['type'] === 'select') {
+                ($keyword !== 'all') && array_push($condition, [$field, '=', $keyword]);
             }
         }
 
@@ -132,7 +133,7 @@ class PaybackController extends AdminController
         $reward = Payback::find($item_id);
         $invite_sponsor = $reward->ref_by; // 邀请发起人（受益方）
 
-        if ($reward->getOriginal('fraud_detect') == 0) {
+        if ($reward->getOriginal('fraud_detect') === 0) {
             return $response->withJson([
                 'ret' => 0,
                 'msg' => '此功能仅适用于认定为欺诈的返利记录',
@@ -140,7 +141,7 @@ class PaybackController extends AdminController
         }
 
         $invite_sponsor_user = User::find($invite_sponsor);
-        if ($invite_sponsor_user != null) {
+        if ($invite_sponsor_user !== null) {
             $invite_sponsor_user->money += $reward->ref_get;
             $invite_sponsor_user->save();
         }

@@ -1,10 +1,9 @@
 <?php
+
 namespace App\Controllers\Admin;
 
-use Slim\Http\Request;
-use Slim\Http\Response;
-use App\Models\Product;
 use App\Controllers\AdminController;
+use App\Models\Product;
 
 class ProductController extends AdminController
 {
@@ -56,7 +55,7 @@ class ProductController extends AdminController
         return $response->withJson([
             'ret' => 1,
             'data' => $product,
-            'content' => json_decode($product->content, true)
+            'content' => json_decode($product->content, true),
         ]);
     }
 
@@ -83,7 +82,7 @@ class ProductController extends AdminController
         $product_rebate_amount = $request->getParam('product_rebate_amount');
 
         try {
-            $product = new Product;
+            $product = new Product();
 
             if ($product_name == '') {
                 throw new \Exception('请填写商品名称');
@@ -171,13 +170,13 @@ class ProductController extends AdminController
         } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => $e->getMessage()
+                'msg' => $e->getMessage(),
             ]);
         }
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '添加成功'
+            'msg' => '添加成功',
         ]);
     }
 
@@ -293,13 +292,13 @@ class ProductController extends AdminController
         } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => $e->getMessage()
+                'msg' => $e->getMessage(),
             ]);
         }
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '更新成功'
+            'msg' => '更新成功',
         ]);
     }
 
@@ -310,7 +309,7 @@ class ProductController extends AdminController
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '删除成功'
+            'msg' => '删除成功',
         ]);
     }
 }

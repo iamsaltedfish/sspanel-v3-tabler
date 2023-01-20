@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
@@ -120,10 +121,10 @@ class GiftCardController extends AdminController
         $receive_mailbox = $request->getParam('receive_mailbox');
 
         try {
-            if (empty($card_number) || $card_number < 0) {
+            if ($card_number < 0) {
                 throw new \Exception('生成数量应该是一个正整数');
             }
-            if (empty($card_value) || $card_value < 0) {
+            if ($card_value < 0) {
                 throw new \Exception('礼品卡面值应该大于零');
             }
             if (!Tools::emailCheck($receive_mailbox)) {
@@ -134,7 +135,7 @@ class GiftCardController extends AdminController
                 $card = strtolower(Tools::genRandomChar($card_length));
                 array_push($cards, $card);
                 // save to database
-                $giftcard = new GiftCard;
+                $giftcard = new GiftCard();
                 $giftcard->card = $card;
                 $giftcard->balance = $card_value * 100;
                 $giftcard->created_at = time();
@@ -144,11 +145,16 @@ class GiftCardController extends AdminController
                 $giftcard->save();
             }
 
-            if (Setting::obtain('mail_driver') != 'none') {
-                Mail::send($receive_mailbox, $_ENV['appName'] . '- 充值码', 'giftcard.tpl', 'system',
+            if (Setting::obtain('mail_driver') !== 'none') {
+                Mail::send(
+                    $receive_mailbox,
+                    $_ENV['appName'] . '- 充值码',
+                    'giftcard.tpl',
+                    'system',
                     [
                         'text' => implode('<br/>', $cards),
-                    ], []
+                    ],
+                    []
                 );
             }
         } catch (\Exception $e) {
@@ -171,18 +177,18 @@ class GiftCardController extends AdminController
         foreach ($details['search_dialog'] as $from) {
             $field = $from['id'];
             $keyword = $request->getParam($field);
-            if (!empty($keyword) && $field == 'balance') {
-                $keyword = $keyword * 100;
+            if (!empty($keyword) && $field === 'balance') {
+                $keyword *= 100;
             }
-            if ($from['type'] == 'input') {
+            if ($from['type'] === 'input') {
                 if ($from['exact']) {
-                    ($keyword != '') && array_push($condition, [$field, '=', $keyword]);
+                    ($keyword !== '') && array_push($condition, [$field, '=', $keyword]);
                 } else {
-                    ($keyword != '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
+                    ($keyword !== '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
                 }
             }
-            if ($from['type'] == 'select') {
-                ($keyword != 'all') && array_push($condition, [$field, '=', $keyword]);
+            if ($from['type'] === 'select') {
+                ($keyword !== 'all') && array_push($condition, [$field, '=', $keyword]);
             }
         }
 

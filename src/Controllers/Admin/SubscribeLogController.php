@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
@@ -21,7 +22,7 @@ class SubscribeLogController extends AdminController
         );
     }
 
-    public function subscribe_ajax($request, $response, $args)
+    public function subscribeAjax($request, $response, $args)
     {
         $email = $request->getParam('email');
         $user_id = $request->getParam('user_id');
@@ -32,12 +33,12 @@ class SubscribeLogController extends AdminController
 
         $condition = [];
 
-        ($email != '') && array_push($condition, ['email', '=', $email]);
-        ($user_id != '') && array_push($condition, ['user_id', '=', $user_id]);
-        ($user_name != '') && array_push($condition, ['user_name', '=', $user_name]);
-        ($request_ip != '') && array_push($condition, ['request_ip', '=', $request_ip]);
-        ($subscribe_type != '') && array_push($condition, ['subscribe_type', '=', $subscribe_type]);
-        ($request_user_agent != '') && array_push($condition, ['request_user_agent', 'like', '%' . $request_user_agent . '%']);
+        ($email !== '') && array_push($condition, ['email', '=', $email]);
+        ($user_id !== '') && array_push($condition, ['user_id', '=', $user_id]);
+        ($user_name !== '') && array_push($condition, ['user_name', '=', $user_name]);
+        ($request_ip !== '') && array_push($condition, ['request_ip', '=', $request_ip]);
+        ($subscribe_type !== '') && array_push($condition, ['subscribe_type', '=', $subscribe_type]);
+        ($request_user_agent !== '') && array_push($condition, ['request_user_agent', 'like', '%' . $request_user_agent . '%']);
 
         $results = UserSubscribeLog::orderBy('id', 'desc')
             ->where($condition)

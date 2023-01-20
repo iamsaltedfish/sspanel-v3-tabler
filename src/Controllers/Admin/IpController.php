@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
@@ -82,7 +83,7 @@ class IpController extends AdminController
 
         foreach ($logs as $log) {
             $log->datetime = date('Y-m-d H:i:s', $log->datetime);
-            $log->result = ($log->type == '0') ? '成功' : '失败';
+            $log->result = ($log->type === 0) ? '成功' : '失败';
         }
 
         return $response->write(
@@ -100,15 +101,15 @@ class IpController extends AdminController
         foreach ($details['search_dialog'] as $from) {
             $field = $from['id'];
             $keyword = $request->getParam($field);
-            if ($from['type'] == 'input') {
+            if ($from['type'] === 'input') {
                 if ($from['exact']) {
-                    ($keyword != '') && array_push($condition, [$field, '=', $keyword]);
+                    ($keyword !== '') && array_push($condition, [$field, '=', $keyword]);
                 } else {
-                    ($keyword != '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
+                    ($keyword !== '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
                 }
             }
-            if ($from['type'] == 'select') {
-                ($keyword != 'all') && array_push($condition, [$field, '=', $keyword]);
+            if ($from['type'] === 'select') {
+                ($keyword !== 'all') && array_push($condition, [$field, '=', $keyword]);
             }
         }
 
@@ -119,7 +120,7 @@ class IpController extends AdminController
 
         foreach ($results as $result) {
             $result->datetime = date('Y-m-d H:i:s', $result->datetime);
-            $result->result = ($result->type == '0') ? '成功' : '失败';
+            $result->result = ($result->type === 0) ? '成功' : '失败';
         }
 
         return $response->withJson([
@@ -135,7 +136,7 @@ class IpController extends AdminController
      * @param Response  $response
      * @param array     $args
      */
-    public function ajax_login($request, $response, $args)
+    public function ajaxLogin($request, $response, $args)
     {
         $query = LoginIp::getTableDataFromAdmin(
             $request,
@@ -154,7 +155,7 @@ class IpController extends AdminController
         foreach ($query['datas'] as $value) {
             /** @var LoginIp $value */
 
-            if ($value->user() == null) {
+            if ($value->user() === null) {
                 LoginIp::user_is_null($value);
                 continue;
             }
@@ -187,7 +188,7 @@ class IpController extends AdminController
      */
     public function alive($request, $response, $args)
     {
-        $table_config['total_column'] = array(
+        $table_config['total_column'] = [
             'id' => 'ID',
             'userid' => '用户ID',
             'user_name' => '用户名',
@@ -197,7 +198,7 @@ class IpController extends AdminController
             'location' => '归属地',
             'datetime' => '时间',
             'is_node' => '是否为中转连接',
-        );
+        ];
         $table_config['default_show_column'] = array_keys($table_config['total_column']);
         $table_config['ajax_url'] = 'alive/ajax';
         return $response->write(
@@ -214,7 +215,7 @@ class IpController extends AdminController
      * @param Response  $response
      * @param array     $args
      */
-    public function ajax_alive($request, $response, $args)
+    public function ajaxAlive($request, $response, $args)
     {
         $query = Ip::getTableDataFromAdmin(
             $request,
@@ -270,13 +271,13 @@ class IpController extends AdminController
      */
     public function block($request, $response, $args)
     {
-        $table_config['total_column'] = array(
+        $table_config['total_column'] = [
             'id' => 'ID',
             'node_name' => '节点名称',
             'ip' => 'IP',
             'location' => '归属地',
             'datetime' => '时间',
-        );
+        ];
         $table_config['default_show_column'] = array_keys($table_config['total_column']);
         $table_config['ajax_url'] = 'block/ajax';
         return $response->write(
@@ -295,14 +296,14 @@ class IpController extends AdminController
      */
     public function unblock($request, $response, $args)
     {
-        $table_config['total_column'] = array(
+        $table_config['total_column'] = [
             'id' => 'ID',
             'userid' => '用户ID',
             'user_name' => '用户名',
             'ip' => 'IP',
             'location' => '归属地',
             'datetime' => '时间',
-        );
+        ];
         $table_config['default_show_column'] = array_keys($table_config['total_column']);
         $table_config['ajax_url'] = 'unblock/ajax';
         return $response->write(

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
@@ -35,14 +36,14 @@ class OrderController extends AdminController
 
         $condition = [];
 
-        ($no != '') && array_push($condition, ['no', '=', $no]);
-        ($user_id != '') && array_push($condition, ['user_id', '=', $user_id]);
-        ($product_name != '') && array_push($condition, ['product_name', 'like', '%' . $product_name . '%']);
-        ($order_coupon != '') && array_push($condition, ['order_coupon', '=', $order_coupon]);
-        ($product_type != 'all') && array_push($condition, ['product_type', '=', $product_type]);
-        ($order_status != 'all') && array_push($condition, ['order_status', '=', $order_status]);
-        ($order_payment != 'all') && array_push($condition, ['order_payment', '=', $order_payment]);
-        ($execute_status != 'all') && array_push($condition, ['execute_status', '=', $execute_status]);
+        ($no !== '') && array_push($condition, ['no', '=', $no]);
+        ($user_id !== '') && array_push($condition, ['user_id', '=', $user_id]);
+        ($product_name !== '') && array_push($condition, ['product_name', 'like', '%' . $product_name . '%']);
+        ($order_coupon !== '') && array_push($condition, ['order_coupon', '=', $order_coupon]);
+        ($product_type !== 'all') && array_push($condition, ['product_type', '=', $product_type]);
+        ($order_status !== 'all') && array_push($condition, ['order_status', '=', $order_status]);
+        ($order_payment !== 'all') && array_push($condition, ['order_payment', '=', $order_payment]);
+        ($execute_status !== 'all') && array_push($condition, ['execute_status', '=', $execute_status]);
 
         $results = ProductOrder::orderBy('id', 'desc')
             ->where($condition)
@@ -102,11 +103,11 @@ class OrderController extends AdminController
             }
         }
 
-        if ($user->ref_by != 0) {
+        if ($user->ref_by !== 0) {
             $invite_user = User::find($user->ref_by);
             if (isset($invite_user)) {
                 $payback = Payback::where('associated_order', $order_no)->first();
-                if (isset($payback) && $payback->fraud_detect == 0) {
+                if (isset($payback) && $payback->fraud_detect === 0) {
                     $array = [
                         'item' => '邀请人余额',
                         'before' => $invite_user->money,
@@ -153,11 +154,11 @@ class OrderController extends AdminController
             }
             $user->save();
 
-            if ($user->ref_by != 0) {
+            if ($user->ref_by !== 0) {
                 $invite_user = User::find($user->ref_by);
                 if (isset($invite_user)) {
                     $payback = Payback::where('associated_order', $order_no)->first();
-                    if (isset($payback) && $payback->fraud_detect == 0) {
+                    if (isset($payback) && $payback->fraud_detect === 0) {
                         if ($invite_user->money < $payback->ref_get) {
                             $invite_user->money = 0;
                         } else {

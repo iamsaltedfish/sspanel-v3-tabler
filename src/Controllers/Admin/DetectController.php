@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
@@ -17,14 +18,14 @@ class DetectController extends AdminController
      */
     public function index($request, $response, $args)
     {
-        $table_config['total_column'] = array(
+        $table_config['total_column'] = [
             'op' => '操作',
             'id' => 'ID',
             'name' => '名称',
             'text' => '介绍',
             'regex' => '正则表达式',
             'type' => '类型',
-        );
+        ];
         $table_config['default_show_column'] = array_keys($table_config['total_column']);
         $table_config['ajax_url'] = 'detect/ajax';
         return $response->write(
@@ -39,7 +40,7 @@ class DetectController extends AdminController
      * @param Response  $response
      * @param array     $args
      */
-    public function ajax_rule($request, $response, $args)
+    public function ajaxRule($request, $response, $args)
     {
         $query = DetectRule::getTableDataFromAdmin(
             $request,
@@ -185,7 +186,7 @@ class DetectController extends AdminController
      */
     public function log($request, $response, $args)
     {
-        $table_config['total_column'] = array(
+        $table_config['total_column'] = [
             'id' => 'ID',
             'user_id' => '用户ID',
             'user_name' => '用户名',
@@ -197,7 +198,7 @@ class DetectController extends AdminController
             'rule_regex' => '规则正则表达式',
             'rule_type' => '规则类型',
             'datetime' => '时间',
-        );
+        ];
         $table_config['default_show_column'] = array_keys($table_config['total_column']);
         $table_config['ajax_url'] = 'log/ajax';
         return $response->write(
@@ -212,7 +213,7 @@ class DetectController extends AdminController
      * @param Response  $response
      * @param array     $args
      */
-    public function ajax_log($request, $response, $args)
+    public function ajaxLog($request, $response, $args)
     {
         $query = DetectLog::getTableDataFromAdmin(
             $request,
@@ -233,15 +234,15 @@ class DetectController extends AdminController
         foreach ($query['datas'] as $value) {
             /** @var DetectLog $value */
 
-            if ($value->rule() == null) {
+            if ($value->rule() === null) {
                 DetectLog::rule_is_null($value);
                 continue;
             }
-            if ($value->node() == null) {
+            if ($value->node() === null) {
                 DetectLog::node_is_null($value);
                 continue;
             }
-            if ($value->user() == null) {
+            if ($value->user() === null) {
                 DetectLog::user_is_null($value);
                 continue;
             }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
@@ -140,7 +141,7 @@ class ChartController extends AdminController
         $active_payments = $_ENV['active_payments'];
         foreach ($active_payments as $payment) {
             $key = $payment['name'];
-            $payment_fee = empty($payment['rate']) ? '0' : $payment['rate'];
+            $payment_fee = (!isset($payment['rate'])) ? 0 : $payment['rate'];
             $condition = [
                 ['created_at', '>', $begin_time],
                 ['created_at', '<', $end_time],
@@ -154,7 +155,7 @@ class ChartController extends AdminController
             $fee = ($deal_amount - $balance_payment_amount) * $payment_fee;
             $net_income = $deal_amount - $balance_payment_amount - $fee;
 
-            if ($deal_order_count == 0) {
+            if ($deal_order_count === 0) {
                 $customer_price = 0;
             } else {
                 $customer_price = round(($net_income / 100) / $deal_order_count, 2);

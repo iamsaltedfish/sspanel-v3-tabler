@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
@@ -83,15 +84,15 @@ class MailController extends AdminController
         foreach ($details['search_dialog'] as $from) {
             $field = $from['id'];
             $keyword = $request->getParam($field);
-            if ($from['type'] == 'input') {
+            if ($from['type'] === 'input') {
                 if ($from['exact']) {
-                    ($keyword != '') && array_push($condition, [$field, '=', $keyword]);
+                    ($keyword !== '') && array_push($condition, [$field, '=', $keyword]);
                 } else {
-                    ($keyword != '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
+                    ($keyword !== '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
                 }
             }
-            if ($from['type'] == 'select') {
-                ($keyword != 'all') && array_push($condition, [$field, '=', $keyword]);
+            if ($from['type'] === 'select') {
+                ($keyword !== 'all') && array_push($condition, [$field, '=', $keyword]);
             }
         }
 

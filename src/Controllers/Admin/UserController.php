@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
@@ -176,15 +177,15 @@ class UserController extends AdminController
         foreach ($details['search_dialog'] as $from) {
             $field = $from['id'];
             $keyword = $request->getParam($field);
-            if ($from['type'] == 'input') {
+            if ($from['type'] === 'input') {
                 if ($from['exact']) {
-                    ($keyword != '') && array_push($condition, [$field, '=', $keyword]);
+                    ($keyword !== '') && array_push($condition, [$field, '=', $keyword]);
                 } else {
-                    ($keyword != '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
+                    ($keyword !== '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
                 }
             }
-            if ($from['type'] == 'select') {
-                ($keyword != 'all') && array_push($condition, [$field, '=', $keyword]);
+            if ($from['type'] === 'select') {
+                ($keyword !== 'all') && array_push($condition, [$field, '=', $keyword]);
             }
         }
 
@@ -284,30 +285,30 @@ class UserController extends AdminController
         $email = $request->getParam('email');
         $ref_by = $request->getParam('ref_by');
         $password = $request->getParam('password');
-        $email_notify = $request->getParam('email_notify');
-        $dispense_product = $request->getParam('dispense_product');
+        $email_notify = (int) $request->getParam('email_notify');
+        $dispense_product = (int) $request->getParam('dispense_product');
 
         try {
-            if ($email == '') {
+            if ($email === '') {
                 throw new \Exception('请填写邮箱');
             }
             if (!Tools::emailCheck($email)) {
                 throw new \Exception('邮箱格式不正确');
             }
             $exist = User::where('email', $email)->first();
-            if ($exist != null) {
+            if ($exist !== null) {
                 throw new \Exception('此邮箱已注册');
             }
-            if ($password == '') {
+            if ($password === '') {
                 $password = Tools::genRandomChar(10);
             }
-            if ($email_notify == '1') {
-                if (Setting::obtain('mail_driver') == 'none') {
+            if ($email_notify === 1) {
+                if (Setting::obtain('mail_driver') === 'none') {
                     throw new \Exception('没有有效的发信配置');
                 }
             }
             AuthController::register_helper('user', $email, $password, '', '1', '', 0, false, 'null');
-            if ($email_notify == '1') {
+            if ($email_notify === 1) {
                 $subject = $_ENV['appName'] . ' - 您的账户已创建';
                 $text = '请在 ' . $_ENV['baseUrl'] . ' 使用以下信息登录：'
                     . '<br/>账户：' . $email
@@ -319,7 +320,7 @@ class UserController extends AdminController
                     'text' => $text,
                 ], []);
             }
-            if ($dispense_product != '0') {
+            if ($dispense_product !== 0) {
                 $user = User::where('email', $email)->first();
                 $product = Product::find($dispense_product);
                 $product_content = json_decode($product->content, true);
@@ -347,10 +348,10 @@ class UserController extends AdminController
                 }
                 $user->save();
             }
-            if ($ref_by != '') {
+            if ($ref_by !== '') {
                 if (Tools::emailCheck($ref_by)) {
                     $invite_user = User::where('email', $ref_by)->first();
-                    if ($invite_user == null) {
+                    if ($invite_user === null) {
                         throw new \Exception('没有找到此邀请人');
                     }
                     $ref_by = $invite_user->id;

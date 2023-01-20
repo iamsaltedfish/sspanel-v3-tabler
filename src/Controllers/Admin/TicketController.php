@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
@@ -88,7 +89,7 @@ class TicketController extends AdminController
             ->where('is_topic', '1')
             ->first();
 
-        if ($topic == null) {
+        if ($topic === null) {
             return null;
         }
 
@@ -114,22 +115,22 @@ class TicketController extends AdminController
             $tk_id = $args['id'];
             $close_together = $request->getParam('close_together');
             $ticket = WorkOrder::where('tk_id', $tk_id)->first();
-            if ($ticket == null) {
+            if ($ticket === null) {
                 throw new \Exception('回复的主题帖不存在');
             }
             $topic = WorkOrder::where('tk_id', $tk_id)
                 ->where('is_topic', '1')
                 ->first();
-            if ($topic->closed_by == '已关闭') {
+            if ($topic->closed_by === '已关闭') {
                 throw new \Exception('此主题帖已关闭');
             }
             $content = $request->getParam('content');
-            if ($content == '') {
+            if ($content === '') {
                 throw new \Exception('请添加回复内容');
             }
 
             $anti_xss = new AntiXSS();
-            $ticket = new WorkOrder;
+            $ticket = new WorkOrder();
             $ticket->tk_id = $tk_id;
             $ticket->is_topic = 0;
             $ticket->title = null;
@@ -158,11 +159,15 @@ class TicketController extends AdminController
         if ($_ENV['mail_ticket']) {
             $anti_xss = new AntiXSS();
             $user = User::find($topic->user_id);
-            $user->sendMail($_ENV['appName'] . ' - 工单被回复', 'news/warn.tpl', 'work_order',
+            $user->sendMail(
+                $_ENV['appName'] . ' - 工单被回复',
+                'news/warn.tpl',
+                'work_order',
                 [
                     'text' => '工单主题：' . $anti_xss->xss_clean($topic->title) .
                     '<br/>' . '新添回复：' . $anti_xss->xss_clean($content),
-                ], []
+                ],
+                []
             );
         }
 
@@ -179,15 +184,15 @@ class TicketController extends AdminController
         foreach ($details['search_dialog'] as $from) {
             $field = $from['id'];
             $keyword = $request->getParam($field);
-            if ($from['type'] == 'input') {
+            if ($from['type'] === 'input') {
                 if ($from['exact']) {
-                    ($keyword != '') && array_push($condition, [$field, '=', $keyword]);
+                    ($keyword !== '') && array_push($condition, [$field, '=', $keyword]);
                 } else {
-                    ($keyword != '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
+                    ($keyword !== '') && array_push($condition, [$field, 'like', '%' . $keyword . '%']);
                 }
             }
-            if ($from['type'] == 'select') {
-                ($keyword != 'all') && array_push($condition, [$field, '=', $keyword]);
+            if ($from['type'] === 'select') {
+                ($keyword !== 'all') && array_push($condition, [$field, '=', $keyword]);
             }
         }
 

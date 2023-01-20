@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
@@ -309,7 +310,6 @@ class NodeController extends AdminController
             if ($node->remark === '') {
                 throw new \Exception('请设置私有备注');
             }
-            $configs = json_decode($node->transit_json, true);
             $decode_error = json_last_error(); // 解码正常时会输出 int(0)
             $node->transit_enable = ($request->getParam('transit_enable') === 'true') ? 1 : 0;
             if ($decode_error !== 0 && $node->transit_enable === 1) {

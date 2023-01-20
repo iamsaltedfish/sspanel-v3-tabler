@@ -3,16 +3,12 @@
 namespace App\Controllers\Admin\UserLog;
 
 use App\Controllers\AdminController;
-use App\Models\{
-    User,
-    UserSubscribeLog
-};
+use App\Models\User;
+use App\Models\UserSubscribeLog;
 use App\Utils\QQWry;
-use Slim\Http\{
-    Request,
-    Response
-};
 use Psr\Http\Message\ResponseInterface;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 class SubLogController extends AdminController
 {
@@ -26,12 +22,12 @@ class SubLogController extends AdminController
         $id = $args['id'];
         $user = User::find($id);
         $table_config['total_column'] = array(
-            'id'                  => 'ID',
-            'subscribe_type'      => '类型',
-            'request_ip'          => 'IP',
-            'location'            => '归属地',
-            'request_time'        => '时间',
-            'request_user_agent'  => 'User-Agent'
+            'id' => 'ID',
+            'subscribe_type' => '类型',
+            'request_ip' => 'IP',
+            'location' => '归属地',
+            'request_time' => '时间',
+            'request_user_agent' => 'User-Agent',
         );
         $table_config['default_show_column'] = array_keys($table_config['total_column']);
         $table_config['ajax_url'] = 'sublog/ajax';
@@ -51,7 +47,7 @@ class SubLogController extends AdminController
      */
     public function ajax($request, $response, $args): ResponseInterface
     {
-        $user  = User::find($args['id']);
+        $user = User::find($args['id']);
         $query = UserSubscribeLog::getTableDataFromAdmin(
             $request,
             static function (&$order_field) {
@@ -64,27 +60,27 @@ class SubLogController extends AdminController
             }
         );
 
-        $data  = [];
+        $data = [];
         $QQWry = new QQWry();
         foreach ($query['datas'] as $value) {
             /** @var UserSubscribeLog $value */
 
-            $tempdata                       = [];
-            $tempdata['id']                 = $value->id;
-            $tempdata['subscribe_type']     = $value->subscribe_type;
-            $tempdata['request_ip']         = $value->request_ip;
-            $tempdata['location']           = $value->location($QQWry);
-            $tempdata['request_time']       = $value->request_time;
+            $tempdata = [];
+            $tempdata['id'] = $value->id;
+            $tempdata['subscribe_type'] = $value->subscribe_type;
+            $tempdata['request_ip'] = $value->request_ip;
+            $tempdata['location'] = $value->location($QQWry);
+            $tempdata['request_time'] = $value->request_time;
             $tempdata['request_user_agent'] = $value->request_user_agent;
 
             $data[] = $tempdata;
         }
 
         return $response->withJson([
-            'draw'            => $request->getParam('draw'),
-            'recordsTotal'    => UserSubscribeLog::where('user_id', $user->id)->count(),
+            'draw' => $request->getParam('draw'),
+            'recordsTotal' => UserSubscribeLog::where('user_id', $user->id)->count(),
             'recordsFiltered' => $query['count'],
-            'data'            => $data,
+            'data' => $data,
         ]);
     }
 }

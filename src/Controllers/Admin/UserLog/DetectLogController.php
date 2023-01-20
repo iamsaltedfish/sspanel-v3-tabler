@@ -3,15 +3,11 @@
 namespace App\Controllers\Admin\UserLog;
 
 use App\Controllers\AdminController;
-use App\Models\{
-    User,
-    DetectLog
-};
-use Slim\Http\{
-    Request,
-    Response
-};
+use App\Models\DetectLog;
+use App\Models\User;
 use Psr\Http\Message\ResponseInterface;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 class DetectLogController extends AdminController
 {
@@ -25,15 +21,15 @@ class DetectLogController extends AdminController
         $id = $args['id'];
         $user = User::find($id);
         $table_config['total_column'] = array(
-            'id'          => 'ID',
-            'node_id'     => '节点ID',
-            'node_name'   => '节点名',
-            'list_id'     => '规则ID',
-            'rule_name'   => '规则名',
-            'rule_text'   => '规则描述',
-            'rule_regex'  => '规则正则表达式',
-            'rule_type'   => '规则类型',
-            'datetime'    => '时间'
+            'id' => 'ID',
+            'node_id' => '节点ID',
+            'node_name' => '节点名',
+            'list_id' => '规则ID',
+            'rule_name' => '规则名',
+            'rule_text' => '规则描述',
+            'rule_regex' => '规则正则表达式',
+            'rule_type' => '规则类型',
+            'datetime' => '时间',
         );
         $table_config['default_show_column'] = array_keys($table_config['total_column']);
         $table_config['ajax_url'] = 'detect/ajax';
@@ -53,7 +49,7 @@ class DetectLogController extends AdminController
      */
     public function ajax($request, $response, $args): ResponseInterface
     {
-        $user  = User::find($args['id']);
+        $user = User::find($args['id']);
         $query = DetectLog::getTableDataFromAdmin(
             $request,
             static function (&$order_field) {
@@ -69,7 +65,7 @@ class DetectLogController extends AdminController
             }
         );
 
-        $data  = [];
+        $data = [];
         foreach ($query['datas'] as $value) {
             /** @var DetectLog $value */
 
@@ -81,25 +77,25 @@ class DetectLogController extends AdminController
                 DetectLog::node_is_null($value);
                 continue;
             }
-            $tempdata               = [];
-            $tempdata['id']         = $value->id;
-            $tempdata['node_id']    = $value->node_id;
-            $tempdata['node_name']  = $value->node_name();
-            $tempdata['list_id']    = $value->list_id;
-            $tempdata['rule_name']  = $value->rule_name();
-            $tempdata['rule_text']  = $value->rule_text();
+            $tempdata = [];
+            $tempdata['id'] = $value->id;
+            $tempdata['node_id'] = $value->node_id;
+            $tempdata['node_name'] = $value->node_name();
+            $tempdata['list_id'] = $value->list_id;
+            $tempdata['rule_name'] = $value->rule_name();
+            $tempdata['rule_text'] = $value->rule_text();
             $tempdata['rule_regex'] = $value->rule_regex();
-            $tempdata['rule_type']  = $value->rule_type();
-            $tempdata['datetime']   = $value->datetime();
+            $tempdata['rule_type'] = $value->rule_type();
+            $tempdata['datetime'] = $value->datetime();
 
             $data[] = $tempdata;
         }
 
         return $response->withJson([
-            'draw'            => $request->getParam('draw'),
-            'recordsTotal'    => DetectLog::where('user_id', $user->id)->count(),
+            'draw' => $request->getParam('draw'),
+            'recordsTotal' => DetectLog::where('user_id', $user->id)->count(),
             'recordsFiltered' => $query['count'],
-            'data'            => $data,
+            'data' => $data,
         ]);
     }
 }

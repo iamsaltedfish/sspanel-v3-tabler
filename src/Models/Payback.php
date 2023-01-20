@@ -60,7 +60,7 @@ class Payback extends Model
         return (count($intersection) > 0) ? false : true; // false为没有通过检测
     }
 
-    public function rebate($user_id, $order_amount, $order_no)
+    public static function rebate($user_id, $order_amount, $order_no)
     {
         $configs = Setting::getClass('invite');
         $user = User::where('id', $user_id)->first();
@@ -106,7 +106,7 @@ class Payback extends Model
         }
     }
 
-    public function executeRebate($order_no, $user_id, $gift_user_id, $order_amount, $adjust_rebate = null, $fraud = false)
+    public static function executeRebate($order_no, $user_id, $gift_user_id, $order_amount, $adjust_rebate = null, $fraud = false)
     {
         // 查询
         $gift_user = User::where('id', $gift_user_id)->first();

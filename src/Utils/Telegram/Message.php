@@ -1,45 +1,45 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Utils\Telegram;
 
+use App\Models\Setting;
 use App\Utils\TelegramSessionManager;
 
-class Message
+final class Message
 {
     /**
      * Bot
      */
-    protected $bot;
+    private $bot;
 
     /**
      * 触发用户
      */
-    protected $User;
+    private $User;
 
     /**
      * 触发用户TG信息
      */
-    protected $triggerUser;
+    private $triggerUser;
 
     /**
      * 消息会话 ID
      */
-    protected $ChatID;
+    private $ChatID;
 
     /**
      * 触发源信息
      */
-    protected $Message;
+    private $Message;
 
     /**
      * 触发源信息 ID
      */
-    protected $MessageID;
+    private $MessageID;
 
-    /**
-     * @param \Telegram\Bot\Api             $bot
-     * @param \Telegram\Bot\Objects\Message $Message
-     */
-    public function __construct($bot, $Message)
+    public function __construct(\Telegram\Bot\Api $bot, \Telegram\Bot\Objects\Message $Message)
     {
         $this->bot = $bot;
         $this->triggerUser = [
@@ -52,15 +52,15 @@ class Message
         $this->Message = $Message;
         $this->MessageID = $Message->getMessageId();
 
-        if ($this->Message->getText() != null) {
+        if ($this->Message->getText() !== null) {
             // 消息内容
             $MessageData = trim($this->Message->getText());
             if ($this->ChatID > 0) {
                 // 私聊
-                if ($this->User != null) {
-                    if (is_numeric($MessageData) && strlen($MessageData) == 6) {
-                        $uid = TelegramSessionManager::verify_login_number($MessageData, $this->User->id);
-                        if ($uid != 0) {
+                if ($this->User !== null) {
+                    if (is_numeric($MessageData) && strlen((string) $MessageData) === 6) {
+                        $uid = TelegramSessionManager::verifyLoginNumber($MessageData, $this->User->id);
+                        if ($uid !== 0) {
                             $text = '登录验证成功，邮箱：' . $this->User->email;
                         } else {
                             $text = '登录验证失败，数字无效';
@@ -74,9 +74,9 @@ class Message
                         );
                     }
                 } else {
-                    if (strlen($MessageData) == 16) {
-                        $Uid = TelegramSessionManager::verify_bind_session($MessageData);
-                        if ($Uid == 0) {
+                    if (strlen($MessageData) === 16) {
+                        $Uid = TelegramSessionManager::verifyBindSession($MessageData);
+                        if ($Uid === 0) {
                             $text = '绑定失败了呢，经检查发现：【' . $MessageData . '】的有效期为 10 分钟，您可以在我们网站上的 **资料编辑** 页面刷新后重试.';
                         } else {
                             $BinsUser = TelegramTools::getUser($Uid, 'id');
@@ -107,13 +107,12 @@ class Message
             return;
         }
 
-        if ($this->Message->getNewChatParticipant() != null) {
-            self::NewChatParticipant();
+        if ($this->Message->getNewChatParticipant() !== null) {
+            $this->newChatParticipant();
         }
     }
 
     /**
-     *
      * 回复讯息 | 默认已添加 chat_id 和 message_id
      *
      * @param array $sendMessage
@@ -133,7 +132,7 @@ class Message
     /**
      * 入群检测
      */
-    public function NewChatParticipant(): void
+    public function newChatParticipant(): void
     {
         $NewChatMember = $this->Message->getNewChatParticipant();
         $Member = [
@@ -141,16 +140,16 @@ class Message
             'name' => $NewChatMember->getFirstName() . ' ' . $NewChatMember->getLastName(),
             'username' => $NewChatMember->getUsername(),
         ];
-        if ($NewChatMember->getUsername() == $_ENV['telegram_bot']) {
+        if ($NewChatMember->getUsername() === $_ENV['telegram_bot']) {
             // 机器人加入新群组
-            if ($_ENV['allow_to_join_new_groups'] !== true && !in_array($this->ChatID, $_ENV['group_id_allowed_to_join'])) {
+            if ($_ENV['allow_to_join_new_groups'] !== true && ! \in_array($this->ChatID, $_ENV['group_id_allowed_to_join'])) {
                 // 退群
                 $this->replyWithMessage(
                     [
                         'text' => '不约，叔叔我们不约.',
                     ]
                 );
-                TelegramTools::SendPost(
+                TelegramTools::sendPost(
                     'kickChatMember',
                     [
                         'chat_id' => $this->ChatID,
@@ -177,22 +176,22 @@ class Message
         } else {
             // 新成员加入群组
             $NewUser = TelegramTools::getUser($Member['id']);
-            $deNewChatMember = json_decode($NewChatMember, true);
+            $deNewChatMember = \json_decode($NewChatMember, true);
             if (
-                $_ENV['group_bound_user'] == true
+                Setting::obtain('telegram_group_bound_user') === true
                 &&
-                $this->ChatID == $_ENV['telegram_chatid']
+                $this->ChatID === $_ENV['telegram_chatid']
                 &&
-                $NewUser == null
+                $NewUser === null
                 &&
-                $deNewChatMember['is_bot'] == false
+                $deNewChatMember['is_bot'] === false
             ) {
                 $this->replyWithMessage(
                     [
                         'text' => '由于 ' . $Member['name'] . ' 未绑定账户，将被移除.',
                     ]
                 );
-                TelegramTools::SendPost(
+                TelegramTools::sendPost(
                     'kickChatMember',
                     [
                         'chat_id' => $this->ChatID,

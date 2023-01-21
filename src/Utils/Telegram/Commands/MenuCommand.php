@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Utils\Telegram\Commands;
 
 use App\Utils\Telegram\TelegramTools;
@@ -8,7 +11,7 @@ use Telegram\Bot\Commands\Command;
 /**
  * Class MenuCommand.
  */
-class MenuCommand extends Command
+final class MenuCommand extends Command
 {
     /**
      * @var string Command Name
@@ -28,9 +31,6 @@ class MenuCommand extends Command
         $Update = $this->getUpdate();
         $Message = $Update->getMessage();
 
-        // 消息 ID
-        $MessageID = $Message->getMessageId();
-
         // 消息会话 ID
         $ChatID = $Message->getChat()->getId();
 
@@ -48,7 +48,7 @@ class MenuCommand extends Command
             ];
 
             $user = TelegramTools::getUser($SendUser['id']);
-            if ($user == null) {
+            if ($user === null) {
                 $reply = \App\Utils\Telegram\Callbacks\Callback::getGuestIndexKeyboard();
             } else {
                 $reply = \App\Utils\Telegram\Callbacks\Callback::getUserIndexKeyboard($user);
@@ -61,7 +61,7 @@ class MenuCommand extends Command
                     'parse_mode' => 'Markdown',
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $reply['keyboard'],
                         ]

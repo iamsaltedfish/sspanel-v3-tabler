@@ -1,7 +1,10 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Utils\Telegram\Callbacks;
 
-use App\Controllers\LinkController;
+use App\Controllers\SubController;
 use App\Models\InviteCode;
 use App\Models\Ip;
 use App\Models\LoginIp;
@@ -14,54 +17,50 @@ use App\Utils\QQWry;
 use App\Utils\Telegram\Reply;
 use App\Utils\Telegram\TelegramTools;
 use App\Utils\Tools;
+use Telegram\Bot\FileUpload\InputFile;
 
-class Callback
+final class Callback
 {
     /**
      * Bot
      */
-    protected $bot;
+    private $bot;
 
     /**
      * 触发用户
      */
-    protected $User;
+    private $User;
 
     /**
      * 触发用户TG信息
      */
-    protected $triggerUser;
+    private $triggerUser;
 
     /**
      * 回调
      */
-    protected $Callback;
+    private $Callback;
 
     /**
      * 回调数据内容
      */
-    protected $CallbackData;
+    private $CallbackData;
 
     /**
      * 消息会话 ID
      */
-    protected $ChatID;
+    private $ChatID;
 
     /**
      * 触发源信息 ID
      */
-    protected $MessageID;
+    private $MessageID;
 
     /**
      * 源消息是否可编辑
      */
-    protected $AllowEditMessage;
-
-    /**
-     * @param \Telegram\Bot\Api                   $bot
-     * @param \Telegram\Bot\Objects\CallbackQuery $Callback
-     */
-    public function __construct($bot, $Callback)
+    private $AllowEditMessage;
+    public function __construct(\Telegram\Bot\Api $bot, \Telegram\Bot\Objects\CallbackQuery $Callback)
     {
         $this->bot = $bot;
         $this->triggerUser = [
@@ -74,27 +73,25 @@ class Callback
         $this->Callback = $Callback;
         $this->MessageID = $Callback->getMessage()->getMessageId();
         $this->CallbackData = $Callback->getData();
-        $this->AllowEditMessage = time() < $Callback->getMessage()->getDate() + 172800;
+        $this->AllowEditMessage = \time() < $Callback->getMessage()->getDate() + 172800;
 
         if ($this->ChatID < 0 && $_ENV['telegram_group_quiet'] === true) {
             // 群组中不回应
             return;
         }
-
         switch (true) {
-            case (strpos($this->CallbackData, 'user.') === 0):
+            case strpos($this->CallbackData, 'user.') === 0:
                 // 用户相关
                 $this->userCallback();
                 break;
             default:
-                // 游客回调数据处理
+                //游客回调数据处理
                 $this->guestCallback();
                 break;
         }
     }
 
     /**
-     *
      * 游客的回复
      *
      * @return array
@@ -121,12 +118,9 @@ class Callback
     }
 
     /**
-     *
      * 响应回调查询 | 默认已添加 chat_id 和 message_id
      *
      * @param array $sendMessage
-     *
-     * @return void
      */
     public function replyWithMessage(array $sendMessage): void
     {
@@ -138,14 +132,13 @@ class Callback
             $sendMessage
         );
         if ($this->AllowEditMessage) {
-            TelegramTools::SendPost('editMessageText', $sendMessage);
+            TelegramTools::sendPost('editMessageText', $sendMessage);
         } else {
             $this->bot->sendMessage($sendMessage);
         }
     }
 
     /**
-     *
      * 响应回调查询 | 默认已添加 callback_query_id
      *
      * <code>
@@ -156,8 +149,6 @@ class Callback
      * </code>
      *
      * @param array $sendMessage
-     *
-     * @return void
      */
     public function answerCallbackQuery(array $sendMessage): void
     {
@@ -168,14 +159,11 @@ class Callback
             ],
             $sendMessage
         );
-        TelegramTools::SendPost('answerCallbackQuery', $sendMessage);
+        TelegramTools::sendPost('answerCallbackQuery', $sendMessage);
     }
 
     /**
-     *
      * 回调数据处理
-     *
-     * @return void
      */
     public function guestCallback(): void
     {
@@ -184,10 +172,10 @@ class Callback
             case 'general.pricing':
                 // 产品介绍
                 $sendMessage = [
-                    'text' => '请访问用户中心获取产品介绍',
+                    'text' => $_ENV['telegram_general_pricing'],
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => self::getGuestIndexKeyboard()['keyboard'],
                         ]
@@ -197,10 +185,10 @@ class Callback
             case 'general.terms':
                 // 服务条款
                 $sendMessage = [
-                    'text' => '请访问用户中心阅读服务条款',
+                    'text' => $_ENV['telegram_general_terms'],
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => self::getGuestIndexKeyboard()['keyboard'],
                         ]
@@ -214,7 +202,7 @@ class Callback
                     'text' => $temp['text'],
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $temp['keyboard'],
                         ]
@@ -227,7 +215,7 @@ class Callback
 
     public static function getUserIndexKeyboard($user)
     {
-        $checkin = (!$user->isAbleToCheckin() ? '已签到' : '立即签到');
+        $checkin = (!$user->isAbleToCheckin() ? '已签到' : '签到');
         $Keyboard = [
             [
                 [
@@ -260,12 +248,12 @@ class Callback
         $text .= PHP_EOL . PHP_EOL;
         $text .= Reply::getUserInfo($user);
         $text .= PHP_EOL;
-        $text .= '流量重置时间：' . $user->valid_use_loop();
-        if ($_ENV['show_group_link']) {
+        $text .= '流量重置时间：' . $user->validUseLoop();
+        if (Setting::obtain('telegram_show_group_link')) {
             $Keyboard[] = [
                 [
                     'text' => '加入用户群',
-                    'url' => $_ENV['group_link'],
+                    'url' => Setting::obtain('telegram_group_link'),
                 ],
             ];
         }
@@ -276,22 +264,19 @@ class Callback
     }
 
     /**
-     *
      * 用户相关回调数据处理
-     *
      */
     public function userCallback()
     {
-        if ($this->User == null) {
+        if ($this->User === null) {
             if ($this->ChatID < 0) {
                 // 群组内提示
                 return $this->answerCallbackQuery([
                     'text' => '您好，您尚未绑定账户，无法进行操作.',
                     'show_alert' => true,
                 ]);
-            } else {
-                return $this->guestCallback();
             }
+            return $this->guestCallback();
         }
         $CallbackDataExplode = explode('|', $this->CallbackData);
         $Operate = explode('.', $CallbackDataExplode[0]);
@@ -299,30 +284,30 @@ class Callback
         switch ($op_1) {
             case 'edit':
                 // 资料编辑
-                $this->UserEdit();
+                $this->userEdit();
                 break;
             case 'subscribe':
                 // 订阅中心
-                $this->UserSubscribe();
+                $this->userSubscribe();
                 break;
             case 'invite':
                 // 分享计划
-                $this->UserInvite();
+                $this->userInvite();
                 break;
             case 'checkin':
                 // 签到
-                if ($Operate[2] != $this->triggerUser['id']) {
+                if ((int) $Operate[2] !== $this->triggerUser['id']) {
                     $this->answerCallbackQuery([
                         'text' => '您好，您无法操作他人的账户.',
                         'show_alert' => true,
                     ]);
                     return;
                 }
-                $this->UserCheckin();
+                $this->userCheckin();
                 break;
             case 'center':
                 // 用户中心
-                $this->UserCenter();
+                $this->userCenter();
                 break;
             default:
                 // 用户首页
@@ -332,7 +317,7 @@ class Callback
                     'parse_mode' => 'HTML',
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $temp['keyboard'],
                         ]
@@ -382,11 +367,9 @@ class Callback
     }
 
     /**
-     *
      * 用户中心
-     *
      */
-    public function UserCenter()
+    public function userCenter(): void
     {
         $back = [
             [
@@ -402,8 +385,8 @@ class Callback
         ];
         $CallbackDataExplode = explode('|', $this->CallbackData);
         $Operate = explode('.', $CallbackDataExplode[0]);
-        $op_2 = $Operate[2];
-        switch ($op_2) {
+        $OpEnd = end($Operate);
+        switch ($OpEnd) {
             case 'login_log':
                 // 登录记录
                 $iplocation = new QQWry();
@@ -412,7 +395,7 @@ class Callback
                 foreach ($totallogin as $single) {
                     $location = $iplocation->getlocation($single->ip);
                     $loginiplocation = iconv('gbk', 'utf-8//IGNORE', $location['country'] . $location['area']);
-                    if (!in_array($loginiplocation, $userloginip)) {
+                    if (!\in_array($loginiplocation, $userloginip)) {
                         $userloginip[] = $loginiplocation;
                     }
                 }
@@ -424,7 +407,7 @@ class Callback
                     'disable_web_page_preview' => false,
                     'parse_mode' => 'HTML',
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $back,
                         ]
@@ -434,7 +417,7 @@ class Callback
             case 'usage_log':
                 // 使用记录
                 $iplocation = new QQWry();
-                $total = Ip::where('datetime', '>=', time() - 300)->where('userid', '=', $this->User->id)->get();
+                $total = Ip::where('datetime', '>=', \time() - 300)->where('userid', '=', $this->User->id)->get();
                 $userip = [];
                 foreach ($total as $single) {
                     $single->ip = Tools::getRealIp($single->ip);
@@ -453,7 +436,7 @@ class Callback
                     'disable_web_page_preview' => false,
                     'parse_mode' => 'HTML',
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $back,
                         ]
@@ -465,7 +448,7 @@ class Callback
                 $paybacks = Payback::where('ref_by', $this->User->id)->orderBy('datetime', 'desc')->take(10)->get();
                 $temp = [];
                 foreach ($paybacks as $payback) {
-                    $temp[] = '<code>#' . $payback->id . '：' . ($payback->user() != null ? $payback->user()->user_name : '已注销') . '：' . $payback->ref_get . ' 元</code>';
+                    $temp[] = '<code>#' . $payback->id . '：' . ($payback->user() !== null ? $payback->user()->user_name : '已注销') . '：' . $payback->ref_get . ' 元</code>';
                 }
                 $text = '<strong>以下是您最近 10 条返利记录：</strong>';
                 $text .= PHP_EOL . PHP_EOL;
@@ -475,7 +458,7 @@ class Callback
                     'disable_web_page_preview' => false,
                     'parse_mode' => 'HTML',
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $back,
                         ]
@@ -499,7 +482,7 @@ class Callback
                     'disable_web_page_preview' => false,
                     'parse_mode' => 'HTML',
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $back,
                         ]
@@ -512,7 +495,7 @@ class Callback
                     'text' => $temp['text'],
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $temp['keyboard'],
                         ]
@@ -582,11 +565,9 @@ class Callback
     }
 
     /**
-     *
      * 用户编辑
-     *
      */
-    public function UserEdit()
+    public function userEdit()
     {
         if ($this->ChatID < 0) {
             return $this->answerCallbackQuery([
@@ -608,11 +589,11 @@ class Callback
         ];
         $CallbackDataExplode = explode('|', $this->CallbackData);
         $Operate = explode('.', $CallbackDataExplode[0]);
-        $op_2 = $Operate[2];
-        switch ($op_2) {
+        $OpEnd = end($Operate);
+        switch ($OpEnd) {
             case 'update_link':
                 // 重置订阅链接
-                $this->User->clean_link();
+                $this->User->cleanLink();
                 $this->answerCallbackQuery([
                     'text' => '订阅链接重置成功，请在下方重新更新订阅.',
                     'show_alert' => true,
@@ -622,7 +603,7 @@ class Callback
                     'text' => $temp['text'],
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $temp['keyboard'],
                         ]
@@ -647,7 +628,7 @@ class Callback
                     'text' => $temp['text'],
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $temp['keyboard'],
                         ]
@@ -658,7 +639,7 @@ class Callback
                 // 加密方式更改
                 $keyboard = $back;
                 if (isset($CallbackDataExplode[1])) {
-                    if (in_array($CallbackDataExplode[1], Config::getSupportParam('method'))) {
+                    if (\in_array($CallbackDataExplode[1], Config::getSupportParam('method'))) {
                         $temp = $this->User->setMethod($CallbackDataExplode[1]);
                         if ($temp['ok'] === true) {
                             $text = '您当前的加密方式为：' . $this->User->method . PHP_EOL . PHP_EOL . $temp['msg'];
@@ -688,89 +669,7 @@ class Callback
                     'text' => $text,
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
-                        [
-                            'inline_keyboard' => $keyboard,
-                        ]
-                    ),
-                ];
-                break;
-            case 'protocol':
-                // 协议更改
-                $keyboard = $back;
-                if (isset($CallbackDataExplode[1])) {
-                    if (in_array($CallbackDataExplode[1], Config::getSupportParam('protocol'))) {
-                        $temp = $this->User->setProtocol($CallbackDataExplode[1]);
-                        if ($temp['ok'] === true) {
-                            $text = '您当前的协议为：' . $this->User->protocol . PHP_EOL . PHP_EOL . $temp['msg'];
-                        } else {
-                            $text = '发生错误，请重新选择.' . PHP_EOL . PHP_EOL . $temp['msg'];
-                        }
-                    } else {
-                        $text = '发生错误，请重新选择.';
-                    }
-                } else {
-                    $Protocols = [];
-                    foreach (Config::getSupportParam('protocol') as $value) {
-                        $Protocols[] = [
-                            'text' => $value,
-                            'callback_data' => 'user.edit.protocol|' . $value,
-                        ];
-                    }
-                    $Protocols = array_chunk($Protocols, 1);
-                    $keyboard = [];
-                    foreach ($Protocols as $Protocol) {
-                        $keyboard[] = $Protocol;
-                    }
-                    $keyboard[] = $back[0];
-                    $text = '您当前的协议为：' . $this->User->protocol;
-                }
-                $sendMessage = [
-                    'text' => $text,
-                    'disable_web_page_preview' => false,
-                    'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
-                        [
-                            'inline_keyboard' => $keyboard,
-                        ]
-                    ),
-                ];
-                break;
-            case 'obfs':
-                // 混淆更改
-                $keyboard = $back;
-                if (isset($CallbackDataExplode[1])) {
-                    if (in_array($CallbackDataExplode[1], Config::getSupportParam('obfs'))) {
-                        $temp = $this->User->setObfs($CallbackDataExplode[1]);
-                        if ($temp['ok'] === true) {
-                            $text = '您当前的协议为：' . $this->User->obfs . PHP_EOL . PHP_EOL . $temp['msg'];
-                        } else {
-                            $text = '发生错误，请重新选择.' . PHP_EOL . PHP_EOL . $temp['msg'];
-                        }
-                    } else {
-                        $text = '发生错误，请重新选择.';
-                    }
-                } else {
-                    $Obfss = [];
-                    foreach (Config::getSupportParam('obfs') as $value) {
-                        $Obfss[] = [
-                            'text' => $value,
-                            'callback_data' => 'user.edit.obfs|' . $value,
-                        ];
-                    }
-                    $Obfss = array_chunk($Obfss, 1);
-                    $keyboard = [];
-                    foreach ($Obfss as $Obfs) {
-                        $keyboard[] = $Obfs;
-                    }
-                    $keyboard[] = $back[0];
-                    $text = '您当前的协议为：' . $this->User->obfs;
-                }
-                $sendMessage = [
-                    'text' => $text,
-                    'disable_web_page_preview' => false,
-                    'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $keyboard,
                         ]
@@ -788,20 +687,31 @@ class Callback
                     ],
                     $back[0],
                 ];
-                $op_3 = $Operate[3];
-                switch ($op_3) {
+                $OpEnd = end($Operate);
+                switch ($OpEnd) {
                     case 'update':
-                        $text = '暂不支持修改此项目';
+                        $this->User->sendDailyMail = ($this->User->sendDailyMail === 0 ? 1 : 0);
+                        if ($this->User->save()) {
+                            $text = '设置更改成功，每日邮件接收当前设置为：';
+                            $text .= '<strong>';
+                            $text .= ($this->User->sendDailyMail === 0 ? '不发送' : '发送');
+                            $text .= '</strong>';
+                        } else {
+                            $text = '发生错误.';
+                        }
                         break;
                     default:
-                        $text = '暂不支持查看此项目';
+                        $text = '每日邮件接收当前设置为：';
+                        $text .= '<strong>';
+                        $text .= ($this->User->sendDailyMail === 0 ? '不发送' : '发送');
+                        $text .= '</strong>';
                         break;
                 }
                 $sendMessage = [
                     'text' => $text,
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $keyboard,
                         ]
@@ -812,7 +722,7 @@ class Callback
                 // Telegram 账户解绑
                 $this->AllowEditMessage = false;
                 $text = '发送 **/unbind 账户邮箱** 进行解绑.';
-                if ($_ENV['unbind_kick_member']) {
+                if (Setting::obtain('telegram_unbind_kick_member') === true) {
                     $text .= PHP_EOL . PHP_EOL . '根据管理员的设定，您解绑账户将会被自动移出用户群.';
                 }
                 $sendMessage = [
@@ -825,30 +735,17 @@ class Callback
                 break;
             case 'unban':
                 // 群组解封
-                if (isset($Operate[3]) && $Operate[3] == 'update') {
-                    TelegramTools::SendPost(
-                        'unbanChatMember',
-                        [
-                            'chat_id' => $_ENV['telegram_chatid'],
-                            'user_id' => $this->triggerUser['id'],
-                        ]
-                    );
-                    $this->answerCallbackQuery([
-                        'text' => '已提交解封，如您仍无法加入群组，请联系管理员.',
-                        'show_alert' => true,
-                    ]);
-                }
                 $sendMessage = [
                     'text' => '如果您已经身处用户群，请勿随意点击解封，否则会导致您被移除出群组.',
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => [
                                 [
                                     [
                                         'text' => '点击提交解封',
-                                        'callback_data' => 'user.edit.unban.update',
+                                        'callback_data' => 'user.edit.unban_update',
                                     ],
                                 ],
                                 $back[0],
@@ -857,19 +754,31 @@ class Callback
                     ),
                 ];
                 break;
+            case 'unban_update':
+                // 提交群组解封
+                TelegramTools::sendPost(
+                    'unbanChatMember',
+                    [
+                        'chat_id' => $_ENV['telegram_chatid'],
+                        'user_id' => $this->triggerUser['id'],
+                    ]
+                );
+                $this->answerCallbackQuery([
+                    'text' => '已提交解封，如您仍无法加入群组，请联系管理员.',
+                    'show_alert' => true,
+                ]);
+                break;
             default:
                 $temp = $this->getUserEditKeyboard();
                 $text = '您可在此编辑您的资料或连接信息：' . PHP_EOL . PHP_EOL;
                 $text .= '端口：' . $this->User->port . PHP_EOL;
                 $text .= '密码：' . $this->User->passwd . PHP_EOL;
-                $text .= '加密：' . $this->User->method . PHP_EOL;
-                $text .= '协议：' . $this->User->protocol . PHP_EOL;
-                $text .= '混淆：' . $this->User->obfs;
+                $text .= '加密：' . $this->User->method;
                 $sendMessage = [
                     'text' => $text,
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $temp['keyboard'],
                         ]
@@ -893,80 +802,8 @@ class Callback
         $keyboard = [
             [
                 [
-                    'text' => 'SSR 订阅',
-                    'callback_data' => 'user.subscribe|?sub=1',
-                ],
-            ],
-            [
-                [
-                    'text' => 'SS-Android 订阅',
-                    'callback_data' => 'user.subscribe|?list=ssa',
-                ],
-                [
-                    'text' => 'V2RayN 订阅',
-                    'callback_data' => 'user.subscribe|?sub=3',
-                ],
-            ],
-            [
-                [
-                    'text' => 'Shadowrocket',
-                    'callback_data' => 'user.subscribe|?list=shadowrocket',
-                ],
-                [
-                    'text' => 'Kitsunebi',
-                    'callback_data' => 'user.subscribe|?list=kitsunebi',
-                ],
-            ],
-            [
-                [
                     'text' => 'Clash',
-                    'callback_data' => 'user.subscribe|?clash=1',
-                ],
-            ],
-            [
-                [
-                    'text' => 'Clash Provider',
-                    'callback_data' => 'user.subscribe|?list=clash',
-                ],
-            ],
-            [
-                [
-                    'text' => 'Surge List',
-                    'callback_data' => 'user.subscribe|?list=surge',
-                ],
-                [
-                    'text' => 'Surge 4',
-                    'callback_data' => 'user.subscribe|?surge=4',
-                ],
-            ],
-            [
-                [
-                    'text' => 'Surge 2',
-                    'callback_data' => 'user.subscribe|?surge=2',
-                ],
-                [
-                    'text' => 'Surge 3',
-                    'callback_data' => 'user.subscribe|?surge=3',
-                ],
-            ],
-            [
-                [
-                    'text' => 'Quantumult',
-                    'callback_data' => 'user.subscribe|?list=quantumult',
-                ],
-                [
-                    'text' => 'QuantumultX',
-                    'callback_data' => 'user.subscribe|?list=quantumultx',
-                ],
-            ],
-            [
-                [
-                    'text' => 'Quantumult Conf',
-                    'callback_data' => 'user.subscribe|?quantumult=3',
-                ],
-                [
-                    'text' => 'Surfboard',
-                    'callback_data' => 'user.subscribe|?surfboard=1',
+                    'callback_data' => 'user.subscribe|clash',
                 ],
             ],
             [
@@ -983,11 +820,9 @@ class Callback
     }
 
     /**
-     *
      * 用户订阅
-     *
      */
-    public function UserSubscribe()
+    public function userSubscribe(): void
     {
         $CallbackDataExplode = explode('|', $this->CallbackData);
         // 订阅中心
@@ -1005,79 +840,25 @@ class Callback
                     ],
                 ],
             ];
-            $token = LinkController::GenerateSSRSubCode($this->User->id);
-            $UserApiUrl = LinkController::getSubinfo($this->User, 0)['link'];
+            $token = Tools::generateSSRSubCode($this->User->id);
+            $UserApiUrl = SubController::getUniversalSub($this->User);
             switch ($CallbackDataExplode[1]) {
-                case '?clash=1':
-                    $temp['text'] = '您的 Clash 配置文件.' . PHP_EOL . '同时，您也可使用该订阅链接：' . $UserApiUrl . $CallbackDataExplode[1];
-                    $filename = 'Clash_' . $token . '_' . time() . '.yaml';
+                case 'clash':
+                    $temp['text'] = '您的 Clash 配置文件.' . PHP_EOL . '同时，您也可使用该订阅链接：' . $UserApiUrl . '/clash';
+                    $filename = 'Clash_' . $token . '_' . \time() . '.yaml';
                     $filepath = BASE_PATH . '/storage/SendTelegram/' . $filename;
                     $fh = fopen($filepath, 'w+');
-                    $string = LinkController::getClash($this->User, 1, [], [], false);
+                    $string = SubController::getClash($this->User);
                     fwrite($fh, $string);
                     fclose($fh);
                     $this->bot->sendDocument(
                         [
                             'chat_id' => $this->ChatID,
-                            'document' => $filepath,
+                            'document' => InputFile::create($filepath),
                             'caption' => $temp['text'],
                         ]
                     );
                     unlink($filepath);
-                    break;
-                case '?quantumult=3':
-                    $temp['text'] = '点击打开配置文件，选择分享 拷贝到 Quantumult，选择更新配置.';
-                    $filename = 'Quantumult_' . $token . '_' . time() . '.conf';
-                    $filepath = BASE_PATH . '/storage/SendTelegram/' . $filename;
-                    $fh = fopen($filepath, 'w+');
-                    $string = LinkController::GetQuantumult($this->User, 3, [], [], false);
-                    fwrite($fh, $string);
-                    fclose($fh);
-                    $this->bot->sendDocument(
-                        [
-                            'chat_id' => $this->ChatID,
-                            'document' => $filepath,
-                            'caption' => $temp['text'],
-                        ]
-                    );
-                    unlink($filepath);
-                    break;
-                case '?surge=2':
-                    $temp['text'] = '点击打开配置文件，选择分享 拷贝到 Surge，点击启动.';
-                    $filename = 'Surge_' . $token . '_' . time() . '.conf';
-                    $filepath = BASE_PATH . '/storage/SendTelegram/' . $filename;
-                    $fh = fopen($filepath, 'w+');
-                    $string = LinkController::getSurge($this->User, 2, [], [], false);
-                    fwrite($fh, $string);
-                    fclose($fh);
-                    $this->bot->sendDocument(
-                        [
-                            'chat_id' => $this->ChatID,
-                            'document' => $filepath,
-                            'caption' => $temp['text'],
-                        ]
-                    );
-                    unlink($filepath);
-                    break;
-                case '?surge=3':
-                    $temp['text'] = '点击打开配置文件，选择分享 拷贝到 Surge，点击启动.';
-                    $filename = 'Surge_' . $token . '_' . time() . '.conf';
-                    $filepath = BASE_PATH . '/storage/SendTelegram/' . $filename;
-                    $fh = fopen($filepath, 'w+');
-                    $string = LinkController::getSurge($this->User, 3, [], [], false);
-                    fwrite($fh, $string);
-                    fclose($fh);
-                    $this->bot->sendDocument(
-                        [
-                            'chat_id' => $this->ChatID,
-                            'document' => $filepath,
-                            'caption' => $temp['text'],
-                        ]
-                    );
-                    unlink($filepath);
-                    break;
-                default:
-                    $temp['text'] = '该订阅链接为：' . PHP_EOL . PHP_EOL . $UserApiUrl . $CallbackDataExplode[1];
                     break;
             }
         } else {
@@ -1087,7 +868,7 @@ class Callback
             'text' => $temp['text'],
             'disable_web_page_preview' => false,
             'reply_to_message_id' => null,
-            'reply_markup' => json_encode(
+            'reply_markup' => \json_encode(
                 [
                     'inline_keyboard' => $temp['keyboard'],
                 ]
@@ -1105,16 +886,20 @@ class Callback
 
     public function getUserInviteKeyboard()
     {
-        if (!$paybacks_sum = Payback::where('ref_by', $this->User->id)->sum('ref_get')) {
+        $paybacks_sum = Payback::where('ref_by', $this->User->id)->sum('ref_get');
+
+        if (!is_null($paybacks_sum)) {
             $paybacks_sum = 0;
         }
         $invitation = Setting::getClass('invite');
         $text = [
-            '<strong>分享计划</strong>',
+            '<strong>分享计划，您每邀请 1 位用户注册：</strong>',
             '',
-            '- 具体邀请政策请查看公告或发工单询问',
+            '- 您会获得 <strong>' . $invitation['invitation_to_register_traffic_reward'] . 'G</strong> 流量奖励.',
+            '- 对方将获得 <strong>' . $invitation['invitation_to_register_balance_reward'] . ' 元</strong> 奖励作为初始资金.',
+            '- 对方充值时您还会获得对方充值金额的 <strong>' . $invitation['rebate_ratio'] . '%</strong> 的返利.',
             '',
-            '您已获得返利：' . $paybacks_sum . ' 元',
+            '已获得返利：' . $paybacks_sum . ' 元.',
         ];
         $keyboard = [
             [
@@ -1137,20 +922,18 @@ class Callback
     }
 
     /**
-     *
      * 分享计划
-     *
      */
-    public function UserInvite()
+    public function userInvite(): void
     {
         $CallbackDataExplode = explode('|', $this->CallbackData);
         $Operate = explode('.', $CallbackDataExplode[0]);
-        $op_2 = $Operate[2];
-        switch ($op_2) {
+        $OpEnd = end($Operate);
+        switch ($OpEnd) {
             case 'get':
                 $this->AllowEditMessage = false;
                 $code = InviteCode::where('user_id', $this->User->id)->first();
-                if ($code == null) {
+                if ($code === null) {
                     $this->User->addInviteCode();
                     $code = InviteCode::where('user_id', $this->User->id)->first();
                 }
@@ -1169,7 +952,7 @@ class Callback
                     'text' => $temp['text'],
                     'disable_web_page_preview' => false,
                     'reply_to_message_id' => null,
-                    'reply_markup' => json_encode(
+                    'reply_markup' => \json_encode(
                         [
                             'inline_keyboard' => $temp['keyboard'],
                         ]
@@ -1188,41 +971,13 @@ class Callback
     }
 
     /**
-     *
      * 每日签到
-     *
      */
-    public function UserCheckin()
+    public function userCheckin(): void
     {
-        $User = $this->User;
-        if ($_ENV['enable_checkin'] == false) {
-            $msg = '暂时不能签到';
-        } else {
-            if ($_ENV['enable_expired_checkin'] == false && strtotime($User->expire_in) < time()) {
-                $msg = '账户过期时不能签到';
-            } else {
-                if (!$User->isAbleToCheckin()) {
-                    $msg = '今天已经签到过了';
-                } else {
-                    $rand_traffic = random_int((int) $_ENV['checkinMin'], (int) $_ENV['checkinMax']);
-                    $User->transfer_enable += Tools::toMB($rand_traffic);
-                    $User->last_check_in_time = time();
-                    if ($_ENV['checkin_add_time']) {
-                        $add_timestamp = $_ENV['checkin_add_time_hour'] * 3600;
-                        if (time() > strtotime($User->expire_in)) {
-                            $User->expire_in = date('Y-m-d H:i:s', time() + $add_timestamp);
-                        } else {
-                            $User->expire_in = date('Y-m-d H:i:s', strtotime($User->expire_in) + $add_timestamp);
-                        }
-                    }
-                    $User->save();
-                    $msg = '签到获得了 ' . $rand_traffic . ' MB 流量';
-                }
-            }
-        }
-
+        $checkin = $this->User->checkin();
         $this->answerCallbackQuery([
-            'text' => $msg,
+            'text' => $checkin['msg'],
             'show_alert' => true,
         ]);
         // 回送信息
@@ -1233,7 +988,7 @@ class Callback
             $temp['text'] .= PHP_EOL . PHP_EOL;
             $temp['text'] .= Reply::getUserTrafficInfo($this->User);
             $temp['text'] .= PHP_EOL;
-            $temp['text'] .= '流量重置时间：' . $this->User->valid_use_loop();
+            $temp['text'] .= '流量重置时间：' . $this->User->validUseLoop();
             $temp['keyboard'] = [
                 [
                     [
@@ -1244,10 +999,10 @@ class Callback
             ];
         }
         $this->replyWithMessage([
-            'text' => $msg,
+            'text' => $temp['text'] . PHP_EOL . PHP_EOL . $checkin['msg'],
             'reply_to_message_id' => $this->MessageID,
             'parse_mode' => 'Markdown',
-            'reply_markup' => json_encode(
+            'reply_markup' => \json_encode(
                 [
                     'inline_keyboard' => $temp['keyboard'],
                 ]

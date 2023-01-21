@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Utils\Telegram\Commands;
 
 use App\Models\User;
@@ -10,7 +13,7 @@ use Telegram\Bot\Commands\Command;
 /**
  * Class SetuserCommand.
  */
-class SetuserCommand extends Command
+final class SetuserCommand extends Command
 {
     /**
      * @var string Command Name
@@ -43,17 +46,19 @@ class SetuserCommand extends Command
             'username' => $Message->getFrom()->getUsername(),
         ];
 
-        if (!in_array($SendUser['id'], $_ENV['telegram_admins'])) {
+        if (! \in_array($SendUser['id'], $_ENV['telegram_admins'])) {
             $AdminUser = User::where('is_admin', 1)->where('telegram_id', $SendUser['id'])->first();
-            if ($AdminUser == null) {
+            if ($AdminUser === null) {
                 // 非管理员回复消息
-                $response = $this->replyWithMessage(
-                    [
-                        'text' => '您无操作权限',
-                        'parse_mode' => 'HTML',
-                        'reply_to_message_id' => $MessageID,
-                    ]
-                );
+                if ($_ENV['enable_not_admin_reply'] === true && $_ENV['not_admin_reply_msg'] !== '') {
+                    $this->replyWithMessage(
+                        [
+                            'text' => $_ENV['not_admin_reply_msg'],
+                            'parse_mode' => 'HTML',
+                            'reply_to_message_id' => $MessageID,
+                        ]
+                    );
+                }
                 return;
             }
         }
@@ -61,16 +66,16 @@ class SetuserCommand extends Command
         // 发送 '输入中' 会话状态
         $this->replyWithChatAction(['action' => Actions::TYPING]);
 
-        return $this->Reply($SendUser, $Message, $MessageID, $ChatID);
+        return $this->reply($SendUser, $Message, $MessageID, $ChatID);
     }
 
-    public function Reply($SendUser, $Message, $MessageID, $ChatID)
+    public function reply($SendUser, $Message, $MessageID, $ChatID): void
     {
         $User = null;
         $FindUser = null;
-        $arguments = implode(' ', array_splice(explode(' ', trim($Message->getText())), 1));
-
-        if ($Message->getReplyToMessage() != null) {
+        $argumentsExplode = explode(' ', trim($Message->getText()));
+        $arguments = implode(' ', $argumentsExplode);
+        if ($Message->getReplyToMessage() !== null) {
             // 回复源消息用户
             $FindUser = [
                 'id' => $Message->getReplyToMessage()->getFrom()->getId(),
@@ -78,10 +83,10 @@ class SetuserCommand extends Command
                 'username' => $Message->getReplyToMessage()->getFrom()->getUsername(),
             ];
             $User = TelegramTools::getUser($FindUser['id']);
-            if ($User == null) {
-                $response = $this->replyWithMessage(
+            if ($User === null) {
+                $this->replyWithMessage(
                     [
-                        'text' => '没有找到这个用户',
+                        'text' => $_ENV['no_user_found'],
                         'parse_mode' => 'HTML',
                         'reply_to_message_id' => $MessageID,
                     ]
@@ -89,9 +94,9 @@ class SetuserCommand extends Command
                 return;
             }
 
-            if ($arguments == '') {
+            if ($arguments === '/setuser') {
                 // 无参数时回复用户信息
-                $response = $this->replyWithMessage(
+                $this->replyWithMessage(
                     [
                         'text' => Reply::getUserInfoFromAdmin($User, $ChatID),
                         'reply_to_message_id' => $MessageID,
@@ -101,7 +106,7 @@ class SetuserCommand extends Command
             }
         }
 
-        if ($arguments == '') {
+        if ($arguments === '/setuser') {
             $strArray = [
                 '/setuser [用户识别] [操作字段] [操作参数]',
                 '',
@@ -116,9 +121,9 @@ class SetuserCommand extends Command
                 '操作参数：',
                 '- 请查看对应选项支持的写法.',
             ];
-            $response = $this->replyWithMessage(
+            $this->replyWithMessage(
                 [
-                    'text' => TelegramTools::StrArrayToCode($strArray),
+                    'text' => TelegramTools::strArrayToCode($strArray),
                     'parse_mode' => 'HTML',
                     'reply_to_message_id' => $MessageID,
                 ]
@@ -131,10 +136,10 @@ class SetuserCommand extends Command
 
         // ############## 命令解析 ##############
         $UserCode = '';
-        if ($User == null) {
-            $Options = TelegramTools::StrExplode($arguments, ' ', 3);
+        if ($User === null) {
+            $Options = TelegramTools::strExplode($arguments, ' ', 3);
             if (count($Options) < 3) {
-                $response = $this->replyWithMessage(
+                $this->replyWithMessage(
                     [
                         'text' => '没有提供选项或操作值.',
                         'parse_mode' => 'HTML',
@@ -150,9 +155,9 @@ class SetuserCommand extends Command
             // 操作值
             $value = $Options[2];
         } else {
-            $Options = TelegramTools::StrExplode($arguments, ' ', 2);
+            $Options = TelegramTools::strExplode($arguments, ' ', 2);
             if (count($Options) < 2) {
-                $response = $this->replyWithMessage(
+                $this->replyWithMessage(
                     [
                         'text' => '没有提供选项或操作值.',
                         'parse_mode' => 'HTML',
@@ -169,7 +174,7 @@ class SetuserCommand extends Command
         // ############## 命令解析 ##############
 
         // ############## 用户识别码处理 ##############
-        if ($User == null) {
+        if ($User === null) {
             // 默认搜寻字段
             $useMethod = 'email';
             if (strpos($UserCode, ':') !== false) {
@@ -179,16 +184,15 @@ class SetuserCommand extends Command
                 $UserCode = $UserCodeExplode[1];
                 $SearchMethods = TelegramTools::getUserSearchMethods();
                 $useTempMethod = TelegramTools::getOptionMethod($SearchMethods, $Search);
-                if ($useTempMethod != '') {
+                if ($useTempMethod !== '') {
                     $useMethod = $useTempMethod;
                 }
             }
             $User = TelegramTools::getUser($UserCode, $useMethod);
-            if ($User == null) {
-
-                $response = $this->replyWithMessage(
+            if ($User === null) {
+                $this->replyWithMessage(
                     [
-                        'text' => '没有找到这个用户',
+                        'text' => $_ENV['no_user_found'],
                         'parse_mode' => 'HTML',
                         'reply_to_message_id' => $MessageID,
                     ]
@@ -201,10 +205,10 @@ class SetuserCommand extends Command
         // ############## 字段选项处理 ##############
         $OptionMethods = TelegramTools::getUserActionOption();
         $useOptionMethod = TelegramTools::getOptionMethod($OptionMethods, $Option);
-        if ($useOptionMethod == '') {
-            $response = $this->replyWithMessage(
+        if ($useOptionMethod === '') {
+            $this->replyWithMessage(
                 [
-                    'text' => '没有找到这个字段',
+                    'text' => $_ENV['data_method_not_found'],
                     'parse_mode' => 'HTML',
                     'reply_to_message_id' => $MessageID,
                 ]
@@ -213,8 +217,8 @@ class SetuserCommand extends Command
         }
         // ############## 字段选项处理 ##############
 
-        $reply = TelegramTools::OperationUser($User, $useOptionMethod, $value, $ChatID);
-        $response = $this->replyWithMessage(
+        $reply = TelegramTools::operationUser($User, $useOptionMethod, $value, $ChatID);
+        $this->replyWithMessage(
             [
                 'text' => $reply['msg'],
                 'parse_mode' => 'HTML',

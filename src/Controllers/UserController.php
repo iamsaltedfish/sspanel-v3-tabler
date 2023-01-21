@@ -97,7 +97,7 @@ class UserController extends BaseController
     public function couponCheck($request, $response, $args)
     {
         $coupon_code = trim($request->getParam('coupon'));
-        $product_id = $request->getParam('product_id');
+        $product_id = (int) $request->getParam('product_id');
 
         try {
             $coupon = Coupon::where('coupon', $coupon_code)->first();
@@ -108,8 +108,9 @@ class UserController extends BaseController
                 throw new \Exception('优惠码已过期');
             }
             if ($coupon->product_limit !== '0') {
-                $scope = explode(',', $coupon->product_limit);
-                if (!in_array($product_id, $scope)) {
+                // https://blog.csdn.net/haibo0668/article/details/108534887
+                $scope = array_map('intval', explode(',', $coupon->product_limit));
+                if (!in_array($product_id, $scope, true)) {
                     throw new \Exception('优惠码不适用于此商品');
                 }
             }
@@ -140,7 +141,7 @@ class UserController extends BaseController
     {
         $user = $this->user;
         $coupon_code = $request->getParam('coupon');
-        $product_id = $request->getParam('product_id');
+        $product_id = (int) $request->getParam('product_id');
         $product = Product::find($product_id);
 
         try {
@@ -162,8 +163,9 @@ class UserController extends BaseController
                     throw new \Exception('优惠码已过期');
                 }
                 if ($coupon->product_limit !== '0') {
-                    $scope = explode(',', $coupon->product_limit);
-                    if (!in_array($product_id, $scope)) {
+                    // https://blog.csdn.net/haibo0668/article/details/108534887
+                    $scope = array_map('intval', explode(',', $coupon->product_limit));
+                    if (!in_array($product_id, $scope, true)) {
                         throw new \Exception('优惠码不适用于此商品');
                     }
                 }
@@ -695,7 +697,7 @@ class UserController extends BaseController
     {
         $user = $this->user;
         $enable = (int) $request->getParam('enable');
-        $user->ga_enable = ($enable === 1) ? '1' : '0';
+        $user->ga_enable = ($enable === 1) ? 1 : 0;
         $user->save();
 
         return $response->withJson([

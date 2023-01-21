@@ -42,7 +42,7 @@ class TicketController extends UserController
         $anti_xss = new AntiXSS();
         $title = $request->getParam('title');
         $content = $request->getParam('content');
-        $ticket_client = $request->getParam('ticket_client');
+        $ticket_client = (int) $request->getParam('ticket_client');
 
         try {
             if ($title === '') {

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers\Mod_Mu;
 
 use App\Controllers\BaseController;
@@ -9,30 +10,19 @@ use App\Models\NodeOnlineLog;
 use App\Models\User;
 use App\Utils\Tools;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Request;
-use Slim\Http\Response;
 
 class UserController extends BaseController
 {
-    /**
-     * User List
-     *
-     * @param \Slim\Http\Request    $request
-     * @param \Slim\Http\Response   $response
-     * @param array                 $args
-     *
-     * @return \Slim\Http\Response
-     */
     public function index($request, $response, $args): ResponseInterface
     {
-        $node_id = $request->getQueryParam('node_id', '0');
+        $node_id = (int) $request->getQueryParam('node_id', 0);
 
-        if ($node_id == '0') {
+        if ($node_id === 0) {
             $node = Node::where('node_ip', $_SERVER['REMOTE_ADDR'])->first();
             $node_id = $node->id;
         } else {
             $node = Node::where('id', '=', $node_id)->first();
-            if ($node == null) {
+            if ($node === null) {
                 return $response->withJson([
                     'ret' => 0,
                 ]);
@@ -42,7 +32,7 @@ class UserController extends BaseController
         $node->save();
 
         // 节点流量耗尽则返回 null
-        if (($node->node_bandwidth_limit != 0) && $node->node_bandwidth_limit < $node->node_bandwidth) {
+        if (($node->node_bandwidth_limit !== 0) && $node->node_bandwidth_limit < $node->node_bandwidth) {
             $users = null;
             return $response->withJson([
                 'ret' => 1,
@@ -50,7 +40,7 @@ class UserController extends BaseController
             ]);
         }
 
-        if (in_array($node->sort, [0, 10]) && $node->mu_only != -1) {
+        if (in_array($node->sort, [0, 10]) && $node->mu_only !== -1) {
             $mu_port_migration = $_ENV['mu_port_migration'];
             $muPort = Tools::get_MuOutPortArray($node->server);
         } else {
@@ -65,7 +55,7 @@ class UserController extends BaseController
             static function ($query) use ($node) {
                 $query->where(
                     static function ($query1) use ($node) {
-                        if ($node->node_group != 0) {
+                        if ($node->node_group !== 0) {
                             $query1->where('class', '>=', $node->node_class)
                                 ->where('node_group', '=', $node->node_group);
                         } else {
@@ -76,22 +66,22 @@ class UserController extends BaseController
             }
         )->where('enable', 1)->where('expire_in', '>', date('Y-m-d H:i:s'))->get();
 
-        if ($node->sort == 14) {
-            $key_list = array('node_speedlimit', 'id', 'node_connector', 'uuid', 'alive_ip');
-        } elseif ($node->sort == 11) {
-            $key_list = array('node_speedlimit', 'id', 'node_connector', 'uuid', 'alive_ip');
+        if ($node->sort === 14) {
+            $key_list = ['node_speedlimit', 'id', 'node_connector', 'uuid', 'alive_ip'];
+        } elseif ($node->sort === 11) {
+            $key_list = ['node_speedlimit', 'id', 'node_connector', 'uuid', 'alive_ip'];
         } else {
-            $key_list = array(
+            $key_list = [
                 'method', 'obfs', 'obfs_param', 'protocol', 'protocol_param', 'node_speedlimit',
                 'is_multi_user', 'id', 'port', 'passwd', 'node_connector', 'alive_ip',
-            );
+            ];
         }
 
-        $alive_ip = (new \App\Models\Ip)->getUserAliveIpCount();
-        $users = array();
+        $alive_ip = (new \App\Models\Ip())->getUserAliveIpCount();
+        $users = [];
         foreach ($users_raw as $user_raw) {
             $user_raw_id = strval($user_raw->id);
-            if (!empty($alive_ip[$user_raw_id]) && $user_raw->node_connector != 0) {
+            if (isset($alive_ip[$user_raw_id]) && $user_raw->node_connector !== 0) {
                 $user_raw->alive_ip = $alive_ip[$user_raw_id];
             }
             if ($user_raw->transfer_enable <= $user_raw->u + $user_raw->d) {
@@ -102,14 +92,14 @@ class UserController extends BaseController
                     continue;
                 }
             }
-            if ($mu_port_migration === true && $user_raw->is_multi_user != 0) {
+            if ($mu_port_migration === true && $user_raw->is_multi_user !== 0) {
                 // 下发偏移后端口
-                if ($muPort['type'] == 0) {
+                if ($muPort['type'] === 0) {
                     if (in_array($user_raw->port, array_keys($muPort['port']))) {
                         $user_raw->port = $muPort['port'][$user_raw->port]['backend'];
                     }
                 } else {
-                    $user_raw->port = ($user_raw->port + $muPort['type']);
+                    $user_raw->port += $muPort['type'];
                 }
             }
             $user_raw = Tools::keyFilter($user_raw, $key_list);
@@ -127,11 +117,6 @@ class UserController extends BaseController
         ]);
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function getTraffic($request, $response, $args)
     {
         $res = [
@@ -141,25 +126,20 @@ class UserController extends BaseController
         return $response->withJson($res);
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function addTraffic($request, $response, $args)
     {
         $params = $request->getQueryParams();
 
         $data = $request->getParam('data');
         $this_time_total_bandwidth = 0;
-        $node_id = $params['node_id'];
-        if ($node_id == '0') {
+        $node_id = (int) $params['node_id'];
+        if ($node_id === 0) {
             $node = Node::where('node_ip', $_SERVER['REMOTE_ADDR'])->first();
             $node_id = $node->id;
         }
         $node = Node::find($node_id);
 
-        if ($node == null) {
+        if ($node === null) {
             return $response->withJson([
                 'ret' => 0,
             ]);
@@ -172,7 +152,7 @@ class UserController extends BaseController
                 $user_id = $log['user_id'];
                 $user = User::find($user_id);
 
-                if ($user == null) {
+                if ($user === null) {
                     continue;
                 }
 
@@ -206,24 +186,19 @@ class UserController extends BaseController
         return $response->withJson($res);
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function addAliveIp($request, $response, $args)
     {
         $params = $request->getQueryParams();
 
         $data = $request->getParam('data');
-        $node_id = $params['node_id'];
-        if ($node_id == '0') {
+        $node_id = (int) $params['node_id'];
+        if ($node_id === 0) {
             $node = Node::where('node_ip', $_SERVER['REMOTE_ADDR'])->first();
             $node_id = $node->id;
         }
         $node = Node::find($node_id);
 
-        if ($node == null) {
+        if ($node === null) {
             $res = [
                 'ret' => 0,
             ];
@@ -251,24 +226,19 @@ class UserController extends BaseController
         return $response->withJson($res);
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function addDetectLog($request, $response, $args)
     {
         $params = $request->getQueryParams();
 
         $data = $request->getParam('data');
-        $node_id = $params['node_id'];
-        if ($node_id == '0') {
+        $node_id = (int) $params['node_id'];
+        if ($node_id === 0) {
             $node = Node::where('node_ip', $_SERVER['REMOTE_ADDR'])->first();
             $node_id = $node->id;
         }
         $node = Node::find($node_id);
 
-        if ($node == null) {
+        if ($node === null) {
             $res = [
                 'ret' => 0,
             ];

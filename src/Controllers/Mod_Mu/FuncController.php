@@ -1,22 +1,16 @@
 <?php
+
 namespace App\Controllers\Mod_Mu;
 
 use App\Controllers\BaseController;
 use App\Models\DetectRule;
-use App\Models\Node;
 use App\Models\Log;
+use App\Models\Node;
 use App\Utils\Tools;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Request;
-use Slim\Http\Response;
 
 class FuncController extends BaseController
 {
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function ping($request, $response, $args)
     {
         $res = [
@@ -26,11 +20,6 @@ class FuncController extends BaseController
         return $response->withJson($res);
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function getDetectLogs($request, $response, $args): ResponseInterface
     {
         $rules = DetectRule::all();
@@ -47,11 +36,6 @@ class FuncController extends BaseController
         return $response->withHeader('ETAG', $etag)->withJson($res);
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function getBlockip($request, $response, $args): ResponseInterface
     {
         $block_ips = [];
@@ -68,11 +52,6 @@ class FuncController extends BaseController
         return $response->withHeader('ETAG', $etag)->withJson($res);
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function getUnblockip($request, $response, $args): ResponseInterface
     {
         $unblock_ips = [];
@@ -89,33 +68,20 @@ class FuncController extends BaseController
         return $response->withHeader('ETAG', $etag)->withJson($res);
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function addBlockIp($request, $response, $args)
     {
         $params = $request->getQueryParams();
-
-        $data = $request->getParam('data');
-        $node_id = $params['node_id'];
-        if ($node_id == '0') {
+        $node_id = (int) $params['node_id'];
+        if ($node_id === 0) {
             $node = Node::where('node_ip', $_SERVER['REMOTE_ADDR'])->first();
             $node_id = $node->id;
         }
         $node = Node::find($node_id);
-        if ($node == null) {
+        if ($node === null) {
             $res = [
                 'ret' => 0,
             ];
             return $response->withJson($res);
-        }
-
-        if (count($data) > 0) {
-            foreach ($data as $log) {
-                $ip = $log['ip'];
-            }
         }
 
         $res = [
@@ -125,11 +91,6 @@ class FuncController extends BaseController
         return $response->withJson($res);
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function log($request, $response, $args)
     {
         $msg = $request->getParam('msg');
@@ -138,12 +99,12 @@ class FuncController extends BaseController
         $status = $request->getParam('status');
         $reporter = $request->getParam('reporter');
 
-        $l = new Log;
+        $l = new Log();
         $l->type = $type;
         $l->reporter = $reporter;
         $l->level = $level;
         $l->msg = $msg;
-        $l->status = (empty($status)) ? 0 : $status;
+        $l->status = ($status === '') ? 0 : $status;
         $l->created_at = time();
 
         if ($l->save()) {

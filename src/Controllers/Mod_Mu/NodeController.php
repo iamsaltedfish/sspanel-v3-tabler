@@ -1,23 +1,16 @@
 <?php
+
 namespace App\Controllers\Mod_Mu;
 
 use App\Controllers\BaseController;
 use App\Models\Node;
 use App\Models\NodeInfoLog;
 use App\Models\StreamMedia;
-use App\Services\Config;
 use App\Utils\Tools;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Request;
-use Slim\Http\Response;
 
 class NodeController extends BaseController
 {
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function saveReport($request, $response, $args)
     {
         // $request_ip = $_SERVER["REMOTE_ADDR"];
@@ -35,7 +28,7 @@ class NodeController extends BaseController
         die('ok');
         } */
 
-        $report = new StreamMedia;
+        $report = new StreamMedia();
         $report->node_id = $node_id;
         $report->result = json_encode($result);
         $report->created_at = time();
@@ -43,15 +36,10 @@ class NodeController extends BaseController
         die('ok');
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function info($request, $response, $args)
     {
-        $node_id = $args['id'];
-        if ($node_id == '0') {
+        $node_id = (int) $args['id'];
+        if ($node_id === 0) {
             $node = Node::where('node_ip', $_SERVER['REMOTE_ADDR'])->first();
             $node_id = $node->id;
         }
@@ -76,20 +64,15 @@ class NodeController extends BaseController
         return $response->withJson($res);
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function getInfo($request, $response, $args): ResponseInterface
     {
-        $node_id = $args['id'];
-        if ($node_id == '0') {
+        $node_id = (int) $args['id'];
+        if ($node_id === 0) {
             $node = Node::where('node_ip', $_SERVER['REMOTE_ADDR'])->first();
             $node_id = $node->id;
         }
         $node = Node::find($node_id);
-        if ($node == null) {
+        if ($node === null) {
             $res = [
                 'ret' => 0,
             ];
@@ -128,11 +111,6 @@ class NodeController extends BaseController
         return $response->withHeader('ETAG', $etag)->withJson($res);
     }
 
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
     public function getAllInfo($request, $response, $args): ResponseInterface
     {
         $nodes = Node::where('node_ip', '<>', null)->where(
@@ -156,30 +134,6 @@ class NodeController extends BaseController
         }
 
         return $response->withHeader('ETAG', $etag)->withJson($res);
-    }
-
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function getConfig($request, $response, $args)
-    {
-        $data = $request->getParsedBody();
-        switch ($data['type']) {
-            case ('database'):
-                $db_config = Config::getDbConfig();
-                $db_config['host'] = $this->getServerIP();
-                $res = [
-                    'ret' => 1,
-                    'data' => $db_config,
-                ];
-                break;
-            case ('webapi'):
-                $webapiConfig = [];
-                #todo
-        }
-        return $response->withJson($res);
     }
 
     private function getServerIP()

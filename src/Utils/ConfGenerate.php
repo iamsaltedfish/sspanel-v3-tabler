@@ -8,8 +8,8 @@
 
 namespace App\Utils;
 
-use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * ConfGenerate
@@ -54,10 +54,10 @@ class ConfGenerate
                 }
                 break;
             case (!isset($Rule['content']['class'])
-                && !isset($Rule['content']['noclass'])
-                && isset($Rule['content']['regex'])
-                && preg_match('/' . $Rule['content']['regex'] . '/i', $Proxy['remark'])
-            ):
+                    && !isset($Rule['content']['noclass'])
+                    && isset($Rule['content']['regex'])
+                    && preg_match('/' . $Rule['content']['regex'] . '/i', $Proxy['remark'])
+                ):
                 $return = $Proxy;
                 break;
         }
@@ -111,7 +111,7 @@ class ConfGenerate
         $Rule = self::getRule($Configs['Rule']);
 
         $Conf = [
-            '#!MANAGED-CONFIG ' .((int)$_SERVER['SERVER_PORT'] == 443 ? 'https' : 'http') . '://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+            '#!MANAGED-CONFIG ' . ((int) $_SERVER['SERVER_PORT'] == 443 ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
             '',
             '#---------------------------------------------------#',
             '## 上次更新于：' . date("Y-m-d H:i:s"),
@@ -128,7 +128,7 @@ class ConfGenerate
             $ProxyGroup,
             '',
             '[Rule]',
-            $Rule
+            $Rule,
         ];
 
         return implode(PHP_EOL, $Conf);
@@ -337,7 +337,7 @@ class ConfGenerate
         );
 
         $Conf = [
-            '#!MANAGED-CONFIG ' .((int)$_SERVER['SERVER_PORT'] == 443 ? 'https' : 'http') . '://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+            '#!MANAGED-CONFIG ' . ((int) $_SERVER['SERVER_PORT'] == 443 ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
             '',
             '#---------------------------------------------------#',
             '## 上次更新于：' . date("Y-m-d H:i:s"),
@@ -346,7 +346,7 @@ class ConfGenerate
             Yaml::dump($tmp, 4, 2),
             '',
             'rules:',
-            self::getRule($Configs['Rule'])
+            self::getRule($Configs['Rule']),
         ];
 
         return implode(PHP_EOL, $Conf);
@@ -386,7 +386,7 @@ class ConfGenerate
                 $tmp = [
                     'name' => $ProxyGroup['name'],
                     'type' => $ProxyGroup['type'],
-                    'proxies' => $proxies
+                    'proxies' => $proxies,
                 ];
                 if ($ProxyGroup['type'] != 'select') {
                     $tmp['url'] = $ProxyGroup['url'];

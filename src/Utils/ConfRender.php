@@ -8,9 +8,8 @@
 
 namespace App\Utils;
 
-use Smarty;
 use App\Services\Config;
-
+use Smarty;
 
 class ConfRender
 {

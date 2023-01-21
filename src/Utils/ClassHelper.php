@@ -1,23 +1,21 @@
 <?php
 
-
 namespace App\Utils;
-
 
 class ClassHelper
 {
     private static $composer = null;
-    private static $classes  = [];
+    private static $classes = [];
 
     public function __construct()
     {
         self::$composer = null;
-        self::$classes  = [];
+        self::$classes = [];
 
         self::$composer = require __DIR__ . '/../../vendor/autoload.php';
 
         if (false === empty(self::$composer)) {
-            self::$classes  = array_keys(self::$composer->getClassMap());
+            self::$classes = array_keys(self::$composer->getClassMap());
         }
     }
 
@@ -41,13 +39,13 @@ class ClassHelper
         }
 
         $termUpper = strtoupper($namespace);
-        return array_filter($this->getClasses(), function($class) use ($termUpper) {
+        return array_filter($this->getClasses(), function ($class) use ($termUpper) {
             $className = strtoupper($class);
             if (
                 0 === strpos($className, $termUpper) and
                 false === strpos($className, strtoupper('Abstract')) and
                 false === strpos($className, strtoupper('Interface'))
-            ){
+            ) {
                 return $class;
             }
             return false;

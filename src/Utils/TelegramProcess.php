@@ -2,10 +2,10 @@
 
 namespace App\Utils;
 
+use App\Controllers\AuthController;
+use App\Controllers\LinkController;
 use App\Models\User;
 use App\Services\Config;
-use App\Controllers\LinkController;
-use App\Controllers\AuthController;
 use TelegramBot\Api\Client;
 use TelegramBot\Api\Exception;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
@@ -96,7 +96,6 @@ class TelegramProcess
         return $reply;
     }
 
-
     public static function telegram_process($bot, $message, $command)
     {
         $user = User::where('telegram_id', $message->getFrom()->getId())->first();
@@ -145,7 +144,7 @@ class TelegramProcess
                             $imtype = 4; // Telegram
                             $imvalue = $username;
                             $name = $username;
-                            if ( !$name ) {
+                            if (!$name) {
                                 $name = 'telegram.' . $telegram_id;
                             }
                             $code = 0; // TODO: Refer Code
@@ -183,7 +182,7 @@ class TelegramProcess
                             $reply['message'] = '绑定失败，二维码无效：' . substr($qrcode_text, 11) . '二维码的有效期为10分钟，请尝试刷新网站的“资料编辑”页面以更新二维码';
                             break;
                         }
-                        if(User::where('telegram_id', $message->getFrom()->getId())->count()>0){
+                        if (User::where('telegram_id', $message->getFrom()->getId())->count() > 0) {
                             $reply['message'] = '该Telegram已绑定其他账户';
                             break;
                         }

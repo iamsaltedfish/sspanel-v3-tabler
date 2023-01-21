@@ -2,7 +2,10 @@
 
 namespace App\Utils;
 
-use App\Models\{Link, Model, User, Node};
+use App\Models\Link;
+use App\Models\Model;
+use App\Models\Node;
+use App\Models\User;
 use App\Services\Config;
 use App\Utils\QQWry;
 use DateTime;
@@ -23,8 +26,8 @@ class Tools
     public static function getIpInfo($ip)
     {
         $iplocation = new QQWry();
-        $location   = $iplocation->getlocation($ip);
-        $ipInfo     = iconv('gbk', 'utf-8//IGNORE', $location['country'] . $location['area']);
+        $location = $iplocation->getlocation($ip);
+        $ipInfo = iconv('gbk', 'utf-8//IGNORE', $location['country'] . $location['area']);
         return $ipInfo;
     }
 
@@ -316,11 +319,11 @@ class Tools
     public static function insertPathRule($single_rule, $pathset, $port)
     {
         /* path
-          path pathtext
-          begin_node_id id
-          end_node id
-          port port
-        */
+        path pathtext
+        begin_node_id id
+        end_node id
+        port port
+         */
 
         if ($single_rule->dist_node_id == -1) {
             return $pathset;
@@ -421,15 +424,15 @@ class Tools
             'host' => '',
             'path' => '',
             'tls' => '',
-            'verify_cert' => true
+            'verify_cert' => true,
         ];
         $item['add'] = $server[0];
         if ($server[1] == '0' || $server[1] == '') {
             $item['port'] = 443;
         } else {
-            $item['port'] = (int)$server[1];
+            $item['port'] = (int) $server[1];
         }
-        $item['aid'] = (int)$server[2];
+        $item['aid'] = (int) $server[2];
         $item['net'] = 'tcp';
         $item['headerType'] = 'none';
         if (count($server) >= 4) {
@@ -473,7 +476,7 @@ class Tools
                 }
             }
             if (array_key_exists('outside_port', $item)) {
-                $item['port'] = (int)$item['outside_port'];
+                $item['port'] = (int) $item['outside_port'];
                 unset($item['outside_port']);
             }
             if (isset($item['inside_port'])) {
@@ -524,13 +527,13 @@ class Tools
             'host' => 'microsoft.com',
             'path' => '',
             'net' => 'ws',
-            'tls' => ''
+            'tls' => '',
         ];
         $item['add'] = $server[0];
         if ($server[1] == '0' || $server[1] == '') {
             $item['port'] = 443;
         } else {
-            $item['port'] = (int)$server[1];
+            $item['port'] = (int) $server[1];
         }
         if (count($server) >= 4) {
             $item['net'] = $server[3];
@@ -558,7 +561,7 @@ class Tools
                 unset($item['relayserver']);
             }
             if (array_key_exists('outside_port', $item)) {
-                $item['port'] = (int)$item['outside_port'];
+                $item['port'] = (int) $item['outside_port'];
                 unset($item['outside_port']);
             }
         }
@@ -585,25 +588,25 @@ class Tools
                     if (strpos($item['port'], '+') !== false) { // 多个单端口节点，格式：8.8.8.8;port=80#1080+443#8443
                         $args_explode = explode('+', $item['port']);
                         foreach ($args_explode as $arg) {
-                            if ((int)substr($arg, 0, strpos($arg, '#')) == $mu_port) {
+                            if ((int) substr($arg, 0, strpos($arg, '#')) == $mu_port) {
                                 $node_port = (int) substr($arg, strpos($arg, '#') + 1);
                             }
                         }
                     } else {
-                        if ((int)substr($item['port'], 0, strpos($item['port'], '#')) == $mu_port) {
+                        if ((int) substr($item['port'], 0, strpos($item['port'], '#')) == $mu_port) {
                             $node_port = (int) substr($item['port'], strpos($item['port'], '#') + 1);
                         }
                     }
                 } else { // 端口偏移，偏移端口，格式：8.8.8.8;port=1000 or 8.8.8.8;port=-1000
-                    $node_port = ($mu_port + (int)$item['port']);
+                    $node_port = ($mu_port + (int) $item['port']);
                 }
             }
         }
 
         return [
-            'name'    => ($_ENV['disable_sub_mu_port'] ? $node_name : $node_name . ' - ' . $node_port . ' 单端口'),
+            'name' => ($_ENV['disable_sub_mu_port'] ? $node_name : $node_name . ' - ' . $node_port . ' 单端口'),
             'address' => $node_server[0],
-            'port'    => (int) $node_port
+            'port' => (int) $node_port,
         ];
     }
 
@@ -627,14 +630,14 @@ class Tools
 
                                 $port[substr($arg, 0, strpos($arg, '#'))] = [
                                     "backend" => (int) $backend_port,
-                                    "display" => (int) $display_port
+                                    "display" => (int) $display_port,
                                 ];
                             } else {
                                 $user_port = substr($arg, 0, strpos($arg, '#'));
 
                                 $port[$user_port] = [
                                     "backend" => (int) $user_port,
-                                    "display" => (int) $user_port
+                                    "display" => (int) $user_port,
                                 ];
                             }
                         }
@@ -647,26 +650,26 @@ class Tools
 
                             $port[substr($item['port'], 0, strpos($item['port'], '#'))] = [
                                 "backend" => (int) $backend_port,
-                                "display" => (int) $display_port
+                                "display" => (int) $display_port,
                             ];
                         } else {
                             $user_port = substr($item['port'], 0, strpos($item['port'], '#'));
 
                             $port[$user_port] = [
                                 "backend" => (int) $user_port,
-                                "display" => (int) $user_port
+                                "display" => (int) $user_port,
                             ];
                         }
                     }
                 } else {
-                    $type = (int)$item['port'];
+                    $type = (int) $item['port'];
                 }
             }
         }
 
         return [
             'type' => $type,
-            'port' => $port
+            'port' => $port,
         ];
     }
 
@@ -674,77 +677,77 @@ class Tools
     // 以便于兼容如：【上海 -> 美国】等节点名称
     private static $emoji = [
         "🇦🇷" => [
-            "阿根廷"
+            "阿根廷",
         ],
         "🇦🇹" => [
             "奥地利",
-            "维也纳"
+            "维也纳",
         ],
         "🇦🇺" => [
             "澳大利亚",
-            "悉尼"
+            "悉尼",
         ],
         "🇧🇷" => [
             "巴西",
-            "圣保罗"
+            "圣保罗",
         ],
         "🇨🇦" => [
             "加拿大",
             "蒙特利尔",
-            "温哥华"
+            "温哥华",
         ],
         "🇨🇭" => [
             "瑞士",
-            "苏黎世"
+            "苏黎世",
         ],
         "🇩🇪" => [
             "德国",
-            "法兰克福"
+            "法兰克福",
         ],
         "🇫🇮" => [
             "芬兰",
-            "赫尔辛基"
+            "赫尔辛基",
         ],
         "🇫🇷" => [
             "法国",
-            "巴黎"
+            "巴黎",
         ],
         "🇬🇧" => [
             "英国",
-            "伦敦"
+            "伦敦",
         ],
         "🇮🇩" => [
             "印尼",
             "印度尼西亚",
-            "雅加达"
+            "雅加达",
         ],
         "🇮🇪" => [
             "爱尔兰",
-            "都柏林"
+            "都柏林",
         ],
         "🇮🇳" => [
             "印度",
-            "孟买"
+            "孟买",
         ],
         "🇮🇹" => [
             "意大利",
-            "米兰"
+            "米兰",
         ],
         "🇰🇵" => [
-            "朝鲜"
+            "朝鲜",
         ],
         "🇲🇾" => [
-            "马来西亚"
+            "马来西亚",
         ],
         "🇳🇱" => [
             "荷兰",
-            "阿姆斯特丹"
+            "阿姆斯特丹",
         ],
         "🇵🇭" => [
-            "菲律宾"
+            "菲律宾",
         ],
         "🇷🇴" => [
-            "罗马尼亚"
+            "罗马尼亚",
         ],
         "🇷🇺" => [
             "俄罗斯",
@@ -752,18 +755,18 @@ class Tools
             "莫斯科",
             "圣彼得堡",
             "西伯利亚",
-            "新西伯利亚"
+            "新西伯利亚",
         ],
         "🇸🇬" => [
-            "新加坡"
+            "新加坡",
         ],
         "🇹🇭" => [
             "泰国",
-            "曼谷"
+            "曼谷",
         ],
         "🇹🇷" => [
             "土耳其",
-            "伊斯坦布尔"
+            "伊斯坦布尔",
         ],
         "🇺🇲" => [
             "美国",
@@ -777,36 +780,36 @@ class Tools
             "圣克拉拉",
             "西雅图",
             "芝加哥",
-            "沪美"
+            "沪美",
         ],
         "🇻🇳" => [
-            "越南"
+            "越南",
         ],
         "🇿🇦" => [
-            "南非"
+            "南非",
         ],
         "🇰🇷" => [
             "韩国",
-            "首尔"
+            "首尔",
         ],
         "🇲🇴" => [
-            "澳门"
+            "澳门",
         ],
         "🇯🇵" => [
             "日本",
             "东京",
             "大阪",
             "埼玉",
-            "沪日"
+            "沪日",
         ],
         "🇹🇼" => [
             "台湾",
             "台北",
-            "台中"
+            "台中",
         ],
         "🇭🇰" => [
             "香港",
-            "深港"
+            "深港",
         ],
         "🇨🇳" => [
             "中国",
@@ -817,15 +820,15 @@ class Tools
             "杭州",
             "徐州",
             "宁波",
-            "镇江"
-        ]
+            "镇江",
+        ],
     ];
 
     public static function addEmoji($Name)
     {
         $done = [
             'index' => -1,
-            'emoji' => ''
+            'emoji' => '',
         ];
         foreach (self::$emoji as $key => $value) {
             foreach ($value as $item) {
@@ -913,12 +916,12 @@ class Tools
      */
     public static function paginate_render($data): string
     {
-        $totalPage   = $data->lastPage();
+        $totalPage = $data->lastPage();
         $currentPage = $data->currentPage();
         $html = '<ul class="pagination pagination-primary justify-content-end">';
         for ($i = 1; $i <= $totalPage; $i++) {
             $active = '<li class="page-item active"><span class="page-link">' . $i . '</span></li>';
-            $page   = '<li class="page-item"><a class="page-link" href="' . $data->url($i) . '">' . $i . '</a></li>';
+            $page = '<li class="page-item"><a class="page-link" href="' . $data->url($i) . '">' . $i . '</a></li>';
             if ($i == 1) {
                 // 当前为第一页
                 if ($currentPage == $i) {

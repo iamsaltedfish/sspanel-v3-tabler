@@ -2,9 +2,6 @@
 
 namespace App\Utils;
 
-use App\Services\Config;
-
-
 class Hash
 {
     public static function passwordHash($pass)

@@ -2,11 +2,10 @@
 
 namespace App\Utils;
 
-use App\Models\Models;
 use App\Services\Config;
-use Ozdemir\Datatables\DB\DatabaseInterface;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\QueryException;
+use Ozdemir\Datatables\DB\DatabaseInterface;
 
 class DatatablesHelper implements DatabaseInterface
 {
@@ -34,7 +33,7 @@ class DatatablesHelper implements DatabaseInterface
         $data = $this->connection->select($query, $this->escape);
         $row = [];
         foreach ($data as $item) {
-            $row[] = (array)$item;
+            $row[] = (array) $item;
         }
         return $row;
     }

@@ -55,7 +55,7 @@ class GeetestLib
         $result = array(
             'success' => 1,
             'gt' => $this->captcha_id,
-            'challenge' => $challenge
+            'challenge' => $challenge,
         );
         $this->response = $result;
     }
@@ -71,7 +71,7 @@ class GeetestLib
         $result = array(
             'success' => 0,
             'gt' => $this->captcha_id,
-            'challenge' => $challenge
+            'challenge' => $challenge,
         );
         $this->response = $result;
     }
@@ -200,7 +200,7 @@ class GeetestLib
                 'http' => array(
                     'method' => 'GET',
                     'timeout' => self::$connectTimeout + self::$socketTimeout,
-                )
+                ),
             );
             $context = stream_context_create($opts);
             $data = file_get_contents($url, false, $context);
@@ -250,8 +250,8 @@ class GeetestLib
                     'method' => 'POST',
                     'header' => "Content-type: application/x-www-form-urlencoded\r\n" . 'Content-Length: ' . strlen($data) . "\r\n",
                     'content' => $data,
-                    'timeout' => self::$connectTimeout + self::$socketTimeout
-                )
+                    'timeout' => self::$connectTimeout + self::$socketTimeout,
+                ),
             );
             $context = stream_context_create($opts);
             $data = file_get_contents($url, false, $context);
@@ -259,7 +259,6 @@ class GeetestLib
 
         return $data;
     }
-
 
     /**
      * 解码随机参数
@@ -299,7 +298,6 @@ class GeetestLib
 
         return $res;
     }
-
 
     /**
      * @param $x_str

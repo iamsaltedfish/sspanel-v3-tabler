@@ -2,20 +2,18 @@
 
 namespace App\Utils;
 
-use App\Models\{
-    User,
-    Node
-};
-use App\Services\Config;
 use App\Controllers\LinkController;
+use App\Models\Node;
+use App\Models\User;
+use App\Services\Config;
 
 class URL
 {
     /*
-    * 1 SSR can
-    * 2 SS can
-    * 3 Both can
-    */
+     * 1 SSR can
+     * 2 SS can
+     * 3 Both can
+     */
     public static function CanMethodConnect($method)
     {
         $ss_aead_method_list = Config::getSupportParam('ss_aead_method');
@@ -26,10 +24,10 @@ class URL
     }
 
     /*
-    * 1 SSR can
-    * 2 SS can
-    * 3 Both can
-    */
+     * 1 SSR can
+     * 2 SS can
+     * 3 Both can
+     */
     public static function CanProtocolConnect($protocol)
     {
         if ($protocol != 'origin') {
@@ -43,12 +41,12 @@ class URL
     }
 
     /*
-    * 1 SSR can
-    * 2 SS can
-    * 3 Both can
-    * 4 Both can, But ssr need set obfs to plain
-    * 5 Both can, But ss need set obfs to plain
-    */
+     * 1 SSR can
+     * 2 SS can
+     * 3 Both can
+     * 4 Both can, But ssr need set obfs to plain
+     * 5 Both can, But ss need set obfs to plain
+     */
     public static function CanObfsConnect($obfs)
     {
         if ($obfs != 'plain') {
@@ -250,12 +248,12 @@ class URL
                 if (
                     ConfGenerate::getMatchProxy(
                         [
-                            'remark' => $node->name
+                            'remark' => $node->name,
                         ],
                         [
                             'content' => [
-                                'regex' => $Rule['content']['regex']
-                            ]
+                                'regex' => $Rule['content']['regex'],
+                            ],
                         ]
                     ) === null
                 ) {
@@ -267,9 +265,9 @@ class URL
             // 其他类型单端口节点
             if (in_array($node->sort, [11, 13, 14])) {
                 $node_class = [
-                    11 => 'getV2RayItem',           // V2Ray
-                    13 => 'getV2RayPluginItem',     // Rico SS (V2RayPlugin && obfs)
-                    14 => 'getTrojanItem',          // Trojan
+                    11 => 'getV2RayItem', // V2Ray
+                    13 => 'getV2RayPluginItem', // Rico SS (V2RayPlugin && obfs)
+                    14 => 'getTrojanItem', // Trojan
                 ];
                 $class = $node_class[$node->sort];
                 $item = $node->$class($user, 0, 0, $emoji);

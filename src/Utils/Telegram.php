@@ -25,12 +25,12 @@ class Telegram
                 $async = ($chat_id != $_ENV['telegram_chatid']);
                 $bot = new Api($_ENV['telegram_token'], $async);
                 $sendMessage = [
-                    'chat_id'                   => $chat_id,
-                    'text'                      => $messageText,
-                    'parse_mode'                => '',
-                    'disable_web_page_preview'  => false,
-                    'reply_to_message_id'       => null,
-                    'reply_markup'              => null
+                    'chat_id' => $chat_id,
+                    'text' => $messageText,
+                    'parse_mode' => '',
+                    'disable_web_page_preview' => false,
+                    'reply_to_message_id' => null,
+                    'reply_markup' => null,
                 ];
                 $bot->sendMessage($sendMessage);
             } else {
@@ -57,12 +57,12 @@ class Telegram
                 $async = ($chat_id != $_ENV['telegram_chatid']);
                 $bot = new Api($_ENV['telegram_token'], $async);
                 $sendMessage = [
-                    'chat_id'                   => $chat_id,
-                    'text'                      => $messageText,
-                    'parse_mode'                => 'Markdown',
-                    'disable_web_page_preview'  => false,
-                    'reply_to_message_id'       => null,
-                    'reply_markup'              => null
+                    'chat_id' => $chat_id,
+                    'text' => $messageText,
+                    'parse_mode' => 'Markdown',
+                    'disable_web_page_preview' => false,
+                    'reply_to_message_id' => null,
+                    'reply_markup' => null,
                 ];
                 try {
                     $bot->sendMessage($sendMessage);

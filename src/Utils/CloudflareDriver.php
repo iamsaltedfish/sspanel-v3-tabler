@@ -8,7 +8,6 @@
 
 namespace App\Utils;
 
-use App\Services\Config;
 use Cloudflare\API\Adapter\Guzzle;
 use Cloudflare\API\Auth\APIKey;
 use Cloudflare\API\Endpoints\DNS;

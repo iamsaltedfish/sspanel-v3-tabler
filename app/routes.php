@@ -32,7 +32,7 @@ return function (SlimApp $app) {
         $this->post('/kill',                    App\Controllers\UserController::class . ':handleKill');
         $this->get('/disable',                  App\Controllers\UserController::class . ':disable');
         $this->get('/announcement',             App\Controllers\UserController::class . ':announcement');
-        $this->get('/subscribe_log',            App\Controllers\UserController::class . ':subscribe_log');
+        $this->get('/subscribe_log',            App\Controllers\UserController::class . ':subscribeLog');
 
         // 文档中心
         $this->get('/docs/{client}',            App\Controllers\DocsController::class . ':index');
@@ -44,16 +44,16 @@ return function (SlimApp $app) {
 
         // 审计系统
         if (!$_ENV['hide_audit_rules_and_logs']) {
-            $this->get('/detect',               App\Controllers\UserController::class . ':detect_index');
-            $this->get('/detect/log',           App\Controllers\UserController::class . ':detect_log');
+            $this->get('/detect',               App\Controllers\UserController::class . ':detectIndex');
+            $this->get('/detect/log',           App\Controllers\UserController::class . ':detectLog');
         }
 
         // 工单系统
         $this->get('/ticket',                   App\Controllers\User\TicketController::class . ':ticket');
-        $this->get('/ticket/create',            App\Controllers\User\TicketController::class . ':ticket_create');
-        $this->post('/ticket',                  App\Controllers\User\TicketController::class . ':ticket_add');
-        $this->get('/ticket/{id}/view',         App\Controllers\User\TicketController::class . ':ticket_view');
-        $this->put('/ticket/{id}',              App\Controllers\User\TicketController::class . ':ticket_update');
+        $this->get('/ticket/create',            App\Controllers\User\TicketController::class . ':ticketCreate');
+        $this->post('/ticket',                  App\Controllers\User\TicketController::class . ':ticketAdd');
+        $this->get('/ticket/{id}/view',         App\Controllers\User\TicketController::class . ':ticketView');
+        $this->put('/ticket/{id}',              App\Controllers\User\TicketController::class . ':ticketUpdate');
 
         // 新商店系统
         $this->get('/product',                  App\Controllers\UserController::class . ':productIndex');
@@ -68,7 +68,7 @@ return function (SlimApp $app) {
 
         // 编辑页面
         $this->get('/edit',                     App\Controllers\UserController::class . ':edit');
-        $this->get('/telegram_reset',           App\Controllers\UserController::class . ':telegram_reset');
+        $this->get('/telegram_reset',           App\Controllers\UserController::class . ':telegramReset');
         $this->post('/email',                   App\Controllers\UserController::class . ':updateEmail');
         $this->post('/username',                App\Controllers\UserController::class . ':updateUsername');
         $this->post('/password',                App\Controllers\UserController::class . ':updatePassword');
@@ -86,9 +86,9 @@ return function (SlimApp $app) {
         // 节点列表
         $this->get('/server',                   App\Controllers\User\NodeController::class . ':serverList');
         if (!$_ENV['hide_old_server_list']) {
-            $this->get('/node',                 App\Controllers\User\NodeController::class . ':user_node_page');
-            $this->get('/node/{id}',            App\Controllers\User\NodeController::class . ':user_node_info');
-            $this->get('/node/{id}/ajax',       App\Controllers\User\NodeController::class . ':user_node_ajax');
+            $this->get('/node',                 App\Controllers\User\NodeController::class . ':userNodePage');
+            $this->get('/node/{id}',            App\Controllers\User\NodeController::class . ':userNodeInfo');
+            $this->get('/node/{id}/ajax',       App\Controllers\User\NodeController::class . ':userNodeAjax');
         }
 
         // 其他
@@ -213,22 +213,22 @@ return function (SlimApp $app) {
         $this->put('/detect/{id}',              App\Controllers\Admin\DetectController::class . ':update');
         $this->delete('/detect',                App\Controllers\Admin\DetectController::class . ':delete');
         $this->get('/detect/log',               App\Controllers\Admin\DetectController::class . ':log');
-        $this->post('/detect/ajax',             App\Controllers\Admin\DetectController::class . ':ajax_rule');
-        $this->post('/detect/log/ajax',         App\Controllers\Admin\DetectController::class . ':ajax_log');
+        $this->post('/detect/ajax',             App\Controllers\Admin\DetectController::class . ':ajaxRule');
+        $this->post('/detect/log/ajax',         App\Controllers\Admin\DetectController::class . ':ajaxLog');
 
         // IP Mange
         $this->get('/login',                    App\Controllers\Admin\IpController::class . ':index');
         $this->get('/alive',                    App\Controllers\Admin\IpController::class . ':alive');
         $this->post('/login/ajax',              App\Controllers\Admin\IpController::class . ':ajaxQuery');
-        $this->post('/alive/ajax',              App\Controllers\Admin\IpController::class . ':ajax_alive');
+        $this->post('/alive/ajax',              App\Controllers\Admin\IpController::class . ':ajaxAlive');
 
         // User Mange
-        //$this->get('/user',                     App\Controllers\Admin\UserController::class . ':index');
+        //$this->get('/user',                   App\Controllers\Admin\UserController::class . ':index');
         $this->get('/user/{id}/edit',           App\Controllers\Admin\UserController::class . ':edit');
         $this->put('/user/{id}',                App\Controllers\Admin\UserController::class . ':update');
-        //$this->delete('/user',                  App\Controllers\Admin\UserController::class . ':delete');
-        //$this->post('/user/changetouser',       App\Controllers\Admin\UserController::class . ':changetouser');
-        //$this->post('/user/ajax',               App\Controllers\Admin\UserController::class . ':ajax');
+        //$this->delete('/user',                App\Controllers\Admin\UserController::class . ':delete');
+        //$this->post('/user/changetouser',     App\Controllers\Admin\UserController::class . ':changetouser');
+        //$this->post('/user/ajax',             App\Controllers\Admin\UserController::class . ':ajax');
         $this->post('/user/create',             App\Controllers\Admin\UserController::class . ':createNewUser');
         $this->get('/user',                     App\Controllers\Admin\UserController::class . ':index');
         $this->post('/user/ajax',               App\Controllers\Admin\UserController::class . ':ajaxQuery');
@@ -243,7 +243,7 @@ return function (SlimApp $app) {
 
         // Subscribe Log Mange
         $this->get('/subscribe',                App\Controllers\Admin\SubscribeLogController::class . ':index');
-        $this->post('/subscribe/ajax',          App\Controllers\Admin\SubscribeLogController::class . ':subscribe_ajax');
+        $this->post('/subscribe/ajax',          App\Controllers\Admin\SubscribeLogController::class . ':subscribeAjax');
 
         // 指定用户订阅记录
         $this->get('/user/{id}/sublog',         App\Controllers\Admin\UserLog\SubLogController::class . ':index');
@@ -287,7 +287,6 @@ return function (SlimApp $app) {
         $this->post('/media/saveReport',    App\Controllers\Mod_Mu\NodeController::class . ':saveReport');
         // 其他
         $this->get('/nodes',                App\Controllers\Mod_Mu\NodeController::class . ':getAllInfo');
-        $this->post('/nodes/config',        App\Controllers\Mod_Mu\NodeController::class . ':getConfig');
         $this->get('/nodes/{id}/info',      App\Controllers\Mod_Mu\NodeController::class . ':getInfo');
         $this->post('/nodes/{id}/info',     App\Controllers\Mod_Mu\NodeController::class . ':info');
 

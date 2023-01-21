@@ -18,7 +18,7 @@
         "league/omnipay": "^3",
         "lokielse/omnipay-alipay": "*",
         "mailgun/mailgun-php": "^2.6.0",
-        "nunomaduro/phpinsights": "^2.4",
+        "nunomaduro/phpinsights": "^2.6",
         "phpmailer/phpmailer": "~6.0",
         "ramsey/uuid": "^3.0@dev",
         "robmorgan/phinx": "^0.12.9",
@@ -41,6 +41,9 @@
     },
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

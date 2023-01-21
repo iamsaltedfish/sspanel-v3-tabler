@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Models\Ann;
@@ -100,13 +101,13 @@ class UserController extends BaseController
 
         try {
             $coupon = Coupon::where('coupon', $coupon_code)->first();
-            if ($coupon == null) {
+            if ($coupon === null) {
                 throw new \Exception('优惠码不存在');
             }
             if (time() > $coupon->expired_at) {
                 throw new \Exception('优惠码已过期');
             }
-            if ($coupon->product_limit != '0') {
+            if ($coupon->product_limit !== '0') {
                 $scope = explode(',', $coupon->product_limit);
                 if (!in_array($product_id, $scope)) {
                     throw new \Exception('优惠码不适用于此商品');
@@ -123,14 +124,16 @@ class UserController extends BaseController
                 throw new \Exception('此优惠码已达个人使用限制');
             }
         } catch (\Exception $e) {
-            $res['ret'] = 0;
-            $res['msg'] = $e->getMessage();
-            return $response->withJson($res);
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => $e->getMessage(),
+            ]);
         }
 
-        $res['ret'] = 1;
-        $res['discount'] = $coupon->discount;
-        return $response->withJson($res);
+        return $response->withJson([
+            'ret' => 1,
+            'discount' => $coupon->discount,
+        ]);
     }
 
     public function createOrder($request, $response, $args)
@@ -141,7 +144,7 @@ class UserController extends BaseController
         $product = Product::find($product_id);
 
         try {
-            if ($product == null) {
+            if ($product === null) {
                 throw new \Exception('商品不存在');
             }
             if ($product->stock - $product->sales <= 0) {
@@ -150,15 +153,15 @@ class UserController extends BaseController
             if ($user->limit_order === 1) {
                 throw new \Exception('内部服务器错误');
             }
-            if ($coupon_code != '') {
+            if ($coupon_code !== '') {
                 $coupon = Coupon::where('coupon', $coupon_code)->first();
-                if ($coupon == null) {
+                if ($coupon === null) {
                     throw new \Exception('优惠码不存在');
                 }
                 if (time() > $coupon->expired_at) {
                     throw new \Exception('优惠码已过期');
                 }
-                if ($coupon->product_limit != '0') {
+                if ($coupon->product_limit !== '0') {
                     $scope = explode(',', $coupon->product_limit);
                     if (!in_array($product_id, $scope)) {
                         throw new \Exception('优惠码不适用于此商品');
@@ -176,7 +179,7 @@ class UserController extends BaseController
                 }
             }
 
-            $order = new ProductOrder;
+            $order = new ProductOrder();
             $order->no = substr(md5(time()), 20);
             $order->user_id = $user->id;
             $order->product_id = $product->id;
@@ -184,8 +187,8 @@ class UserController extends BaseController
             $order->product_type = $product->type;
             $order->product_content = $product->translate;
             $order->product_price = $product->price;
-            $order->order_coupon = (empty($coupon)) ? null : $coupon_code;
-            $order->order_price = (empty($coupon)) ? $product->price : $product->price * $coupon->discount;
+            $order->order_coupon = (!isset($coupon)) ? null : $coupon_code;
+            $order->order_price = (!isset($coupon)) ? $product->price : $product->price * $coupon->discount;
             $order->order_payment = 'balance';
             if ($user->money <= 0 || $user->money >= ($order->order_price / 100)) {
                 $order->balance_payment = 0;
@@ -261,25 +264,25 @@ class UserController extends BaseController
 
         try {
             $payments = $_ENV['active_payments'];
-            if (empty($payments[$payment]) && $payment != 'balance') {
+            if (!isset($payments[$payment]) && $payment !== 'balance') {
                 throw new \Exception('提交的支付方式不存在，请从给出的选项中选择');
             }
-            $order->order_payment = empty($payments[$payment]) ? 'balance' : $payments[$payment]['name'];
+            $order->order_payment = (!isset($payments[$payment])) ? 'balance' : $payments[$payment]['name'];
             $order->save();
             if (time() > $order->expired_at) {
                 throw new \Exception('此订单已过期');
             }
-            if ($order->order_status == 'paid') {
+            if ($order->order_status === 'paid') {
                 throw new \Exception('此订单已支付');
             }
-            if ($order->product_id != '0') {
+            if ($order->product_id !== 0) {
                 $product = Product::find($order->product_id);
                 if ($product->stock <= 0) {
                     throw new \Exception('商品库存不足');
                 }
             }
-            if ($payment == 'balance') {
-                if ($order->product_type == 'recharge') {
+            if ($payment === 'balance') {
+                if ($order->product_type === 'recharge') {
                     throw new \Exception('账户充值请使用在线支付');
                 }
                 if ($user->money < ($order->order_price / 100)) {
@@ -295,7 +298,7 @@ class UserController extends BaseController
                 self::execute($order->no);
             } else {
                 // 计算结账金额
-                if ($order->balance_payment == 0) {
+                if ($order->balance_payment === 0) {
                     $checkout_amount = $order->order_price / 100;
                 } else {
                     $checkout_amount = ($order->order_price - $order->balance_payment) / 100;
@@ -315,11 +318,11 @@ class UserController extends BaseController
                     }
                 }
                 // 若账单金额不在支付限额内
-                if ($selected_payment['min'] != false && $checkout_amount < $selected_payment['min']) {
+                if ($selected_payment['min'] !== false && $checkout_amount < $selected_payment['min']) {
                     $min_amount = $selected_payment['min'];
                     throw new \Exception("账单金额低于支付方式限额。建议您返回商店页面，在右上角使用账户充值功能，金额填写此支付方式要求的最低限额{$min_amount}元，并完成支付。完成后返回此页面，选择使用余额支付即可");
                 }
-                if ($selected_payment['max'] != false && $checkout_amount > $selected_payment['max']) {
+                if ($selected_payment['max'] !== false && $checkout_amount > $selected_payment['max']) {
                     throw new \Exception('账单金额高于支付方式限额');
                 }
                 // 提交订单
@@ -342,16 +345,15 @@ class UserController extends BaseController
     public static function execute($order_no)
     {
         $order = ProductOrder::where('no', $order_no)->first();
-        if ($order->product_id == '0') {
+        if ($order->product_id === 0) {
             return self::executeRecharge($order);
-        } else {
-            return self::executeProduct($order);
         }
+        return self::executeProduct($order);
     }
 
     public static function executeRecharge($order)
     {
-        if ($order->execute_status != '1') {
+        if ($order->execute_status !== 1) {
             $order->paid_at = time();
             $order->updated_at = time();
             $order->order_status = 'paid';
@@ -371,7 +373,7 @@ class UserController extends BaseController
         $product = Product::find($order->product_id);
         $user = User::find($order->user_id);
 
-        if ($order->balance_payment != 0 && $order->order_payment != 'balance') {
+        if ($order->balance_payment !== 0 && $order->order_payment !== 'balance') {
             if ($user->money - ($order->balance_payment / 100) < 0) {
                 $order->order_status = 'abnormal';
                 $order->updated_at = time();
@@ -383,7 +385,7 @@ class UserController extends BaseController
             $user->save();
         }
 
-        if ($order->execute_status != '1') {
+        if ($order->execute_status !== 1) {
             $order->order_status = 'paid';
             $order->updated_at = time();
             $order->paid_at = time();
@@ -393,7 +395,7 @@ class UserController extends BaseController
             $product->sales += 1; // 加销量
             $product->save();
 
-            if (!empty($order->order_coupon)) {
+            if ($order->order_coupon !== null) {
                 $coupon = Coupon::where('coupon', $order->order_coupon)->first();
                 $coupon->use_count += 1;
                 $coupon->amount_count += ($order->product_price - $order->order_price) / 100;
@@ -404,7 +406,7 @@ class UserController extends BaseController
             foreach ($product_content as $key => $value) {
                 switch ($key) {
                     case 'product_time':
-                        if (!empty($product_content['product_reset_time']) && $product_content['product_reset_time'] == '1') {
+                        if (isset($product_content['product_reset_time']) && $product_content['product_reset_time'] == '1') {
                             $user->expire_in = date('Y-m-d H:i:s', time() + ($value * 86400));
                         } else {
                             if (time() > strtotime($user->expire_in)) {
@@ -415,7 +417,7 @@ class UserController extends BaseController
                         }
                         break;
                     case 'product_traffic':
-                        if (!empty($product_content['product_reset_traffic']) && $product_content['product_reset_traffic'] == '1') {
+                        if (isset($product_content['product_reset_traffic']) && $product_content['product_reset_traffic'] == '1') {
                             $user->transfer_enable = ($user->u + $user->d) + ($value * 1073741824);
                         } else {
                             $user->transfer_enable += $value * 1073741824;
@@ -460,23 +462,23 @@ class UserController extends BaseController
             // 0 此商品返利规则跟随系统设置
             // 1 此商品不返利
             // 2 此商品返利金额使用下方数值
-            if ($product->rebate_mode == '0' && $user->ref_by > 0) {
+            if ($product->rebate_mode === 0 && $user->ref_by > 0) {
                 $invite_user = User::find($user->ref_by);
-                if ($invite_user != null) {
+                if ($invite_user !== null) {
                     Payback::rebate($user->id, ($order->order_price / 100), $order->no);
                 }
             }
-            if ($product->rebate_mode == '2' && $user->ref_by > 0) {
+            if ($product->rebate_mode === 2 && $user->ref_by > 0) {
                 $invite_user = User::find($user->ref_by);
-                if ($invite_user != null) {
+                if ($invite_user !== null) {
                     // 添加返利记录
-                    $payback = new Payback;
+                    $payback = new Payback();
                     $payback->total = $order->order_price / 100;
                     $payback->userid = $order->user_id;
                     $payback->ref_by = $invite_user->id;
                     $payback->ref_get = $product->rebate_amount / 100;
                     $payback->associated_order = $order->no;
-                    if (!Payback::fraudDetection($user) && $_ENV['rebate_risk_control'] == true) {
+                    if (!Payback::fraudDetection($user) && $_ENV['rebate_risk_control'] === true) {
                         $payback->fraud_detect = 1; // 0为通过; 1为欺诈
                     } else {
                         $invite_user->money += $product->rebate_amount / 100;
@@ -492,14 +494,19 @@ class UserController extends BaseController
             $order->save();
 
             // 告罄补货通知
-            if ($product->stock - $product->sales == 5 || $product->stock - $product->sales == 0) {
+            if ($product->stock - $product->sales === 5 || $product->stock - $product->sales === 0) {
                 $admin_users = User::where('is_admin', '1')->get();
                 foreach ($admin_users as $admin) {
-                    Mail::send($admin->email, $_ENV['appName'] . ' - 商品缺货通知', 'news/warn.tpl', 'system',
+                    Mail::send(
+                        $admin->email,
+                        $_ENV['appName'] . ' - 商品缺货通知',
+                        'news/warn.tpl',
+                        'system',
                         [
                             'user' => $admin,
                             'text' => '商品【' . $product->name . '】当前库存仅有 ' . ($product->stock - $product->sales) . ' 件，请注意及时补货',
-                        ], []
+                        ],
+                        []
                     );
                 }
             }
@@ -512,15 +519,15 @@ class UserController extends BaseController
         $card = $request->getParam('card');
 
         try {
-            if ($card == '') {
+            if ($card === '') {
                 throw new \Exception('请填写礼品卡');
             }
 
             $giftcard = GiftCard::where('card', $card)->first();
-            if ($giftcard == null) {
+            if ($giftcard === null) {
                 throw new \Exception('礼品卡不存在');
             }
-            if ($giftcard->status == '已用') {
+            if ($giftcard->status === '已用') {
                 throw new \Exception('礼品卡已使用');
             }
             $user->money += $giftcard->balance; // 模型已经将礼品卡面额转换，不需要再除以一百
@@ -531,9 +538,9 @@ class UserController extends BaseController
             $giftcard->use_user = $user->id;
             $giftcard->save();
 
-            if ($user->ref_by > 0 && $_ENV['gift_card_rebate'] == true) {
+            if ($user->ref_by > 0 && $_ENV['gift_card_rebate'] === true) {
                 $invite_user = User::find($user->ref_by);
-                if ($invite_user != null) {
+                if ($invite_user !== null) {
                     Payback::rebate($user->id, $giftcard->balance, $card);
                 }
             }
@@ -556,7 +563,7 @@ class UserController extends BaseController
         $amount = $request->getParam('recharge_amount');
 
         try {
-            if ($amount == '') {
+            if ($amount === '') {
                 throw new \Exception('请输入充值金额');
             }
             if ($amount <= 0) {
@@ -568,7 +575,7 @@ class UserController extends BaseController
             }
             $amount = sprintf("%.2f", $amount);
 
-            $order = new ProductOrder;
+            $order = new ProductOrder();
             $order->no = substr(md5(time()), 20);
             $order->user_id = $user->id;
             $order->product_id = 0;
@@ -635,7 +642,7 @@ class UserController extends BaseController
     {
         $user_id = $this->user->id;
         $code = InviteCode::where('user_id', $user_id)->first();
-        if ($code == null) {
+        if ($code === null) {
             $this->user->addInviteCode();
             $code = InviteCode::where('user_id', $user_id)->first();
         }
@@ -655,37 +662,12 @@ class UserController extends BaseController
             ->display('user/invite.tpl');
     }
 
-    public function isHTTPS()
-    {
-        define('HTTPS', false);
-        if (defined('HTTPS') && HTTPS) {
-            return true;
-        }
-        if (!isset($_SERVER)) {
-            return false;
-        }
-        if (!isset($_SERVER['HTTPS'])) {
-            return false;
-        }
-        if ($_SERVER['HTTPS'] === 1) { //Apache
-            return true;
-        }
-        if ($_SERVER['HTTPS'] === 'on') { //IIS
-            return true;
-        }
-        if ($_SERVER['SERVER_PORT'] == 443) { //其他
-            return true;
-        }
-
-        return false;
-    }
-
     public function gaCheck($request, $response, $args)
     {
         $code = $request->getParam('code');
 
         try {
-            if ($code == '') {
+            if ($code === '') {
                 throw new \Exception('请填写验证码');
             }
 
@@ -712,8 +694,8 @@ class UserController extends BaseController
     public function gaSet($request, $response, $args)
     {
         $user = $this->user;
-        $enable = $request->getParam('enable');
-        $user->ga_enable = ($enable == '1') ? '1' : '0';
+        $enable = (int) $request->getParam('enable');
+        $user->ga_enable = ($enable === 1) ? '1' : '0';
         $user->save();
 
         return $response->withJson([
@@ -755,34 +737,38 @@ class UserController extends BaseController
         $oldpwd = $request->getParam('oldpwd');
 
         if (!Hash::checkPassword($user->pass, $oldpwd)) {
-            $res['ret'] = 0;
-            $res['msg'] = '当前密码不正确';
-            return $response->withJson($res);
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => '当前密码不正确',
+            ]);
         }
 
-        if ($pwd != $repwd) {
-            $res['ret'] = 0;
-            $res['msg'] = '两次输入不符';
-            return $response->withJson($res);
+        if ($pwd !== $repwd) {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => '两次输入不符',
+            ]);
         }
 
         if (strlen($pwd) < 8) {
-            $res['ret'] = 0;
-            $res['msg'] = '新密码长度不足 8 位';
-            return $response->withJson($res);
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => '新密码长度不足 8 位',
+            ]);
         }
 
         $hashPwd = Hash::passwordHash($pwd);
         $user->pass = $hashPwd;
         $user->save();
 
-        if ($_ENV['enable_forced_replacement'] == true) {
+        if ($_ENV['enable_forced_replacement'] === true) {
             $user->clean_link();
         }
 
-        $res['ret'] = 1;
-        $res['msg'] = '修改成功，请重新登录';
-        return $response->withJson($res);
+        return $response->withJson([
+            'ret' => 1,
+            'msg' => '修改成功，请重新登录',
+        ]);
     }
 
     public function updateEmail($request, $response, $args)
@@ -795,7 +781,7 @@ class UserController extends BaseController
             if (!$_ENV['enable_change_email']) {
                 throw new \Exception('此项不允许自行修改，请联系管理员操作');
             }
-            if ($newemail == '') {
+            if ($newemail === '') {
                 throw new \Exception('请填写新邮箱');
             }
             if (!Tools::emailCheck($newemail)) {
@@ -804,11 +790,11 @@ class UserController extends BaseController
             if (!Check::isEmailLegal($newemail)) {
                 throw new \Exception('新邮箱的域不受支持');
             }
-            if ($newemail == $oldemail) {
+            if ($newemail === $oldemail) {
                 throw new \Exception('你正在使用此邮箱，无需更改');
             }
             $otheruser = User::where('email', $newemail)->first();
-            if ($otheruser != null) {
+            if ($otheruser !== null) {
                 throw new \Exception('此邮箱已是注册账户');
             }
             if (Setting::obtain('reg_email_verify')) {
@@ -818,7 +804,7 @@ class UserController extends BaseController
                     ->where('expire_in', '>', time())
                     ->first();
 
-                if ($mailcount == null) {
+                if ($mailcount === null) {
                     throw new \Exception('邮箱验证码不正确');
                 }
             }
@@ -840,10 +826,11 @@ class UserController extends BaseController
     public function updateUsername($request, $response, $args)
     {
         $newusername = $request->getParam('newusername');
-        if ($newusername == '') {
-            $res['ret'] = 0;
-            $res['msg'] = '新用户名不能为空';
-            return $response->withJson($res);
+        if ($newusername === '') {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => '新用户名不能为空',
+            ]);
         }
 
         $user = $this->user;
@@ -851,9 +838,10 @@ class UserController extends BaseController
         $user->user_name = $antiXss->xss_clean($newusername);
         $user->save();
 
-        $res['ret'] = 1;
-        $res['msg'] = '修改成功';
-        return $response->withJson($res);
+        return $response->withJson([
+            'ret' => 1,
+            'msg' => '修改成功',
+        ]);
     }
 
     public function updateWechat($request, $response, $args)
@@ -863,10 +851,10 @@ class UserController extends BaseController
         $wechat = trim($request->getParam('wechat'));
 
         try {
-            if ($wechat == '' || $type == '') {
+            if ($wechat === '' || $type === '') {
                 throw new \Exception('选择社交软件名称并填写联系方式');
             }
-            if ($user->telegram_id != 0) {
+            if ($user->telegram_id !== 0) {
                 throw new \Exception('绑定 Telegram 账户时不能修改此项');
             }
         } catch (\Exception $e) {
@@ -881,21 +869,24 @@ class UserController extends BaseController
         $user->im_value = $antiXss->xss_clean($wechat);
         $user->save();
 
-        $res['ret'] = 1;
-        $res['msg'] = '修改成功';
-        return $response->withJson($res);
+        return $response->withJson([
+            'ret' => 1,
+            'msg' => '修改成功',
+        ]);
     }
 
     public function handleKill($request, $response, $args)
     {
         if ($_ENV['enable_kill']) {
+            $res = [];
             $user = $this->user;
             $passwd = $request->getParam('passwd');
 
             if (!Hash::checkPassword($user->pass, $passwd)) {
-                $res['ret'] = '0';
-                $res['msg'] = '当前密码错误，请重试';
-                return $response->withJson($res);
+                return $response->withJson([
+                    'ret' => 0,
+                    'msg' => '当前密码错误，请重试',
+                ]);
             }
 
             Auth::logout();
@@ -911,7 +902,7 @@ class UserController extends BaseController
         return $response->withJson($res);
     }
 
-    public function detect_index($request, $response, $args)
+    public function detectIndex($request, $response, $args)
     {
         $logs = DetectRule::get();
         return $this->view()
@@ -919,7 +910,7 @@ class UserController extends BaseController
             ->display('user/detect/index.tpl');
     }
 
-    public function detect_log($request, $response, $args)
+    public function detectLog($request, $response, $args)
     {
         $logs = DetectLog::where('user_id', $this->user->id)
             ->orderBy('id', 'desc')
@@ -936,9 +927,10 @@ class UserController extends BaseController
         $user = $this->user;
         $user->clean_link();
 
-        $res['ret'] = 1;
-        $res['msg'] = '更换成功';
-        return $response->withJson($res);
+        return $response->withJson([
+            'ret' => 1,
+            'msg' => '更换成功',
+        ]);
     }
 
     public function resetInviteURL($request, $response, $args)
@@ -946,14 +938,15 @@ class UserController extends BaseController
         $user = $this->user;
         $user->clear_inviteCodes();
 
-        $res['ret'] = 1;
-        $res['msg'] = '重置成功';
-        return $response->withJson($res);
+        return $response->withJson([
+            'ret' => 1,
+            'msg' => '重置成功',
+        ]);
     }
 
-    public function subscribe_log($request, $response, $args)
+    public function subscribeLog($request, $response, $args)
     {
-        if ($_ENV['subscribeLog_show'] == false) {
+        if ($_ENV['subscribeLog_show'] === false) {
             return $response->withStatus(302)->withHeader('Location', '/user');
         }
 
@@ -978,7 +971,7 @@ class UserController extends BaseController
             if (!in_array($theme, $themes)) {
                 throw new \Exception('请从给出的主题列表中选择一个');
             }
-            if ($user->theme == $theme) {
+            if ($user->theme === $theme) {
                 throw new \Exception('正在使用此主题，无需更改');
             }
 
@@ -1024,7 +1017,7 @@ class UserController extends BaseController
         return $response->withStatus(302)->withHeader('Location', '/auth/login');
     }
 
-    public function telegram_reset($request, $response, $args)
+    public function telegramReset($request, $response, $args)
     {
         $user = $this->user;
         $user->TelegramReset();
@@ -1040,7 +1033,7 @@ class UserController extends BaseController
         $obfs_param = trim($request->getParam('obfs_param')); // 混淆参数
 
         try {
-            if ($method == '') {
+            if ($method === '') {
                 throw new \Exception('加密无效');
             }
             if (!Tools::is_param_validate('obfs', $obfs)) {
@@ -1079,10 +1072,10 @@ class UserController extends BaseController
     {
         try {
             $user = $this->user;
-            if ($_ENV['enable_checkin'] == false) {
+            if ($_ENV['enable_checkin'] === false) {
                 throw new \Exception('暂时不能签到');
             }
-            if ($_ENV['enable_expired_checkin'] == false && strtotime($user->expire_in) < time()) {
+            if ($_ENV['enable_expired_checkin'] === false && strtotime($user->expire_in) < time()) {
                 throw new \Exception('账户过期时不能签到');
             }
             if (!$user->isAbleToCheckin()) {
@@ -1171,7 +1164,7 @@ class UserController extends BaseController
     public function media($request, $response, $args)
     {
         $results = [];
-        $db = new DatatablesHelper;
+        $db = new DatatablesHelper();
         $nodes = $db->query('SELECT DISTINCT node_id FROM stream_media');
 
         foreach ($nodes as $node_id) {
@@ -1182,7 +1175,7 @@ class UserController extends BaseController
                 ->where('created_at', '>', time() - 86460) // 只获取最近一天零一分钟内上报的数据
                 ->first();
 
-            if ($unlock != null && $node != null) {
+            if ($unlock !== null && $node !== null) {
                 $details = json_decode($unlock->result, true);
                 $details = str_replace('Originals Only', '仅限自制', $details);
                 $details = str_replace('Oversea Only', '仅限海外', $details);
@@ -1199,7 +1192,7 @@ class UserController extends BaseController
             }
         }
 
-        if ($_ENV['streaming_media_unlock_multiplexing'] != null) {
+        if ($_ENV['streaming_media_unlock_multiplexing'] !== null) {
             foreach ($_ENV['streaming_media_unlock_multiplexing'] as $key => $value) {
                 $key_node = Node::where('id', $key)->first();
                 $value_node = StreamMedia::where('node_id', $value)
@@ -1207,7 +1200,7 @@ class UserController extends BaseController
                     ->where('created_at', '>', time() - 86460) // 只获取最近一天零一分钟内上报的数据
                     ->first();
 
-                if ($value_node != null) {
+                if ($value_node !== null) {
                     $details = json_decode($value_node->result, true);
                     $details = str_replace('Originals Only', '仅限自制', $details);
                     $details = str_replace('Oversea Only', '仅限海外', $details);
@@ -1353,11 +1346,11 @@ class UserController extends BaseController
     {
         $token = $args['token'];
         $Etoken = Token::where('token', '=', $token)->where('create_time', '>', time() - 60 * 10)->first();
-        if ($Etoken == null) {
+        if ($Etoken === null) {
             return '下载链接已失效，请刷新页面后重新点击.';
         }
         $user = User::find($Etoken->user_id);
-        if ($user == null) {
+        if ($user === null) {
             return null;
         }
         $this->user = $user;

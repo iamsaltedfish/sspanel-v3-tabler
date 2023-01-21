@@ -189,7 +189,6 @@ class IpController extends AdminController
     public function alive($request, $response, $args)
     {
         $table_config = [];
-        $table_config = [];
         $table_config['total_column'] = [
             'id' => 'ID',
             'userid' => '用户ID',

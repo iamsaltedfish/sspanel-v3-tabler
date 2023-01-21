@@ -17,10 +17,12 @@ class Admin
     {
         $user = AuthService::getUser();
         if (!$user->isLogin) {
-            return $response->withStatus(302)->withHeader('Location', '/auth/login');
+            return $response->withStatus(302)
+                ->withHeader('Location', '/auth/login');
         }
         if (!$user->is_admin) {
-            return $response->withStatus(302)->withHeader('Location', '/user');
+            return $response->withStatus(302)
+                ->withHeader('Location', '/user');
         }
         return $next($request, $response);
     }

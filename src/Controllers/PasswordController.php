@@ -1,14 +1,13 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Models\PasswordReset;
-use App\Models\User;
 use App\Models\Setting;
+use App\Models\User;
 use App\Services\Password;
 use App\Utils\Hash;
 use App\Utils\Tools;
-use Slim\Http\Request;
-use Slim\Http\Response;
 
 class PasswordController extends BaseController
 {
@@ -24,37 +23,37 @@ class PasswordController extends BaseController
         try {
             $email = strtolower($request->getParam('email'));
             $user = User::where('email', $email)->first();
-            if ($user == null) {
+            if ($user === null) {
                 throw new \Exception('此邮箱不存在');
             }
             if (!Tools::emailCheck($email)) {
                 throw new \Exception('邮箱格式不正确');
             }
-            if (Setting::obtain('mail_driver') == 'none') {
+            if (Setting::obtain('mail_driver') === 'none') {
                 throw new \Exception('没有有效的发信配置');
             }
             Password::sendResetEmail($email);
         } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => $e->getMessage()
+                'msg' => $e->getMessage(),
             ]);
         }
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '已发送，请查收邮箱收件箱或垃圾箱'
+            'msg' => '已发送，请查收邮箱收件箱或垃圾箱',
         ]);
     }
 
     public function token($request, $response, $args)
     {
         $token = PasswordReset::where('token', $args['token'])
-        ->where('expire_time', '>', time())
-        ->orderBy('id', 'desc')
-        ->first();
+            ->where('expire_time', '>', time())
+            ->orderBy('id', 'desc')
+            ->first();
 
-        if ($token == null) {
+        if ($token === null) {
             return $response->withStatus(302)->withHeader('Location', '/password/reset');
         }
 
@@ -73,18 +72,18 @@ class PasswordController extends BaseController
             if (strlen($password) < 8) {
                 throw new \Exception('密码长度不足8位');
             }
-            if ($password != $repasswd) {
+            if ($password !== $repasswd) {
                 throw new \Exception('两次输入不符合');
             }
             $token = PasswordReset::where('token', $tokenStr)
-            ->where('expire_time', '>', time())
-            ->orderBy('id', 'desc')
-            ->first();
-            if ($token == null) {
+                ->where('expire_time', '>', time())
+                ->orderBy('id', 'desc')
+                ->first();
+            if ($token === null) {
                 throw new \Exception('链接已经失效，请重新获取');
             }
             $user = $token->getUser();
-            if ($user == null) {
+            if ($user === null) {
                 throw new \Exception('链接已经失效，请重新获取');
             }
 
@@ -92,7 +91,7 @@ class PasswordController extends BaseController
             $user->pass = $hashPassword;
             $user->ga_enable = 0;
             $user->save();
-            if ($_ENV['enable_forced_replacement'] == true) {
+            if ($_ENV['enable_forced_replacement']) {
                 $user->clean_link();
             }
 
@@ -101,13 +100,13 @@ class PasswordController extends BaseController
         } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => $e->getMessage()
+                'msg' => $e->getMessage(),
             ]);
         }
 
         return $response->withJson([
             'ret' => 1,
-            'msg' => '重置成功，请使用新密码登录'
+            'msg' => '重置成功，请使用新密码登录',
         ]);
     }
 }

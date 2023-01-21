@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 class DocsController extends BaseController
@@ -164,7 +165,7 @@ class DocsController extends BaseController
 
         return $groups;
     }
-    
+
     public function index($request, $response, $args)
     {
         $client = $args['client'];

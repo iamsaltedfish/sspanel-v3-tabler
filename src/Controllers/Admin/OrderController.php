@@ -107,7 +107,7 @@ class OrderController extends AdminController
             $invite_user = User::find($user->ref_by);
             if (isset($invite_user)) {
                 $payback = Payback::where('associated_order', $order_no)->first();
-                if (isset($payback) && $payback->fraud_detect === 0) {
+                if (isset($payback) && $payback->getOriginal('fraud_detect') === 0) {
                     $array = [
                         'item' => '邀请人余额',
                         'before' => $invite_user->money,
@@ -158,7 +158,7 @@ class OrderController extends AdminController
                 $invite_user = User::find($user->ref_by);
                 if (isset($invite_user)) {
                     $payback = Payback::where('associated_order', $order_no)->first();
-                    if (isset($payback) && $payback->fraud_detect === 0) {
+                    if (isset($payback) && $payback->getOriginal('fraud_detect') === 0) {
                         if ($invite_user->money < $payback->ref_get) {
                             $invite_user->money = 0;
                         } else {

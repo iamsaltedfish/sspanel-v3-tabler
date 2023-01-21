@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Models\EmailVerify;
@@ -32,14 +33,14 @@ class AuthController extends BaseController
         $user = User::where('email', $email)->first();
 
         try {
-            if ($user == null) {
+            if ($user === null) {
                 throw new \Exception('没有找到这个邮箱');
             }
             if (!Hash::checkPassword($user->pass, $passwd)) {
                 $user->collectLoginIP($_SERVER['REMOTE_ADDR'], $request->getHeaderLine('User-Agent'), 1);
                 throw new \Exception('登录密码不正确');
             }
-            if ($user->ga_enable == 1) {
+            if ($user->ga_enable === 1) {
                 $ga = new GA();
                 if (!$ga->verifyCode($user->ga_token, $code)) {
                     throw new \Exception('两步验证码错误，如丢失密钥，请重置密码');
@@ -78,14 +79,14 @@ class AuthController extends BaseController
             if (!Setting::obtain('reg_email_verify')) {
                 throw new \Exception('不需要验证邮箱');
             }
-            if (Setting::obtain('mail_driver') == 'none') {
+            if (Setting::obtain('mail_driver') === 'none') {
                 throw new \Exception('没有有效的发信配置');
             }
-            if ($reg_mode == 'close') {
+            if ($reg_mode === 'close') {
                 throw new \Exception('未开放注册');
             }
             $email = strtolower(trim($request->getParam('email')));
-            if ($email == '') {
+            if ($email === '') {
                 throw new \Exception('请填写邮箱');
             }
             if (!Tools::emailCheck($email)) {
@@ -95,7 +96,7 @@ class AuthController extends BaseController
                 throw new \Exception('不支持此邮箱域');
             }
             $user = User::where('email', $email)->first();
-            if ($user != null) {
+            if ($user !== null) {
                 throw new \Exception('此邮箱已注册');
             }
             $ipcount = EmailVerify::where('ip', $_SERVER['REMOTE_ADDR'])
@@ -113,7 +114,7 @@ class AuthController extends BaseController
             $one_minute_limit = EmailVerify::where('email', $email)
                 ->orderBy('id', 'desc')
                 ->first();
-            if ($one_minute_limit != null && ($one_minute_limit->expire_in - $email_verify_ttl) > (time() - 60)) {
+            if ($one_minute_limit !== null && ($one_minute_limit->expire_in - $email_verify_ttl) > (time() - 60)) {
                 throw new \Exception('一分钟内只能请求一次验证码邮件');
             }
 
@@ -125,11 +126,16 @@ class AuthController extends BaseController
             $ev->code = $code;
             $ev->save();
 
-            Mail::send($email, $_ENV['appName'] . ' - 验证邮件', 'auth/verify.tpl', 'basic',
+            Mail::send(
+                $email,
+                $_ENV['appName'] . ' - 验证邮件',
+                'auth/verify.tpl',
+                'basic',
                 [
                     'code' => $code,
                     'expire' => date('Y-m-d H:i:s', time() + $email_verify_ttl),
-                ], []
+                ],
+                []
             );
         } catch (\Exception $e) {
             return $response->withJson([
@@ -167,13 +173,13 @@ class AuthController extends BaseController
             $fingerprint = $request->getParam('fingerprint');
             $reg_mode = Setting::obtain('reg_mode');
 
-            if ($tos == 'false') {
+            if ($tos === 'false') {
                 throw new \Exception('请勾选同意服务条款与隐私政策');
             }
-            if ($name == '') {
+            if ($name === '') {
                 throw new \Exception('请填写昵称');
             }
-            if ($email == '') {
+            if ($email === '') {
                 throw new \Exception('请填写注册邮箱');
             }
             if (!Tools::emailCheck($email)) {
@@ -190,27 +196,27 @@ class AuthController extends BaseController
             if (strlen($passwd) < 8) {
                 throw new \Exception('密码长度不足8位');
             }
-            if ($passwd != $repasswd) {
+            if ($passwd !== $repasswd) {
                 throw new \Exception('两次输入的密码不相符');
             }
-            if ($reg_mode == 'close') {
+            if ($reg_mode === 'close') {
                 throw new \Exception('未开放注册');
             }
-            if ($reg_mode == 'invite' && $code == '') {
+            if ($reg_mode === 'invite' && $code === '') {
                 throw new \Exception('仅开放邀请注册，请填写邀请码');
             }
-            if ($reg_mode == 'invite') {
+            if ($reg_mode === 'invite') {
                 $split = explode('=', $code);
                 $code = (count($split) === 1) ? $code : end($split);
                 $reg_invite_code = InviteCode::where('code', $code)->first();
-                if ($reg_invite_code == null) {
+                if ($reg_invite_code === null) {
                     throw new \Exception('没有找到这个邀请码');
                 }
                 $invite_user = User::where('id', $reg_invite_code->user_id)->first();
-                if ($invite_user == null) {
+                if ($invite_user === null) {
                     throw new \Exception('邀请人不存在');
                 }
-                if ($invite_user->invite_num == 0) {
+                if ($invite_user->invite_num === 0) {
                     throw new \Exception('邀请码可用次数不足');
                 }
                 if (!InviteCode::invitationPermissionCheck($invite_user->id)) {
@@ -218,16 +224,16 @@ class AuthController extends BaseController
                 }
             }
             if ($_ENV['enable_reg_im']) {
-                $imtype = $request->getParam('im_type');
+                $imtype = (int) $request->getParam('im_type');
                 $imvalue = $request->getParam('im_value');
-                $legal_scope = ['1', '2', '4', '5'];
-                if (!in_array($imtype, $legal_scope)) {
+                $legal_scope = [1, 2, 4, 5];
+                if (!in_array($imtype, $legal_scope, true)) {
                     throw new \Exception('选择社交软件并填写社交账户');
                 }
                 $imtype_exist = User::where('im_value', $imvalue)
                     ->where('im_type', $imtype)
                     ->first();
-                if ($imtype_exist != null) {
+                if ($imtype_exist !== null) {
                     throw new \Exception('此社交账户已被使用');
                 }
             } else {
@@ -235,7 +241,7 @@ class AuthController extends BaseController
                 $imvalue = '';
             }
             $user = User::where('email', $email)->first();
-            if ($user != null) {
+            if ($user !== null) {
                 throw new \Exception('此邮箱已注册');
             }
             if (Setting::obtain('reg_email_verify')) {
@@ -243,7 +249,7 @@ class AuthController extends BaseController
                     ->where('code', $emailcode)
                     ->where('expire_in', '>', time())
                     ->first();
-                if ($mailcount == null) {
+                if ($mailcount === null) {
                     throw new \Exception('邮箱验证码不正确或已超时');
                 }
             }
@@ -256,7 +262,7 @@ class AuthController extends BaseController
             ]);
         }
 
-        if ($reg_mode == 'invite') {
+        if ($reg_mode === 'invite') {
             // 仅在仅允许邀请注册的情况下扣减邀请码次数
             $invite_user->invite_num -= 1;
             $invite_user->save();
@@ -284,7 +290,7 @@ class AuthController extends BaseController
 
         $user->money = $_ENV['reg_money'];
         $user->email = $email;
-        $user->im_type = ($imtype == '') ? '1' : $imtype;
+        $user->im_type = ($imtype === '') ? 1 : $imtype;
         $user->im_value = $antiXss->xss_clean($imvalue);
         $user->user_name = $antiXss->xss_clean($name);
         $user->port = Tools::getAvPort();
@@ -314,13 +320,13 @@ class AuthController extends BaseController
         $user->expire_in = date('Y-m-d H:i:s', time() + $_ENV['reg_default_time'] * 3600);
         $user->class_expire = date('Y-m-d H:i:s', time() + $_ENV['reg_default_class_time'] * 3600);
         $user->reg_date = date('Y-m-d H:i:s');
-        $user->reg_ip = (empty($_SERVER['REMOTE_ADDR'])) ? '127.0.0.1' : $_SERVER['REMOTE_ADDR'];
+        $user->reg_ip = $_SERVER['REMOTE_ADDR'];
         $user->theme = $_ENV['theme'];
         $groups = explode(',', $_ENV['random_group']);
         $user->node_group = $groups[array_rand($groups)];
         // 标记邀请人
         $c = InviteCode::where('code', $code)->first();
-        if ($c != null) {
+        if ($c !== null) {
             $user->ref_by = $c->user_id;
         }
         $user->save();

@@ -46,9 +46,6 @@ class CouponController extends AdminController
             if ($count !== 0) {
                 throw new \Exception('存在同名优惠码');
             }
-            if (trim($coupon) !== $coupon) {
-                throw new \Exception('优惠码首尾不能有空格');
-            }
             if ($discount === '') {
                 throw new \Exception('请填写优惠额度');
             }
@@ -109,9 +106,6 @@ class CouponController extends AdminController
         try {
             if ($coupon === '') {
                 throw new \Exception('请填写优惠码');
-            }
-            if (trim($coupon) !== $coupon) {
-                throw new \Exception('优惠码首尾不能有空格');
             }
             if ($discount === '') {
                 throw new \Exception('请填写优惠额度');

@@ -2,17 +2,11 @@
 
 namespace App\Controllers;
 
+use App\Models\Link;
+use App\Models\Node;
+use App\Models\UserSubscribeLog;
 use App\Utils\Tools;
-use App\Models\{
-    Link,
-    Node,
-    UserSubscribeLog
-};
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\{
-    Request,
-    Response
-};
 
 /**
  *  SubController
@@ -31,14 +25,14 @@ class SubController extends BaseController
         $subtype = $args['subtype'];
 
         $sub_token = Link::where('token', $token)->first();
-        if ($sub_token == null) {
+        if ($sub_token === null) {
             return $response->withJson([
                 'ret' => 0,
             ]);
         }
 
         $user = $sub_token->getUser();
-        if ($user == null) {
+        if ($user === null) {
             return $response->withJson([
                 'ret' => 0,
             ]);
@@ -51,12 +45,12 @@ class SubController extends BaseController
             ]);
         }
 
-        $nodes = array();
+        $nodes = [];
         //篩選出用戶能連接的節點，感謝 @AVX512
         $nodes_raw = Node::where('type', 1)
             ->where('node_class', '<=', $user->class)
             ->whereIn('node_group', [0, $user->group])
-            ->where(function ($query) {
+            ->where(static function ($query) {
                 $query->where('node_bandwidth_limit', '=', 0)->orWhereRaw('node_bandwidth < node_bandwidth_limit');
             })
             ->get();
@@ -89,7 +83,7 @@ class SubController extends BaseController
                         "encryption" => $user->method,
                         "plugin" => $plugin,
                         "plugin_option" => $plugin_option,
-                        "remark" => $node_raw->info
+                        "remark" => $node_raw->info,
                     ];
                     break;
                 //單獨加了一種SSR節點類型用來同時處理多端口和單端口SSR的訂閲下發
@@ -99,7 +93,7 @@ class SubController extends BaseController
                         break;
                     }
                     //判斷一下是普通SSR節點還是單端口SSR節點，混淆式单端就去掉了，配起来怪麻烦的
-                    if ($node_raw->mu_only == -1) {
+                    if ($node_raw->mu_only === -1) {
                         $node = [
                             "name" => $node_raw->name,
                             "id" => $node_raw->id,
@@ -112,7 +106,7 @@ class SubController extends BaseController
                             "protocol_param" => $user->protocol_param,
                             "obfs" => $user->obfs,
                             "obfs_param" => $user->obfs_param,
-                            "remark" => $node_raw->info
+                            "remark" => $node_raw->info,
                         ];
                     } else {
                         //優先級是 mu_port > offset_port_user > offset_port_node ，v2 和 trojan 同理
@@ -143,7 +137,7 @@ class SubController extends BaseController
                             "protocol_param" => $user_protocol_param,
                             "obfs" => $mu_obfs,
                             "obfs_param" => $mu_suffix,
-                            "remark" => $node_raw->info
+                            "remark" => $node_raw->info,
                         ];
                     }
                     break;
@@ -196,7 +190,7 @@ class SubController extends BaseController
                         "servicename" => $servicename,
                         "tls" => $tls,
                         "enable_vless" => $enable_vless,
-                        "remark" => $node_raw->info
+                        "remark" => $node_raw->info,
                     ];
                     break;
                 case "14":
@@ -221,7 +215,7 @@ class SubController extends BaseController
                     //Trojan-Go 啥都好，就是特性連個支持的付費後端都沒有
                     $security = $node_custom_config['security'] ?? $node_custom_config['enable_xtls'] == '1' ? 'xtls' : 'tls';
                     $mux = $node_custom_config['mux'] ?? '';
-                    $transport = $node_custom_config['transport'] ?? $node_custom_config['grpc'] == '1' ? 'grpc' : 'tcp';;
+                    $transport = $node_custom_config['transport'] ?? $node_custom_config['grpc'] == '1' ? 'grpc' : 'tcp';
                     $transport_plugin = $node_custom_config['transport_plugin'] ?? '';
                     $transport_method = $node_custom_config['transport_method'] ?? '';
                     $servicename = $node_custom_config['servicename'] ?? '';
@@ -246,7 +240,7 @@ class SubController extends BaseController
                     ];
                     break;
             }
-            if ($node == null) {
+            if ($node === null) {
                 continue;
             } else {
                 $nodes[] = $node;
@@ -262,7 +256,7 @@ class SubController extends BaseController
             "user_class_expire_date" => $user->class_expire,
             "user_total_traffic" => $user->transfer_enable,
             "user_used_traffic" => $user->u + $user->d,
-            "nodes" => $nodes
+            "nodes" => $nodes,
         ];
 
         if ($_ENV['subscribeLog'] === true) {
@@ -275,7 +269,7 @@ class SubController extends BaseController
             return $response->withStatus(304);
         }
         return $response->withHeader('ETAG', $etag)->withJson([
-            $sub_info
+            $sub_info,
         ]);
     }
 
@@ -283,7 +277,7 @@ class SubController extends BaseController
     {
         $userid = $user->id;
         $token = Link::where('userid', $userid)->first();
-        if ($token == null) {
+        if ($token === null) {
             $token = new Link();
             $token = $userid;
             $token->token = Tools::genSubToken();

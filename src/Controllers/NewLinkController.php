@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Models\Link;
@@ -35,12 +36,12 @@ class NewLinkController extends BaseController
             self::LoggingSubscriptions($user, $client, $user_agent);
         }
 
-        $specified = $request->getParam('clash');
-        if ($specified == 1) {
+        $specified = (int) $request->getParam('clash');
+        if ($specified === 1) {
             return self::clashClient($nodes, $user);
         }
-        $quantumult_specified = $request->getParam('quantumult');
-        if ($quantumult_specified == 1) {
+        $quantumult_specified = (int) $request->getParam('quantumult');
+        if ($quantumult_specified === 1) {
             return self::quantumultClient($nodes, $user);
         }
 
@@ -135,10 +136,10 @@ class NewLinkController extends BaseController
     // 安全的base64编码 https://developer.aliyun.com/article/506076
     public static function urlSafeBase64Encode(string $string): string
     {
-        $data = base64_encode($string);
+        return base64_encode($string);
         // v2rayn 客户端不能正确解码故注释掉
         //$data = str_replace(array('+', '/', '='), array('-', '_', ''), $data);
-        return $data;
+        //return $data;
     }
 
     // 解析额外参数

@@ -2,16 +2,11 @@
 
 namespace App\Controllers;
 
-use App\Models\InviteCode;
-use App\Utils\{
-    TelegramProcess,
-    Telegram\Process
-};
-use Slim\Http\{
-    Request,
-    Response
-};
+use App\Utils\Telegram\Process;
+use App\Utils\TelegramProcess;
 use Psr\Http\Message\ResponseInterface;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 /**
  *  HomeController
@@ -56,7 +51,7 @@ class HomeController extends BaseController
     public function telegram($request, $response, $args): ResponseInterface
     {
         $token = $request->getQueryParam('token');
-        if ($token == $_ENV['telegram_request_token']) {
+        if ($token === $_ENV['telegram_request_token']) {
             if ($_ENV['use_new_telegram_bot']) {
                 Process::index();
             } else {

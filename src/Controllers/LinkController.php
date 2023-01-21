@@ -1,23 +1,24 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Models\Link;
-use App\Models\User;
 use App\Models\Node;
+use App\Models\User;
 use App\Models\UserSubscribeLog;
 use App\Utils\AppURI;
 use App\Utils\ConfGenerate;
 use App\Utils\ConfRender;
 use App\Utils\Tools;
 use App\Utils\URL;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use voku\helper\AntiXSS;
-use Psr\Http\Message\ResponseInterface;
 
 // Thanks to http://blog.csdn.net/jollyjumper/article/details/9823047
 
-require dirname(dirname(dirname(__FILE__))) . '/config/appprofile.php';
+require dirname(__FILE__, 3) . '/config/appprofile.php';
 
 /**
  *  LinkController
@@ -29,7 +30,7 @@ class LinkController extends BaseController
         for ($i = 0; $i < 10; $i++) {
             $token = Tools::genRandomChar(16);
             $Elink = Link::where('token', $token)->first();
-            if ($Elink == null) {
+            if ($Elink === null) {
                 return $token;
             }
         }
@@ -37,18 +38,15 @@ class LinkController extends BaseController
         return "couldn't alloc token";
     }
 
-    /**
-     * @param int $userid
-     */
     public static function GenerateSSRSubCode(int $userid): string
     {
         $Elink = Link::where('userid', $userid)->first();
-        if ($Elink != null) {
+        if ($Elink !== null) {
             return $Elink->token;
         }
-        $NLink         = new Link();
+        $NLink = new Link();
         $NLink->userid = $userid;
-        $NLink->token  = self::GenerateRandomLink();
+        $NLink->token = self::GenerateRandomLink();
         $NLink->save();
 
         return $NLink->token;
@@ -68,26 +66,29 @@ class LinkController extends BaseController
         $token = $args['token'];
 
         $Elink = Link::where('token', $token)->first();
-        if ($Elink == null) {
+        if ($Elink === null) {
             return null;
         }
 
         $user = $Elink->getUser();
-        if ($user == null) {
+        if ($user === null) {
             return null;
         }
 
         $opts = $request->getQueryParams();
 
         // 筛选节点部分
+        $Rule = [];
         $Rule['type'] = (isset($opts['type']) ? trim($opts['type']) : 'all');
         $Rule['is_mu'] = ($_ENV['mergeSub'] === true ? 1 : 0);
-        if (isset($opts['mu'])) $Rule['is_mu'] = (int) $opts['mu'];
+        if (isset($opts['mu'])) {
+            $Rule['is_mu'] = (int) $opts['mu'];
+        }
 
         if (isset($opts['class'])) {
             $class = trim(urldecode($opts['class']));
             $Rule['content']['class'] = array_map(
-                function ($item) {
+                static function ($item) {
                     return (int) $item;
                 },
                 explode('-', $class)
@@ -97,7 +98,7 @@ class LinkController extends BaseController
         if (isset($opts['noclass'])) {
             $noclass = trim(urldecode($opts['noclass']));
             $Rule['content']['noclass'] = array_map(
-                function ($item) {
+                static function ($item) {
                     return (int) $item;
                 },
                 explode('-', $noclass)
@@ -147,19 +148,19 @@ class LinkController extends BaseController
 
         $getBody = '';
 
-        $sub_type_array = ['list', 'clash', 'surge', 'surfboard','anxray', 'quantumult', 'quantumultx', 'sub'];
+        $sub_type_array = ['list', 'clash', 'surge', 'surfboard', 'anxray', 'quantumult', 'quantumultx', 'sub'];
         foreach ($sub_type_array as $key) {
             if (isset($opts[$key])) {
                 $query_value = $opts[$key];
                 if ($query_value != '0' && $query_value != '') {
 
                     // 兼容代码开始
-                    if ($key == 'sub' && $query_value > 4) {
+                    if ($key === 'sub' && $query_value > 4) {
                         $query_value = 1;
                     }
                     // 兼容代码结束
 
-                    if ($key == 'list') {
+                    if ($key === 'list') {
                         $SubscribeExtend = self::getSubscribeExtend($query_value);
                     } else {
                         $SubscribeExtend = self::getSubscribeExtend($key, $query_value);
@@ -203,22 +204,22 @@ class LinkController extends BaseController
             case 'ss':
                 $return = [
                     'filename' => 'SS',
-                    'suffix'   => 'txt',
-                    'class'    => 'Sub'
+                    'suffix' => 'txt',
+                    'class' => 'Sub',
                 ];
                 break;
             case 'ssa':
                 $return = [
                     'filename' => 'SSA',
-                    'suffix'   => 'json',
-                    'class'    => 'Lists'
+                    'suffix' => 'json',
+                    'class' => 'Lists',
                 ];
                 break;
             case 'ssr':
                 $return = [
                     'filename' => 'SSR',
-                    'suffix'   => 'txt',
-                    'class'    => 'Sub'
+                    'suffix' => 'txt',
+                    'class' => 'Sub',
                 ];
                 break;
             case 'sub':
@@ -238,8 +239,8 @@ class LinkController extends BaseController
                 } else {
                     $return = [
                         'filename' => 'Clash',
-                        'suffix'   => 'yaml',
-                        'class'    => 'Lists'
+                        'suffix' => 'yaml',
+                        'class' => 'Lists',
                     ];
                 }
                 break;
@@ -247,56 +248,56 @@ class LinkController extends BaseController
                 if ($value !== null) {
                     $return = [
                         'filename' => 'Surge',
-                        'suffix'   => 'conf',
-                        'class'    => 'Surge'
+                        'suffix' => 'conf',
+                        'class' => 'Surge',
                     ];
                     $return['filename'] .= $value;
                 } else {
                     $return = [
                         'filename' => 'SurgeList',
-                        'suffix'   => 'list',
-                        'class'    => 'Lists'
+                        'suffix' => 'list',
+                        'class' => 'Lists',
                     ];
                 }
                 break;
             case 'v2rayn':
                 $return = [
                     'filename' => 'V2RayN',
-                    'suffix'   => 'txt',
-                    'class'    => 'Sub'
+                    'suffix' => 'txt',
+                    'class' => 'Sub',
                 ];
                 break;
             case 'trojan':
                 $return = [
                     'filename' => 'Trojan',
-                    'suffix'   => 'txt',
-                    'class'    => 'Sub'
+                    'suffix' => 'txt',
+                    'class' => 'Sub',
                 ];
                 break;
             case 'kitsunebi':
                 $return = [
                     'filename' => 'Kitsunebi',
-                    'suffix'   => 'txt',
-                    'class'    => 'Lists'
+                    'suffix' => 'txt',
+                    'class' => 'Lists',
                 ];
                 break;
             case 'anxray':
                 $return = [
                     'filename' => 'AnXray',
-                    'suffix'   => 'txt',
-                    'class'    => 'AnXray'
+                    'suffix' => 'txt',
+                    'class' => 'AnXray',
                 ];
-                break;	
+                break;
             case 'surfboard':
                 $return = [
                     'filename' => 'Surfboard',
-                    'suffix'   => 'conf',
-                    'class'    => 'Surfboard'
+                    'suffix' => 'conf',
+                    'class' => 'Surfboard',
                 ];
                 break;
             case 'quantumult':
                 if ($value !== null) {
-                    if ((int) $value == 2) {
+                    if ((int) $value === 2) {
                         $return = self::getSubscribeExtend('quantumult_sub');
                     } else {
                         $return = self::getSubscribeExtend('quantumult_conf');
@@ -304,16 +305,16 @@ class LinkController extends BaseController
                 } else {
                     $return = [
                         'filename' => 'Quantumult',
-                        'suffix'   => 'conf',
-                        'class'    => 'Lists'
+                        'suffix' => 'conf',
+                        'class' => 'Lists',
                     ];
                 }
                 break;
             case 'quantumultx':
                 $return = [
                     'filename' => 'QuantumultX',
-                    'suffix'   => 'txt',
-                    'class'    => 'Lists'
+                    'suffix' => 'txt',
+                    'class' => 'Lists',
                 ];
                 if ($value !== null) {
                     $return['class'] = 'QuantumultX';
@@ -322,36 +323,36 @@ class LinkController extends BaseController
             case 'shadowrocket':
                 $return = [
                     'filename' => 'Shadowrocket',
-                    'suffix'   => 'txt',
-                    'class'    => 'Lists'
+                    'suffix' => 'txt',
+                    'class' => 'Lists',
                 ];
                 break;
             case 'clash_provider':
                 $return = [
                     'filename' => 'ClashProvider',
-                    'suffix'   => 'yaml',
-                    'class'    => 'Lists'
+                    'suffix' => 'yaml',
+                    'class' => 'Lists',
                 ];
                 break;
             case 'quantumult_sub':
                 $return = [
                     'filename' => 'QuantumultSub',
-                    'suffix'   => 'conf',
-                    'class'    => 'Quantumult'
+                    'suffix' => 'conf',
+                    'class' => 'Quantumult',
                 ];
                 break;
             case 'quantumult_conf':
                 $return = [
                     'filename' => 'QuantumultConf',
-                    'suffix'   => 'conf',
-                    'class'    => 'Quantumult'
+                    'suffix' => 'conf',
+                    'class' => 'Quantumult',
                 ];
                 break;
             default:
                 $return = [
                     'filename' => 'UndefinedNode',
-                    'suffix'   => 'txt',
-                    'class'    => 'Sub'
+                    'suffix' => 'txt',
+                    'class' => 'Sub',
                 ];
                 break;
         }
@@ -369,14 +370,14 @@ class LinkController extends BaseController
      */
     private static function Subscribe_log($user, $type, $ua)
     {
-        $log                     = new UserSubscribeLog();
-        $log->user_name          = $user->user_name;
-        $log->user_id            = $user->id;
-        $log->email              = $user->email;
-        $log->subscribe_type     = $type;
-        $log->request_ip         = $_SERVER['REMOTE_ADDR'];
-        $log->request_time       = date('Y-m-d H:i:s');
-        $antiXss                 = new AntiXSS();
+        $log = new UserSubscribeLog();
+        $log->user_name = $user->user_name;
+        $log->user_id = $user->id;
+        $log->email = $user->email;
+        $log->subscribe_type = $type;
+        $log->request_ip = $_SERVER['REMOTE_ADDR'];
+        $log->request_time = date('Y-m-d H:i:s');
+        $antiXss = new AntiXSS();
         $log->request_user_agent = $antiXss->xss_clean($ua);
         $log->save();
     }
@@ -430,34 +431,34 @@ class LinkController extends BaseController
         }
         $userapiUrl = $_ENV['subUrl'] . self::GenerateSSRSubCode($user->id);
         $return_info = [
-            'link'            => '',
+            'link' => '',
             // sub
-            'ss'              => '?sub=2',
-            'ssr'             => '?sub=1',
-            'v2ray'           => '?sub=3',
-            'trojan'          => '?sub=4',
+            'ss' => '?sub=2',
+            'ssr' => '?sub=1',
+            'v2ray' => '?sub=3',
+            'trojan' => '?sub=4',
             // apps
-            'ssa'             => '?list=ssa',
-            'anxray'		  => '?anxray=1',
-            'clash'           => '?clash=1',
-            'clash_provider'  => '?list=clash',
-            'surge'           => '?surge=' . $int,
-            'surge_node'      => '?list=surge',
-            'surge2'          => '?surge=2',
-            'surge3'          => '?surge=3',
-            'surge4'          => '?surge=4',
-            'surfboard'       => '?surfboard=1',
-            'quantumult'      => '?quantumult=1',
-            'quantumult_v2'   => '?list=quantumult',
-            'quantumult_sub'  => '?quantumult=2',
+            'ssa' => '?list=ssa',
+            'anxray' => '?anxray=1',
+            'clash' => '?clash=1',
+            'clash_provider' => '?list=clash',
+            'surge' => '?surge=' . $int,
+            'surge_node' => '?list=surge',
+            'surge2' => '?surge=2',
+            'surge3' => '?surge=3',
+            'surge4' => '?surge=4',
+            'surfboard' => '?surfboard=1',
+            'quantumult' => '?quantumult=1',
+            'quantumult_v2' => '?list=quantumult',
+            'quantumult_sub' => '?quantumult=2',
             'quantumult_conf' => '?quantumult=3',
-            'quantumultx'     => '?list=quantumultx',
-            'shadowrocket'    => '?list=shadowrocket',
-            'kitsunebi'       => '?list=kitsunebi'
+            'quantumultx' => '?list=quantumultx',
+            'shadowrocket' => '?list=shadowrocket',
+            'kitsunebi' => '?list=kitsunebi',
         ];
 
         return array_map(
-            function ($item) use ($userapiUrl) {
+            static function ($item) use ($userapiUrl) {
                 return ($userapiUrl . $item);
             },
             $return_info
@@ -479,7 +480,7 @@ class LinkController extends BaseController
                 break;
             case 'anxray':
                 $return = AppURI::getAnXrayURI($item);
-                break;	
+                break;
             case 'surge':
                 $return = AppURI::getSurgeURI($item, 3);
                 break;
@@ -511,13 +512,13 @@ class LinkController extends BaseController
     public static function getLists($user, $list, $opts, $Rule)
     {
         $list = strtolower($list);
-        if ($list == 'ssa') {
+        if ($list === 'ssa') {
             $Rule['type'] = 'ss';
         }
-        if ($list == 'quantumult') {
+        if ($list === 'quantumult') {
             $Rule['type'] = 'vmess';
         }
-        if ($list == 'shadowrocket') {
+        if ($list === 'shadowrocket') {
             // Shadowrocket 自带 emoji
             $Rule['emoji'] = false;
         }
@@ -536,7 +537,7 @@ class LinkController extends BaseController
         }
         foreach ($items as $item) {
             $out = self::getListItem($item, $list);
-            if ($out != null) {
+            if ($out !== null) {
                 $return[] = $out;
             }
         }
@@ -560,16 +561,16 @@ class LinkController extends BaseController
         $return = [];
         $info_array = (count($_ENV['sub_message']) != 0 ? (array) $_ENV['sub_message'] : []);
         if (strtotime($user->expire_in) > time()) {
-            if ($user->transfer_enable == 0) {
+            if ($user->transfer_enable === 0) {
                 $unusedTraffic = '剩余流量：0';
             } else {
                 $unusedTraffic = '剩余 ' . $user->unusedTraffic();
             }
             $diff = round((strtotime($user->expire_in) - time()) / 86400);
-            $expire_in = '剩余' . $diff .' ('.$user->expire_in.')';
+            $expire_in = '剩余' . $diff . ' (' . $user->expire_in . ')';
         } else {
-            $unusedTraffic  = '账户已过期，请续费后使用';
-            $expire_in      = '账户已过期，请续费后使用';
+            $unusedTraffic = '账户已过期，请续费后使用';
+            $expire_in = '账户已过期，请续费后使用';
         }
         if (!in_array($list, ['quantumult', 'quantumultx', 'shadowrocket'])) {
             $info_array[] = $unusedTraffic;
@@ -579,25 +580,25 @@ class LinkController extends BaseController
         $baseUrl = explode('/', $baseUrl)[0];
         if (!$_ENV['sub_overlay_node']) {
             $Extend = [
-                'remark'          => '',
-                'type'            => '',
-                'add'             => $baseUrl,
-                'address'         => $baseUrl,
-                'port'            => 10086,
-                'method'          => 'chacha20-ietf',
-                'passwd'          => $user->passwd,
-                'id'              => $user->uuid,
-                'aid'             => 0,
-                'net'             => 'tcp',
-                'headerType'      => 'none',
-                'host'            => '',
-                'path'            => '/',
-                'tls'             => '',
-                'protocol'        => 'origin',
-                'protocol_param'  => '',
-                'obfs'            => 'plain',
-                'obfs_param'      => '',
-                'group'           => $_ENV['appName']
+                'remark' => '',
+                'type' => '',
+                'add' => $baseUrl,
+                'address' => $baseUrl,
+                'port' => 10086,
+                'method' => 'chacha20-ietf',
+                'passwd' => $user->passwd,
+                'id' => $user->uuid,
+                'aid' => 0,
+                'net' => 'tcp',
+                'headerType' => 'none',
+                'host' => '',
+                'path' => '/',
+                'tls' => '',
+                'protocol' => 'origin',
+                'protocol_param' => '',
+                'obfs' => 'plain',
+                'obfs_param' => '',
+                'group' => $_ENV['appName'],
             ];
         } else {
             $overlay_node_list = $_ENV['sub_overlay_node_list'];
@@ -605,25 +606,25 @@ class LinkController extends BaseController
             $overlay_node = Node::find($overlay_node_list[0]);
             $connect_info = Tools::v2Array($overlay_node->server);
             $Extend = [
-                'id'              => $user->uuid,
-                'aid'             => $connect_info['aid'],
-                'sni'             => $connect_info['host'],
-                'net'             => $connect_info['net'],
-                'add'             => $connect_info['add'],
-                'tls'             => $connect_info['tls'],
-                'host'            => $connect_info['host'],
-                'path'            => $connect_info['path'],
-                'port'            => $connect_info['port'],
-                'passwd'          => $user->passwd,
-                'address'         => $connect_info['add'],
-                'type'            => '',
-                'remark'          => '',
-                'headerType'      => 'none',
-                'vtype'           => 'vmess://',
-                'group'           => $_ENV['appName'],
+                'id' => $user->uuid,
+                'aid' => $connect_info['aid'],
+                'sni' => $connect_info['host'],
+                'net' => $connect_info['net'],
+                'add' => $connect_info['add'],
+                'tls' => $connect_info['tls'],
+                'host' => $connect_info['host'],
+                'path' => $connect_info['path'],
+                'port' => $connect_info['port'],
+                'passwd' => $user->passwd,
+                'address' => $connect_info['add'],
+                'type' => '',
+                'remark' => '',
+                'headerType' => 'none',
+                'vtype' => 'vmess://',
+                'group' => $_ENV['appName'],
             ];
         }
-        if ($list == 'shadowrocket') {
+        if ($list === 'shadowrocket') {
             $return[] = ('STATUS=' . $unusedTraffic . '.♥.' . $expire_in . PHP_EOL . 'REMARKS=' . $_ENV['appName']);
         }
         foreach ($info_array as $remark) {
@@ -631,17 +632,20 @@ class LinkController extends BaseController
             if (in_array($list, ['kitsunebi', 'quantumult', 'v2rayn'])) {
                 $Extend['type'] = 'vmess';
                 $out = self::getListItem($Extend, $list);
-            } elseif ($list == 'trojan') {
+            } elseif ($list === 'trojan') {
                 $Extend['type'] = 'trojan';
                 $out = self::getListItem($Extend, $list);
-            } elseif ($list == 'ssr') {
+            } elseif ($list === 'ssr') {
                 $Extend['type'] = 'ssr';
                 $out = self::getListItem($Extend, $list);
             } else {
                 $Extend['type'] = 'ss';
                 $out = self::getListItem($Extend, $list);
             }
-            if ($out !== null) $return[] = $out;
+            if ($out !== null) {
+                $return[] = $out;
+            }
+
         }
         return $return;
     }
@@ -658,9 +662,7 @@ class LinkController extends BaseController
      */
     public static function getSurge($user, $surge, $opts, $Rule)
     {
-        $subInfo = self::getSubinfo($user, $surge);
-        $userapiUrl = $subInfo['surge'];
-        if ($surge != 4) {
+        if ($surge !== 4) {
             $Rule['type'] = 'ss';
         }
         $items = URL::getNew_AllItems($user, $Rule);
@@ -673,12 +675,11 @@ class LinkController extends BaseController
                 $All_Proxy .= $out . PHP_EOL;
             }
         }
-        $variable = ($surge == 2 ? 'Surge2_Profiles' : 'Surge_Profiles');
+        $variable = ($surge === 2 ? 'Surge2_Profiles' : 'Surge_Profiles');
         if (isset($opts['profiles']) && in_array($opts['profiles'], array_keys($_ENV[$variable]))) {
             $Profiles = $opts['profiles'];
-            $userapiUrl .= ('&profiles=' . $Profiles);
         } else {
-            $Profiles = ($surge == 2 ? $_ENV['Surge2_DefaultProfiles'] : $_ENV['Surge_DefaultProfiles']);
+            $Profiles = ($surge === 2 ? $_ENV['Surge2_DefaultProfiles'] : $_ENV['Surge_DefaultProfiles']);
         }
 
         return ConfGenerate::getSurgeConfs($user, $All_Proxy, $Nodes, $_ENV[$variable][$Profiles]);
@@ -712,7 +713,7 @@ class LinkController extends BaseController
                     'system, 119.29.29.29, 223.6.6.6, 114.114.114.114',
                     '',
                     '[STATE]',
-                    'STATE,AUTO'
+                    'STATE,AUTO',
                 ];
                 return implode(PHP_EOL, $str);
                 break;
@@ -724,9 +725,9 @@ class LinkController extends BaseController
                 break;
         }
 
-        $All_Proxy          = '';
-        $All_Proxy_name     = '';
-        $BackChina_name     = '';
+        $All_Proxy = '';
+        $All_Proxy_name = '';
+        $BackChina_name = '';
         foreach ($items as $item) {
             $out = AppURI::getQuantumultURI($item);
             if ($out !== null) {
@@ -739,12 +740,12 @@ class LinkController extends BaseController
             }
         }
         $ProxyGroups = [
-            'proxy_group'       => base64_encode("🍃 Proxy  :  static, 🏃 Auto\n🏃 Auto\n🚀 Direct\n" . $All_Proxy_name),
-            'domestic_group'    => base64_encode("🍂 Domestic  :  static, 🚀 Direct\n🚀 Direct\n🍃 Proxy\n" . $BackChina_name),
-            'others_group'      => base64_encode("☁️ Others  :   static, 🍃 Proxy\n🚀 Direct\n🍃 Proxy"),
-            'direct_group'      => base64_encode("🚀 Direct : static, DIRECT\nDIRECT"),
-            'apple_group'       => base64_encode("🍎 Only  :  static, 🚀 Direct\n🚀 Direct\n🍃 Proxy"),
-            'auto_group'        => base64_encode("🏃 Auto  :  auto\n" . $All_Proxy_name),
+            'proxy_group' => base64_encode("🍃 Proxy  :  static, 🏃 Auto\n🏃 Auto\n🚀 Direct\n" . $All_Proxy_name),
+            'domestic_group' => base64_encode("🍂 Domestic  :  static, 🚀 Direct\n🚀 Direct\n🍃 Proxy\n" . $BackChina_name),
+            'others_group' => base64_encode("☁️ Others  :   static, 🍃 Proxy\n🚀 Direct\n🍃 Proxy"),
+            'direct_group' => base64_encode("🚀 Direct : static, DIRECT\nDIRECT"),
+            'apple_group' => base64_encode("🍎 Only  :  static, 🚀 Direct\n🚀 Direct\n🍃 Proxy"),
+            'auto_group' => base64_encode("🏃 Auto  :  auto\n" . $All_Proxy_name),
         ];
         $render = ConfRender::getTemplateRender();
         $render->assign('All_Proxy', $All_Proxy)->assign('ProxyGroups', $ProxyGroups);
@@ -779,8 +780,6 @@ class LinkController extends BaseController
      */
     public static function getSurfboard($user, $surfboard, $opts, $Rule)
     {
-        $subInfo = self::getSubinfo($user, 0);
-        $userapiUrl = $subInfo['surfboard'];
         $Nodes = [];
         $All_Proxy = '';
         $items = URL::getNew_AllItems($user, $Rule);
@@ -793,7 +792,6 @@ class LinkController extends BaseController
         }
         if (isset($opts['profiles']) && in_array($opts['profiles'], array_keys($_ENV['Surfboard_Profiles']))) {
             $Profiles = $opts['profiles'];
-            $userapiUrl .= ('&profiles=' . $Profiles);
         } else {
             $Profiles = $_ENV['Surfboard_DefaultProfiles']; // 默认策略组
         }
@@ -813,8 +811,6 @@ class LinkController extends BaseController
      */
     public static function getClash($user, $clash, $opts, $Rule)
     {
-        $subInfo = self::getSubinfo($user, $clash);
-        $userapiUrl = $subInfo['clash'];
         $items = URL::getNew_AllItems($user, $Rule);
         $Proxys = [];
         foreach ($items as $item) {
@@ -825,7 +821,6 @@ class LinkController extends BaseController
         }
         if (isset($opts['profiles']) && in_array($opts['profiles'], array_keys($_ENV['Clash_Profiles']))) {
             $Profiles = $opts['profiles'];
-            $userapiUrl .= ('&profiles=' . $Profiles);
         } else {
             $Profiles = $_ENV['Clash_DefaultProfiles']; // 默认策略组
         }
@@ -835,15 +830,13 @@ class LinkController extends BaseController
 
     public static function getAnXray($user, $anxray, $opts, $Rule)
     {
-        $subInfo = self::getSubinfo($user, $anxray);
-        $All_Proxy  = '';
-        $userapiUrl = $subInfo['anxray'];	
-        $items = URL::getNew_AllItems($user, $Rule); 
+        $All_Proxy = '';
+        $items = URL::getNew_AllItems($user, $Rule);
         foreach ($items as $item) {
-                $out = AppURI::getAnXrayURI($item);	
-                if ($out !== null) {
-                  $All_Proxy .= $out . PHP_EOL;
-                }
+            $out = AppURI::getAnXrayURI($item);
+            if ($out !== null) {
+                $All_Proxy .= $out . PHP_EOL;
+            }
         }
         return base64_encode($All_Proxy);
     }

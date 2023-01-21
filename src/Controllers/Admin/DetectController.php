@@ -18,6 +18,7 @@ class DetectController extends AdminController
      */
     public function index($request, $response, $args)
     {
+        $table_config = [];
         $table_config['total_column'] = [
             'op' => '操作',
             'id' => 'ID',
@@ -186,6 +187,7 @@ class DetectController extends AdminController
      */
     public function log($request, $response, $args)
     {
+        $table_config = [];
         $table_config['total_column'] = [
             'id' => 'ID',
             'user_id' => '用户ID',

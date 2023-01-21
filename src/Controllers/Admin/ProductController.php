@@ -26,10 +26,10 @@ class ProductController extends AdminController
                 $text .= '（将用户等级到期时间调整为购买后的账户到期时间）';
             }
         }
-        if ($type == 'time') {
+        if ($type === 'time') {
             $text = '添加账户时长' . $array['product_time'] . '天';
         }
-        if ($type == 'traffic') {
+        if ($type === 'traffic') {
             $text = '添加账户流量' . $array['product_traffic'] . 'GB';
         }
 
@@ -84,28 +84,28 @@ class ProductController extends AdminController
         try {
             $product = new Product();
 
-            if ($product_name == '') {
+            if ($product_name === '') {
                 throw new \Exception('请填写商品名称');
             }
-            if ($product_price == '') {
+            if ($product_price === '') {
                 throw new \Exception('请填写商品售价');
             }
-            if ($product_stock == '') {
+            if ($product_stock === '') {
                 throw new \Exception('请填写商品库存');
             }
 
-            if ($product_type == 'tatp') {
-                if ($product_time == '') {
+            if ($product_type === 'tatp') {
+                if ($product_time === '') {
                     throw new \Exception('请填写套餐时长');
                 }
-                if ($product_traffic == '') {
+                if ($product_traffic === '') {
                     throw new \Exception('请填写套餐流量');
                 }
 
-                ($product_class == '') && $product_class = '0';
-                ($product_class_time == '') && $product_class_time = $product_time;
-                ($product_speed == '') && $product_speed = '0';
-                ($product_device == '') && $product_device = '0';
+                ($product_class === '') && $product_class = 0;
+                ($product_class_time === '') && $product_class_time = $product_time;
+                ($product_speed === '') && $product_speed = 0;
+                ($product_device === '') && $product_device = 0;
 
                 $content = [
                     'product_time' => $product_time,
@@ -120,8 +120,8 @@ class ProductController extends AdminController
                 ];
 
                 $product->translate = self::translate($content, 'tatp');
-            } elseif ($product_type == 'time') {
-                if ($product_time == '') {
+            } elseif ($product_type === 'time') {
+                if ($product_time === '') {
                     throw new \Exception('请填写套餐时长');
                 }
 
@@ -130,8 +130,8 @@ class ProductController extends AdminController
                 ];
 
                 $product->translate = self::translate($content, 'time');
-            } elseif ($product_type == 'traffic') {
-                if ($product_traffic == '') {
+            } elseif ($product_type === 'traffic') {
+                if ($product_traffic === '') {
                     throw new \Exception('请填写套餐流量');
                 }
 
@@ -140,8 +140,8 @@ class ProductController extends AdminController
                 ];
 
                 $product->translate = self::translate($content, 'traffic');
-            } elseif ($product_type == 'other') {
-                if ($product_content == '') {
+            } elseif ($product_type === 'other') {
+                if ($product_content === '') {
                     throw new \Exception('请填写自定义商品内容');
                 }
 
@@ -158,9 +158,9 @@ class ProductController extends AdminController
             $product->content = json_encode($content);
             $product->stock = $product_stock;
             $product->sales = 0;
-            $product->sort = ($product_sort == '') ? '0' : $product_sort;
+            $product->sort = ($product_sort === '') ? 0 : $product_sort;
             $product->rebate_mode = $product_rebate_mode;
-            $product->rebate_amount = ($product_rebate_amount == '') ? '0' : $product_rebate_amount * 100;
+            $product->rebate_amount = ($product_rebate_amount === '') ? 0 : $product_rebate_amount * 100;
             $product->html = $product_html;
             $product->limit = null;
             $product->status = $product_status;
@@ -206,31 +206,31 @@ class ProductController extends AdminController
         try {
             $product = Product::find($product_id);
 
-            if ($product_name == '') {
+            if ($product_name === '') {
                 throw new \Exception('请填写商品名称');
             }
-            if ($product_price == '') {
+            if ($product_price === '') {
                 throw new \Exception('请填写商品售价');
             }
-            if ($product_stock == '') {
+            if ($product_stock === '') {
                 throw new \Exception('请填写商品库存');
             }
             if ($product_stock < $product->sales) {
                 throw new \Exception('商品库存不能小于销量');
             }
 
-            if ($product_type == 'tatp') {
-                if ($product_time == '') {
+            if ($product_type === 'tatp') {
+                if ($product_time === '') {
                     throw new \Exception('请填写套餐时长');
                 }
-                if ($product_traffic == '') {
+                if ($product_traffic === '') {
                     throw new \Exception('请填写套餐流量');
                 }
 
-                ($product_class == '') && $product_class = '0';
-                ($product_class_time == '') && $product_class_time = $product_time;
-                ($product_speed == '') && $product_speed = '0';
-                ($product_device == '') && $product_device = '0';
+                ($product_class === '') && $product_class = 0;
+                ($product_class_time === '') && $product_class_time = $product_time;
+                ($product_speed === '') && $product_speed = 0;
+                ($product_device === '') && $product_device = 0;
 
                 $content = [
                     'product_time' => $product_time,
@@ -245,8 +245,8 @@ class ProductController extends AdminController
                 ];
 
                 $product->translate = self::translate($content, 'tatp');
-            } elseif ($product_type == 'time') {
-                if ($product_time == '') {
+            } elseif ($product_type === 'time') {
+                if ($product_time === '') {
                     throw new \Exception('请填写套餐时长');
                 }
 
@@ -255,8 +255,8 @@ class ProductController extends AdminController
                 ];
 
                 $product->translate = self::translate($content, 'time');
-            } elseif ($product_type == 'traffic') {
-                if ($product_traffic == '') {
+            } elseif ($product_type === 'traffic') {
+                if ($product_traffic === '') {
                     throw new \Exception('请填写套餐流量');
                 }
 
@@ -265,8 +265,8 @@ class ProductController extends AdminController
                 ];
 
                 $product->translate = self::translate($content, 'traffic');
-            } elseif ($product_type == 'other') {
-                if ($product_content == '') {
+            } elseif ($product_type === 'other') {
+                if ($product_content === '') {
                     throw new \Exception('请填写自定义商品内容');
                 }
 
@@ -282,9 +282,9 @@ class ProductController extends AdminController
             $product->price = $product_price * 100;
             $product->content = json_encode($content);
             $product->stock = $product_stock;
-            $product->sort = ($product_sort == '') ? '0' : $product_sort;
+            $product->sort = ($product_sort === '') ? 0 : $product_sort;
             $product->rebate_mode = $product_rebate_mode;
-            $product->rebate_amount = ($product_rebate_amount == '') ? '0' : $product_rebate_amount * 100;
+            $product->rebate_amount = ($product_rebate_amount === '') ? 0 : $product_rebate_amount * 100;
             $product->html = $product_html;
             $product->status = $product_status;
             $product->updated_at = time();

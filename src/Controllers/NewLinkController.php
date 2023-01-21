@@ -33,7 +33,7 @@ class NewLinkController extends BaseController
 
         $client = self::detectTheSubscribingClient($user_agent);
         if ($_ENV['subscribeLog'] === true) {
-            self::LoggingSubscriptions($user, $client, $user_agent);
+            self::loggingSubscriptions($user, $client, $user_agent);
         }
 
         $specified = (int) $request->getParam('clash');
@@ -369,7 +369,7 @@ class NewLinkController extends BaseController
         return $all;
     }
 
-    public static function LoggingSubscriptions($user, $type, $ua)
+    public static function loggingSubscriptions($user, $type, $ua)
     {
         $xss = new AntiXSS();
         $log = new UserSubscribeLog();

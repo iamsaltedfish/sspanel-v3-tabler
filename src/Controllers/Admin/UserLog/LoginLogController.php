@@ -20,14 +20,15 @@ class LoginLogController extends AdminController
     public function index($request, $response, $args): ResponseInterface
     {
         $id = $args['id'];
+        $table_config = [];
         $user = User::find($id);
-        $table_config['total_column'] = array(
+        $table_config['total_column'] = [
             'id' => 'ID',
             'ip' => 'IP',
             'location' => '归属地',
             'datetime' => '时间',
             'type' => '类型',
-        );
+        ];
         $table_config['default_show_column'] = array_keys($table_config['total_column']);
         $table_config['ajax_url'] = 'login/ajax';
 

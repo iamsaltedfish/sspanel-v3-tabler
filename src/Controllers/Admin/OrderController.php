@@ -60,7 +60,7 @@ class OrderController extends AdminController
             } else {
                 $result->paid_at = 'null';
             }
-            if (empty($result->order_coupon)) {
+            if ($result->order_coupon === null) {
                 $result->order_coupon = 'null';
             }
             $result->execute_status = ($result->execute_status === 0) ? '未执行' : (($result->order_status == 'refunded') ? '已撤销' : '已执行');

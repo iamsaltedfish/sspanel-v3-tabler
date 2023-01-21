@@ -19,8 +19,9 @@ class DetectLogController extends AdminController
     public function index($request, $response, $args): ResponseInterface
     {
         $id = $args['id'];
+        $table_config = [];
         $user = User::find($id);
-        $table_config['total_column'] = array(
+        $table_config['total_column'] = [
             'id' => 'ID',
             'node_id' => '节点ID',
             'node_name' => '节点名',
@@ -30,7 +31,7 @@ class DetectLogController extends AdminController
             'rule_regex' => '规则正则表达式',
             'rule_type' => '规则类型',
             'datetime' => '时间',
-        );
+        ];
         $table_config['default_show_column'] = array_keys($table_config['total_column']);
         $table_config['ajax_url'] = 'detect/ajax';
 

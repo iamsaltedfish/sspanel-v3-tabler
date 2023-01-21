@@ -188,6 +188,8 @@ class IpController extends AdminController
      */
     public function alive($request, $response, $args)
     {
+        $table_config = [];
+        $table_config = [];
         $table_config['total_column'] = [
             'id' => 'ID',
             'userid' => '用户ID',
@@ -271,6 +273,7 @@ class IpController extends AdminController
      */
     public function block($request, $response, $args)
     {
+        $table_config = [];
         $table_config['total_column'] = [
             'id' => 'ID',
             'node_name' => '节点名称',
@@ -296,6 +299,7 @@ class IpController extends AdminController
      */
     public function unblock($request, $response, $args)
     {
+        $table_config = [];
         $table_config['total_column'] = [
             'id' => 'ID',
             'userid' => '用户ID',

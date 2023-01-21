@@ -2,8 +2,8 @@
 
 namespace App\Services\Auth;
 
-use App\Models\User;
 use App\Models\Node;
+use App\Models\User;
 use App\Utils;
 use App\Utils\Hash;
 
@@ -19,7 +19,7 @@ class Cookie extends Base
             'email' => $user->email,
             'key' => $key,
             'ip' => md5($_SERVER['REMOTE_ADDR'] . $_ENV['key'] . $uid . $expire_in),
-            'expire_in' => $expire_in
+            'expire_in' => $expire_in,
         ], $expire_in);
     }
 
@@ -61,13 +61,11 @@ class Cookie extends Base
             $user->isLogin = false;
         }
 
-
         if (Hash::cookieHash($user->pass, $expire_in) != $key) {
             $user = new User();
             $user->isLogin = false;
             return $user;
         }
-
 
         $user->isLogin = true;
         return $user;
@@ -79,7 +77,7 @@ class Cookie extends Base
         Utils\Cookie::set([
             'uid' => null,
             'email' => null,
-            'key' => null
+            'key' => null,
         ], $time);
     }
 }

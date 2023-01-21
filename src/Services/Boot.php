@@ -31,12 +31,13 @@ class Boot
         $capsule->getDatabaseManager()->connection('default')->enableQueryLog();
     }
 
-    public static function bootSentry() {
+    public static function bootSentry()
+    {
         if (!empty($_ENV['sentry_dsn'])) {
             Sentry\init([
                 'dsn' => $_ENV['sentry_dsn'],
                 'prefixes' => [
-                    realpath(__DIR__ . '/../../')
+                    realpath(__DIR__ . '/../../'),
                 ],
                 'in_app_exclude' => [
                     realpath(__DIR__ . '/../../vendor'),

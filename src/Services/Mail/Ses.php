@@ -2,7 +2,6 @@
 
 namespace App\Services\Mail;
 
-use App\Services\Config;
 use App\Services\Aws\Factory;
 
 class Ses extends Base

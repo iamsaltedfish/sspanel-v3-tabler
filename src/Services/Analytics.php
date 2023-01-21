@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Models\Node;
+use App\Models\User;
 use App\Utils\Tools;
 
 class Analytics
@@ -35,7 +35,6 @@ class Analytics
         return Tools::flowAutoShow($total);
     }
 
-
     public function getRawTodayTrafficUsage()
     {
         return User::sum('u') + User::sum('d') - User::sum('last_day_t');
@@ -46,7 +45,6 @@ class Analytics
         $total = User::sum('last_day_t');
         return Tools::flowAutoShow($total);
     }
-
 
     public function getRawLastTrafficUsage()
     {
@@ -63,7 +61,6 @@ class Analytics
     {
         return User::sum('transfer_enable') - User::sum('u') - User::sum('d');
     }
-
 
     public function getTotalTraffic()
     {

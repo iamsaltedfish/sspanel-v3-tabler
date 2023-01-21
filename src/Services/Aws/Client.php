@@ -12,8 +12,8 @@ class Client
             'region' => 'us-west-2',
             'version' => 'latest',
             'DynamoDb' => [
-                'region' => 'eu-central-1'
-            ]
+                'region' => 'eu-central-1',
+            ],
         ]);
     }
 }

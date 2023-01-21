@@ -76,7 +76,7 @@ class Mail
         $record->save();
         // quit
         /* if ($record->status !== 0) {
-            return;
+        return;
         } */
 
         $text = self::genHtml($template, $ary);

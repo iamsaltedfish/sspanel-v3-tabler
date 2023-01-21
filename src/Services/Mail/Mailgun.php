@@ -24,11 +24,11 @@ class Mailgun extends Base
     public function getConfig()
     {
         $configs = Setting::getClass('mailgun');
-        
+
         return [
             'key' => $configs['mailgun_key'],
             'domain' => $configs['mailgun_domain'],
-            'sender' => $configs['mailgun_sender']
+            'sender' => $configs['mailgun_sender'],
         ];
     }
 
@@ -40,19 +40,19 @@ class Mailgun extends Base
         }
         if (count($inline) == 0) {
             $this->mg->messages()->send($this->domain, [
-                    'from' => $this->sender,
-                    'to' => $to,
-                    'subject' => $subject,
-                    'html' => $text
-                ]);
+                'from' => $this->sender,
+                'to' => $to,
+                'subject' => $subject,
+                'html' => $text,
+            ]);
         } else {
             $this->mg->messages()->send($this->domain, [
-                    'from' => $this->sender,
-                    'to' => $to,
-                    'subject' => $subject,
-                    'html' => $text,
-                    'inline' => $inline
-                ]);
+                'from' => $this->sender,
+                'to' => $to,
+                'subject' => $subject,
+                'html' => $text,
+                'inline' => $inline,
+            ]);
         }
     }
 }

@@ -10,6 +10,7 @@ return [
         PHP_CodeSniffer\Standards\Generic\Sniffs\Files\LineLengthSniff::class,
         PHP_CodeSniffer\Standards\Generic\Sniffs\Formatting\SpaceAfterNotSniff::class,
         PHP_CodeSniffer\Standards\Generic\Sniffs\Strings\UnnecessaryStringConcatSniff::class, // uim does not
+        PHP_CodeSniffer\Standards\Squiz\Sniffs\PHP\GlobalKeywordSniff::class,
         PhpCsFixer\Fixer\FunctionNotation\VoidReturnFixer::class, // uim does not
         SlevomatCodingStandard\Sniffs\Classes\ForbiddenPublicPropertySniff::class,
         SlevomatCodingStandard\Sniffs\Functions\FunctionLengthSniff::class,

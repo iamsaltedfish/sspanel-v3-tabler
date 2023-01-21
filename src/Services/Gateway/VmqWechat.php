@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Gateway;
 
 use App\Controllers\UserController;
@@ -12,7 +13,7 @@ class VmqWechat
 
     public static function _enable(): bool
     {
-        if (empty($_ENV['active_payments']['vmq_wechat']) || $_ENV['active_payments']['vmq_wechat']['enable'] == false) {
+        if (!isset($_ENV['active_payments']['vmq_wechat']) || $_ENV['active_payments']['vmq_wechat']['enable'] === false) {
             return false;
         }
 
@@ -61,7 +62,7 @@ class VmqWechat
 
         $local_sign = md5($payId . $param . $type . $price . $reallyPrice . $configs['key']);
 
-        if ($cloud_sign != $local_sign) {
+        if ($cloud_sign !== $local_sign) {
             die('fail');
         }
 

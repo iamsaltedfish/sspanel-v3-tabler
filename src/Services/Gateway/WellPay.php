@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Gateway;
 
 use App\Controllers\UserController;
@@ -12,7 +13,7 @@ class WellPay
 
     public static function _enable(): bool
     {
-        if (empty($_ENV['active_payments']['well_pay']) || $_ENV['active_payments']['well_pay']['enable'] == false) {
+        if (!isset($_ENV['active_payments']['well_pay']) || $_ENV['active_payments']['well_pay']['enable'] === false) {
             return false;
         }
 
@@ -88,12 +89,12 @@ class WellPay
         $sign_key = $_ENV['active_payments']['well_pay']['appkey'];
         $return_arr_forsort = [];
         foreach ($context_arr as $key => $val) {
-            if ($key != 'sign' && $key != 'sign_type' && $key != 'data' && !empty($val)) {
+            if ($key !== 'sign' && $key !== 'sign_type' && $key !== 'data' && $val !== '') {
                 $return_arr_forsort[$key] = $val;
             }
-            if ($key == 'data') {
+            if ($key === 'data') {
                 foreach ($val as $key1 => $val1) {
-                    if (!empty($val1)) {
+                    if ($val1 !== '') {
                         $return_arr_forsort[$key1] = $val1;
                     }
                 }

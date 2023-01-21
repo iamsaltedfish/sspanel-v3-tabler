@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Gateway;
 
 use App\Controllers\UserController;
@@ -12,7 +13,7 @@ class Epay
 
     public static function _enable(): bool
     {
-        if (empty($_ENV['active_payments']['epay']) || $_ENV['active_payments']['epay']['enable'] == false) {
+        if (!isset($_ENV['active_payments']['epay']) || $_ENV['active_payments']['epay']['enable'] === false) {
             return false;
         }
 
@@ -71,7 +72,7 @@ class Epay
         $configs = $_ENV['active_payments']['epay'];
         $str = stripslashes(urldecode(http_build_query($params))) . $configs['key'];
 
-        if ($sign != md5($str)) {
+        if ($sign !== md5($str)) {
             die('fail');
         }
 

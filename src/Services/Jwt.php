@@ -16,13 +16,13 @@ class Jwt
         return JwtClient::encode($input, self::getKey());
     }
 
-    public static function encode_withkey($input, $key)
+    public static function encodeWithkey($input, $key)
     {
         return JwtClient::encode($input, $key);
     }
 
     public static function decodeArray($input)
     {
-        return JWT::decode($input, self::getKey(), array('HS256'));
+        return JWT::decode($input, self::getKey(), ['HS256']);
     }
 }

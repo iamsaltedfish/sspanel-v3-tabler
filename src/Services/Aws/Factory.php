@@ -12,10 +12,10 @@ class Factory
         $configs = Setting::getClass('aws_ses');
 
         $sdk = new Sdk([
-            'credentials' => array(
+            'credentials' => [
                 'key' => $configs['aws_access_key_id'],
                 'secret' => $configs['aws_secret_access_key'],
-            ),
+            ],
             'region' => $_ENV['aws_region'],
             'version' => 'latest',
             'DynamoDb' => [

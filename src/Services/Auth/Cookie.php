@@ -34,7 +34,7 @@ class Cookie extends Base
         $user = new User();
         $user->isLogin = false;
 
-        if ($uid == null) {
+        if ($uid === null) {
             return $user;
         }
 
@@ -42,26 +42,26 @@ class Cookie extends Base
             return $user;
         }
 
-        if ($_ENV['enable_login_bind_ip'] == true) {
+        if ($_ENV['enable_login_bind_ip'] === true) {
             $nodes = Node::where('node_ip', '=', $_SERVER['REMOTE_ADDR'])->first();
-            if (($nodes == null) && $ipHash != md5($_SERVER['REMOTE_ADDR'] . $_ENV['key'] . $uid . $expire_in)) {
+            if (($nodes === null) && $ipHash != md5($_SERVER['REMOTE_ADDR'] . $_ENV['key'] . $uid . $expire_in)) {
                 return $user;
             }
         }
 
         $user = User::find($uid);
-        if ($user == null) {
+        if ($user === null) {
             $user = new User();
             $user->isLogin = false;
             return $user;
         }
 
-        if ($user->email != $email) {
+        if ($user->email !== $email) {
             $user = new User();
             $user->isLogin = false;
         }
 
-        if (Hash::cookieHash($user->pass, $expire_in) != $key) {
+        if (Hash::cookieHash($user->pass, $expire_in) !== $key) {
             $user = new User();
             $user->isLogin = false;
             return $user;

@@ -35,7 +35,7 @@ class Mail
 
     public static function genHtml($template, $ary)
     {
-        $smarty = new smarty();
+        $smarty = new Smarty();
         $smarty->settemplatedir(BASE_PATH . '/resources/email/');
         $smarty->setcompiledir(BASE_PATH . '/storage/framework/smarty/compile/');
         $smarty->setcachedir(BASE_PATH . '/storage/framework/smarty/cache/');
@@ -57,7 +57,7 @@ class Mail
     {
         $user = User::where('email', $to)->first();
         $record = new MailStatistics();
-        $record->user_id = isset($user->id) ? $user->id : 0;
+        $record->user_id = $user->id ?? 0;
         $record->type = $type;
         $record->addr = $to;
         $record->created_at = time();

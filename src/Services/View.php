@@ -12,7 +12,7 @@ class View
 
     public static function getSmarty()
     {
-        $smarty = new smarty(); //实例化smarty
+        $smarty = new Smarty(); //实例化smarty
 
         $user = Auth::getUser();
 

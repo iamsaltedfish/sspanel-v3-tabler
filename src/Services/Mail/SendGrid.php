@@ -3,7 +3,6 @@
 namespace App\Services\Mail;
 
 use App\Models\Setting;
-use App\Services\Config;
 
 class SendGrid extends Base
 {

@@ -3,7 +3,6 @@
 namespace App\Services\Mail;
 
 use App\Models\Setting;
-use App\Services\Config;
 use Mailgun\Mailgun as MailgunService;
 
 class Mailgun extends Base
@@ -34,11 +33,14 @@ class Mailgun extends Base
 
     public function send($to, $subject, $text, $files)
     {
-        $inline = array();
+        $inline = [];
         foreach ($files as $file) {
-            $inline[] = array('filePath' => $file, 'filename' => basename($file));
+            $inline[] = [
+                'filePath' => $file,
+                'filename' => basename($file),
+            ];
         }
-        if (count($inline) == 0) {
+        if (count($inline) === 0) {
             $this->mg->messages()->send($this->domain, [
                 'from' => $this->sender,
                 'to' => $to,

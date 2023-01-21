@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Gateway;
 
 use App\Controllers\UserController;
@@ -12,7 +13,7 @@ class VmqAlipay
 
     public static function _enable(): bool
     {
-        if (empty($_ENV['active_payments']['vmq_alipay']) || $_ENV['active_payments']['vmq_alipay']['enable'] == false) {
+        if (!isset($_ENV['active_payments']['vmq_alipay']) || $_ENV['active_payments']['vmq_alipay']['enable'] === false) {
             return false;
         }
 
@@ -61,7 +62,7 @@ class VmqAlipay
 
         $local_sign = md5($payId . $param . $type . $price . $reallyPrice . $configs['key']);
 
-        if ($cloud_sign != $local_sign) {
+        if ($cloud_sign !== $local_sign) {
             die('fail');
         }
 

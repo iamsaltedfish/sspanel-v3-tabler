@@ -3,7 +3,6 @@
 namespace App\Services\Mail;
 
 use App\Models\Setting;
-use App\Services\Config;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class Smtp extends Base
@@ -25,12 +24,12 @@ class Smtp extends Base
         $mail->Password = $this->config['passsword']; // SMTP password
         $mail->setFrom($this->config['sender'], $this->config['name']);
 
-        if ($this->config['smtp_ssl'] == true) {
+        if ($this->config['smtp_ssl'] === true) {
             // Enable TLS encryption, `ssl` also accepted
-            $mail->SMTPSecure = ($this->config['port'] == '587' ? 'tls' : 'ssl');
+            $mail->SMTPSecure = ($this->config['port'] === '587' ? 'tls' : 'ssl');
         }
 
-        if ($this->config['smtp_bbc'] != '') {
+        if ($this->config['smtp_bbc'] !== '') {
             $mail->addBCC($this->config['smtp_bbc']);
         }
 

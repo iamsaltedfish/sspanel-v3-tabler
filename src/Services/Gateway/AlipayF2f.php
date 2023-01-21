@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Gateway;
 
 use App\Controllers\UserController;
@@ -13,7 +14,7 @@ class AlipayF2f
 
     public static function _enable(): bool
     {
-        if (empty($_ENV['active_payments']['alipay_f2f']) || $_ENV['active_payments']['alipay_f2f']['enable'] == false) {
+        if (!isset($_ENV['active_payments']['alipay_f2f']) || $_ENV['active_payments']['alipay_f2f']['enable'] === false) {
             return false;
         }
 
@@ -35,8 +36,6 @@ class AlipayF2f
 
     public static function createOrder($amount, $order_no, $user_id)
     {
-        $configs = $_ENV['active_payments']['alipay_f2f'];
-
         try {
             $gateway = self::createGateway();
             $request = $gateway->purchase();

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Gateway;
 
 use App\Controllers\UserController;
@@ -12,7 +13,7 @@ class Universal
 
     public static function _enable(): bool
     {
-        if (empty($_ENV['active_payments']['universal']) || $_ENV['active_payments']['universal']['enable'] == false) {
+        if (!isset($_ENV['active_payments']['universal']) || $_ENV['active_payments']['universal']['enable'] === false) {
             return false;
         }
 
@@ -54,7 +55,7 @@ class Universal
         $configs = $_ENV['active_payments']['universal']; // 获取支付服务商参数
         $_sign = md5($id . $configs['sign_key']); // 验证签名
 
-        if ($sign != $_sign) {
+        if ($sign !== $_sign) {
             die('error_sign');
         }
 

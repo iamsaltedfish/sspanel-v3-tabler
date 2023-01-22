@@ -245,18 +245,6 @@ return function (SlimApp $app) {
         $this->get('/subscribe',                App\Controllers\Admin\SubscribeLogController::class . ':index');
         $this->post('/subscribe/ajax',          App\Controllers\Admin\SubscribeLogController::class . ':subscribeAjax');
 
-        // 指定用户订阅记录
-        $this->get('/user/{id}/sublog',         App\Controllers\Admin\UserLog\SubLogController::class . ':index');
-        $this->post('/user/{id}/sublog/ajax',   App\Controllers\Admin\UserLog\SubLogController::class . ':ajax');
-
-        // 指定用户审计记录
-        $this->get('/user/{id}/detect',         App\Controllers\Admin\UserLog\DetectLogController::class . ':index');
-        $this->post('/user/{id}/detect/ajax',   App\Controllers\Admin\UserLog\DetectLogController::class . ':ajax');
-
-        // 指定用户登录记录
-        $this->get('/user/{id}/login',          App\Controllers\Admin\UserLog\LoginLogController::class . ':index');
-        $this->post('/user/{id}/login/ajax',    App\Controllers\Admin\UserLog\LoginLogController::class . ':ajax');
-
         // 设置中心
         $this->get('/setting',                  App\Controllers\Admin\SettingController::class . ':index');
         $this->post('/setting',                 App\Controllers\Admin\SettingController::class . ':save');

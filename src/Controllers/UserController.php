@@ -996,7 +996,7 @@ class UserController extends BaseController
     {
         $config = new Config();
         $themes = Tools::getDir(BASE_PATH . '/resources/views');
-        $bind_token = TelegramSessionManager::add_bind_session($this->user);
+        $bind_token = TelegramSessionManager::addBindSession($this->user);
 
         return $this->view()
             ->assign('user', $this->user)

@@ -101,7 +101,7 @@ class Statistics extends Command
 
     public function CountHistoryRegister()
     {
-        $day_limit = '90';
+        $day_limit = 90;
 
         for ($i = 0; $i <= $day_limit; $i++) {
             if ($i !== 0) {
@@ -121,7 +121,7 @@ class Statistics extends Command
 
     public function CountHistoricalSales()
     {
-        $day_limit = '30';
+        $day_limit = 30;
 
         for ($i = 0; $i <= $day_limit; $i++) {
             if ($i !== 0) {

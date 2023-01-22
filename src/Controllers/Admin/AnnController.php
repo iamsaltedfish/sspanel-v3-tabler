@@ -18,17 +18,18 @@ class AnnController extends AdminController
      */
     public function index($request, $response, $args)
     {
-        $table_config = [];
-        $table_config['total_column'] = [
-            'op' => '操作',
-            'id' => 'ID',
-            'date' => '日期',
-            'content' => '内容',
+        $table_config = [
+            'total_column' => [
+                'op' => '操作',
+                'id' => 'ID',
+                'date' => '日期',
+                'content' => '内容',
+            ],
+            'default_show_column' => [
+                'op', 'id', 'date', 'content',
+            ],
+            'ajax_url' => 'announcement/ajax',
         ];
-        $table_config['default_show_column'] = [
-            'op', 'id', 'date', 'content',
-        ];
-        $table_config['ajax_url'] = 'announcement/ajax';
         return $response->write(
             $this->view()
                 ->assign('table_config', $table_config)

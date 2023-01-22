@@ -18,17 +18,18 @@ class DetectController extends AdminController
      */
     public function index($request, $response, $args)
     {
-        $table_config = [];
-        $table_config['total_column'] = [
-            'op' => '操作',
-            'id' => 'ID',
-            'name' => '名称',
-            'text' => '介绍',
-            'regex' => '正则表达式',
-            'type' => '类型',
+        $table_config = [
+            'ajax_url' => 'detect/ajax',
+            'default_show_column' => array_keys($table_config['total_column']),
+            'total_column' => [
+                'op' => '操作',
+                'id' => 'ID',
+                'name' => '名称',
+                'text' => '介绍',
+                'regex' => '正则表达式',
+                'type' => '类型',
+            ],
         ];
-        $table_config['default_show_column'] = array_keys($table_config['total_column']);
-        $table_config['ajax_url'] = 'detect/ajax';
         return $response->write(
             $this->view()
                 ->assign('table_config', $table_config)
@@ -187,22 +188,23 @@ class DetectController extends AdminController
      */
     public function log($request, $response, $args)
     {
-        $table_config = [];
-        $table_config['total_column'] = [
-            'id' => 'ID',
-            'user_id' => '用户ID',
-            'user_name' => '用户名',
-            'node_id' => '节点ID',
-            'node_name' => '节点名',
-            'list_id' => '规则ID',
-            'rule_name' => '规则名',
-            'rule_text' => '规则描述',
-            'rule_regex' => '规则正则表达式',
-            'rule_type' => '规则类型',
-            'datetime' => '时间',
+        $table_config = [
+            'ajax_url' => 'log/ajax',
+            'default_show_column' => array_keys($table_config['total_column']),
+            'total_column' => [
+                'id' => 'ID',
+                'user_id' => '用户ID',
+                'user_name' => '用户名',
+                'node_id' => '节点ID',
+                'node_name' => '节点名',
+                'list_id' => '规则ID',
+                'rule_name' => '规则名',
+                'rule_text' => '规则描述',
+                'rule_regex' => '规则正则表达式',
+                'rule_type' => '规则类型',
+                'datetime' => '时间',
+            ],
         ];
-        $table_config['default_show_column'] = array_keys($table_config['total_column']);
-        $table_config['ajax_url'] = 'log/ajax';
         return $response->write(
             $this->view()
                 ->assign('table_config', $table_config)

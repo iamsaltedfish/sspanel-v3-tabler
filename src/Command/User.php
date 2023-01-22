@@ -5,22 +5,13 @@ namespace App\Command;
 use App\Controllers\AuthController;
 use App\Models\User as ModelsUser;
 use App\Services\Mail;
-use App\Utils\GA;
-use App\Utils\Hash;
-use App\Utils\Tools;
 use Exception;
 
 class User extends Command
 {
     public $description = ''
         . '├─=: php xcat User [选项]' . PHP_EOL
-        . '│ ├─ getCookie               - 获取指定用户的 Cookie' . PHP_EOL
-        . '│ ├─ resetPort               - 重置单个用户端口' . PHP_EOL
         . '│ ├─ createAdmin             - 创建管理员帐号' . PHP_EOL
-        . '│ ├─ resetAllPort            - 重置所有用户端口' . PHP_EOL
-        . '│ ├─ resetTraffic            - 重置所有用户流量' . PHP_EOL
-        . '│ ├─ generateUUID            - 为所有用户生成新的 UUID' . PHP_EOL
-        . '│ ├─ generateGa              - 为所有用户生成新的 Ga Secret' . PHP_EOL
         . '│ ├─ sendAdminMail           - 向管理员发送通知邮件' . PHP_EOL
         . '│ ├─ sendUserMail            - 向用户发送通知邮件' . PHP_EOL
         . '│ ├─ resetUserLevel          - 重置用户等级' . PHP_EOL;
@@ -83,100 +74,6 @@ class User extends Command
         }
     }
 
-    /**
-     * 重置用户端口
-     *
-     * @return void
-     */
-    public function resetPort()
-    {
-        fwrite(STDOUT, '请输入用户id: ');
-        $user = ModelsUser::find(trim(fgets(STDIN)));
-        if ($user !== null) {
-            $user->port = Tools::getAvPort();
-            if ($user->save()) {
-                echo '重置成功!' . PHP_EOL;
-            }
-        } else {
-            echo 'not found user.' . PHP_EOL;
-        }
-    }
-
-    /**
-     * 重置所有用户端口
-     *
-     * @return void
-     */
-    public function resetAllPort()
-    {
-        $users = ModelsUser::all();
-        foreach ($users as $user) {
-            $origin_port = $user->port;
-            $user->port = Tools::getAvPort();
-            echo '$origin_port=' . $origin_port . '&$user->port=' . $user->port . PHP_EOL;
-            $user->save();
-        }
-    }
-
-    /**
-     * 重置所有用户流量
-     *
-     * @return void
-     */
-    public function resetTraffic()
-    {
-        try {
-            ModelsUser::where('enable', 1)->update([
-                'd' => 0,
-                'u' => 0,
-                'last_day_t' => 0,
-            ]);
-        } catch (Exception $e) {
-            echo $e->getMessage();
-            return;
-        }
-        echo 'reset traffic successful' . PHP_EOL;
-    }
-
-    /**
-     * 为所有用户生成新的UUID
-     *
-     * @return void
-     */
-    public function generateUUID()
-    {
-        $users = ModelsUser::all();
-        $current_timestamp = time();
-        foreach ($users as $user) {
-            /** @var ModelsUser $user */
-            $user->generateUUID($current_timestamp);
-        }
-        echo 'generate UUID successful' . PHP_EOL;
-    }
-
-    /**
-     * 二次验证
-     *
-     * @return void
-     */
-    public function generateGa()
-    {
-        $users = ModelsUser::all();
-        foreach ($users as $user) {
-            $ga = new GA();
-            $secret = $ga->createSecret();
-
-            $user->ga_token = $secret;
-            $user->save();
-        }
-        echo 'generate Ga Secret successful' . PHP_EOL;
-    }
-
-    /**
-     * 重置用户等级
-     *
-     * @return void
-     */
     public function resetUserLevel()
     {
         $users = ModelsUser::all();
@@ -185,14 +82,9 @@ class User extends Command
             $user->class_expire = $user->expire_in;
             $user->save();
         }
-        echo 'All user levels have been reset to 0, and the level expiration time is synchronized with the account expiration time.' . PHP_EOL;
+        echo 'All user levels have been reset to 0, and the level expiration time is sync with the account expiration time.' . PHP_EOL;
     }
 
-    /**
-     * 创建 Admin 账户
-     *
-     * @return void
-     */
     public function createAdmin()
     {
         if (count($this->argv) === 3) {
@@ -236,20 +128,6 @@ class User extends Command
             echo PHP_EOL . '创建成功，请在主页登录' . PHP_EOL;
         } else {
             echo PHP_EOL . '已取消创建' . PHP_EOL;
-        }
-    }
-
-    /**
-     * 获取 USERID 的 Cookie
-     *
-     * @return void
-     */
-    public function getCookie()
-    {
-        if (count($this->argv) === 4) {
-            $user = ModelsUser::find($this->argv[3]);
-            $expire_in = 86400 + time();
-            echo Hash::cookieHash($user->pass, $expire_in) . ' ' . $expire_in;
         }
     }
 }

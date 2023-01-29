@@ -1000,7 +1000,6 @@ class UserController extends BaseController
             ->assign('bind_token', $bind_token)
             ->assign('telegram_bot', $_ENV['telegram_bot'])
             ->assign('config_service', $config)
-            ->registerClass('URL', URL::class)
             ->display('user/edit.tpl');
     }
 

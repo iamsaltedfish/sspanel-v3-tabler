@@ -612,7 +612,7 @@ class UserController extends BaseController
 
     public function resetPort($request, $response, $args)
     {
-        $temp = $this->user->ResetPort();
+        $temp = $this->user->resetPort();
         return $response->withJson([
             'ret' => ($temp['ok'] == true ? 1 : 0),
             'msg' => '新的端口是 ' . $temp['msg'],
@@ -764,7 +764,7 @@ class UserController extends BaseController
         $user->save();
 
         if ($_ENV['enable_forced_replacement'] === true) {
-            $user->clean_link();
+            $user->cleanLink();
         }
 
         return $response->withJson([
@@ -892,7 +892,7 @@ class UserController extends BaseController
             }
 
             Auth::logout();
-            $user->kill_user();
+            $user->killUser();
 
             $res['ret'] = '1';
             $res['msg'] = '已删除你的账户';
@@ -927,7 +927,7 @@ class UserController extends BaseController
     public function resetURL($request, $response, $args)
     {
         $user = $this->user;
-        $user->clean_link();
+        $user->cleanLink();
 
         return $response->withJson([
             'ret' => 1,
@@ -938,7 +938,7 @@ class UserController extends BaseController
     public function resetInviteURL($request, $response, $args)
     {
         $user = $this->user;
-        $user->clear_inviteCodes();
+        $user->clearInviteCodes();
 
         return $response->withJson([
             'ret' => 1,
@@ -1022,7 +1022,7 @@ class UserController extends BaseController
     public function telegramReset($request, $response, $args)
     {
         $user = $this->user;
-        $user->TelegramReset();
+        $user->telegramReset();
         return $response->withStatus(302)->withHeader('Location', '/user/edit');
     }
 

@@ -92,7 +92,7 @@ class PasswordController extends BaseController
             $user->ga_enable = 0;
             $user->save();
             if ($_ENV['enable_forced_replacement']) {
-                $user->clean_link();
+                $user->cleanLink();
             }
 
             $token->expire_time = time();

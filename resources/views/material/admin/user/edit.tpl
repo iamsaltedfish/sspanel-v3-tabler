@@ -310,14 +310,14 @@
                                 <label class="form-label col-3 col-form-label">IP / CIDR</label>
                                 <div class="col">
                                     <textarea id="forbidden_ip" class="col form-control"
-                                        rows="2">{$edit_user->get_forbidden_ip()}</textarea>
+                                        rows="2">{$edit_user->getForbiddenIp()}</textarea>
                                 </div>
                             </div>
                             <div class="form-group mb-3 row">
                                 <label class="form-label col-3 col-form-label">PORT</label>
                                 <div class="col">
                                     <textarea id="forbidden_port" class="col form-control"
-                                        rows="2">{$edit_user->get_forbidden_port()}</textarea>
+                                        rows="2">{$edit_user->getForbiddenPort()}</textarea>
                                 </div>
                             </div>
                             <blockquote class="blockquote">

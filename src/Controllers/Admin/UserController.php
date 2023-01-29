@@ -211,7 +211,7 @@ class UserController extends AdminController
         $item_id = $args['id'];
         $user = User::find($item_id);
 
-        if (!$user->kill_user()) {
+        if (!$user->killUser()) {
             return $response->withJson([
                 'ret' => 0,
                 'msg' => '删除失败',

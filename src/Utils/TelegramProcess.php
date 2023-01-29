@@ -34,7 +34,7 @@ class TelegramProcess
                     $reply_message = self::$all_rss[$callback_data] . ': ' . $subUrl . $ssr_sub_token . $callback_data . PHP_EOL;
                     break;
                 case ($callback_data == 'clean_link'):
-                    $user->clean_link();
+                    $user->cleanLink();
                     $reply_message = '链接重置成功';
                     break;
             }
@@ -52,8 +52,8 @@ class TelegramProcess
             switch ($command) {
                 case 'traffic':
                     $reply['message'] = '您当前的流量状况：
-今日已使用 ' . $user->TodayusedTraffic() . ' ' . number_format(($user->u + $user->d - $user->last_day_t) / $user->transfer_enable * 100, 2) . '%
-今日之前已使用 ' . $user->LastusedTraffic() . ' ' . number_format($user->last_day_t / $user->transfer_enable * 100, 2) . '%
+今日已使用 ' . $user->todayusedTraffic() . ' ' . number_format(($user->u + $user->d - $user->last_day_t) / $user->transfer_enable * 100, 2) . '%
+今日之前已使用 ' . $user->lastUsedTraffic() . ' ' . number_format($user->last_day_t / $user->transfer_enable * 100, 2) . '%
 未使用 ' . $user->unusedTraffic() . ' ' . number_format(($user->transfer_enable - ($user->u + $user->d)) / $user->transfer_enable * 100, 2) . '%';
                     break;
                 case 'checkin':

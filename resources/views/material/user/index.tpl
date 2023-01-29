@@ -57,7 +57,7 @@
                                 {/if}
                             </div>
                             <div class="d-flex mb-2">
-                                <div>最近使用时间：<code>{$user->lastSsTime()}</code></div>
+                                <div>最近使用时间：<code>{$user->lastUseTime()}</code></div>
                             </div>
                         </div>
                     </div>
@@ -245,28 +245,28 @@
                                 <div class="card-body">
                                     <h3 class="card-title">流量用量</h3>
                                     <div class="progress progress-separated mb-3">
-                                        {if $user->LastusedTrafficPercent() < '1'}
+                                        {if $user->lastUsedTrafficPercent() < '1'}
                                             <div class="progress-bar bg-primary" role="progressbar" style="width: 1%"></div>
                                         {else}
                                             <div class="progress-bar bg-primary" role="progressbar"
-                                                style="width: {$user->LastusedTrafficPercent()}%">
+                                                style="width: {$user->lastUsedTrafficPercent()}%">
                                             </div>
                                         {/if}
-                                        {if $user->TodayusedTrafficPercent() < '1'}
+                                        {if $user->todayusedTrafficPercent() < '1'}
                                             <div class="progress-bar bg-success" role="progressbar" style="width: 1%"></div>
                                         {else}
                                             <div class="progress-bar bg-success" role="progressbar"
-                                                style="width: {$user->TodayusedTrafficPercent()}%"></div>
+                                                style="width: {$user->todayusedTrafficPercent()}%"></div>
                                         {/if}
                                     </div>
                                     <div class="row">
                                         <div class="col-auto d-flex align-items-center pe-2">
                                             <span class="legend me-2 bg-primary"></span>
-                                            <span>过去用量 {$user->LastusedTraffic()}</span>
+                                            <span>过去用量 {$user->lastUsedTraffic()}</span>
                                         </div>
                                         <div class="col-auto d-flex align-items-center px-2">
                                             <span class="legend me-2 bg-success"></span>
-                                            <span>今日用量 {$user->TodayusedTraffic()}</span>
+                                            <span>今日用量 {$user->todayusedTraffic()}</span>
                                         </div>
                                         <div class="col-auto d-flex align-items-center ps-2">
                                             <span class="legend me-2"></span>

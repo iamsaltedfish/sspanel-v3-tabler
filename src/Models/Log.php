@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 class Log extends Model
@@ -11,8 +12,8 @@ class Log extends Model
         return date('Y-m-d H:i:s', $value);
     }
 
-    public function getStatusAttribute($value)
+    public function getStatusAttribute(int $value): string
     {
-        return ($value == '0') ? '未处理' : '已处理';
+        return ($value === 0) ? '未处理' : '已处理';
     }
 }

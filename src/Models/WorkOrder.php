@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 class WorkOrder extends Model
@@ -6,22 +7,22 @@ class WorkOrder extends Model
     protected $connection = 'default';
     protected $table = 'work_order';
 
-    public function getCreatedAtAttribute($value)
+    public function getCreatedAtAttribute(int $value): string
     {
         return date('Y-m-d H:i:s', $value);
     }
 
-    public function getUpdatedAtAttribute($value)
+    public function getUpdatedAtAttribute(int $value): string
     {
         return date('Y-m-d H:i:s', $value);
     }
 
-    public function getClosedAtAttribute($value)
+    public function getClosedAtAttribute(int $value): string
     {
-        return ($value == null) ? 'null' : date('Y-m-d H:i', $value);
+        return ($value === null) ? 'null' : date('Y-m-d H:i', $value);
     }
 
-    public function getTheLatestReply($tk_id): string
+    public function getTheLatestReply(int $tk_id): string
     {
         $reply = self::where('tk_id', $tk_id)
             ->orderBy('id', 'desc')
@@ -29,7 +30,7 @@ class WorkOrder extends Model
         return $reply->content;
     }
 
-    public function getTheWorkOrderStatus($tk_id): string
+    public function getTheWorkOrderStatus(int $tk_id): string
     {
         $topic = self::where('is_topic', 1)
             ->where('tk_id', $tk_id)

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 class DetectRule extends Model

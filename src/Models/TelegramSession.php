@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 class TelegramSession extends Model
@@ -14,7 +15,7 @@ class TelegramSession extends Model
     public function User()
     {
         $user = User::where('id', $this->attributes['user_id'])->first();
-        if ($user == null) {
+        if ($user === null) {
             return null;
         }
 

@@ -4,16 +4,16 @@ namespace App\Models;
 
 use Closure;
 use Illuminate\Contracts\Pagination;
+use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model as EloquentMedel;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Query\Expression as QueryExpression;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\Expression as QueryExpression;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\LazyCollection;
-use Illuminate\Database\Capsule\Manager as Capsule;
 
 /**
  * All function below could be staticly called via this function.\
@@ -157,17 +157,17 @@ class Model extends EloquentMedel
     public static function getTableDataFromAdmin(\Slim\Http\Request $request, $callback = null, $precondition = null): array
     {
         //得到排序的方式
-        $order        = $request->getParam('order')[0]['dir'];
+        $order = $request->getParam('order')[0]['dir'];
         //得到排序字段的下标
         $order_column = $request->getParam('order')[0]['column'];
         //根据排序字段的下标得到排序字段
-        $order_field  = $request->getParam('columns')[$order_column]['data'];
+        $order_field = $request->getParam('columns')[$order_column]['data'];
         if ($callback !== null) {
-            call_user_func_array($callback, [&$order_field]);
+            call_user_func_array($callback, [ & $order_field]);
         }
-        $limit_start  = $request->getParam('start');
+        $limit_start = $request->getParam('start');
         $limit_length = $request->getParam('length');
-        $search       = $request->getParam('search')['value'];
+        $search = $request->getParam('search')['value'];
 
         $query = self::query();
         if ($precondition !== null) {

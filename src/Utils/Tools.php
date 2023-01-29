@@ -19,6 +19,29 @@ class Tools
     }
 
     /**
+     * 验证合法邮箱域
+     */
+    public static function isEmailLegal(string $email): bool
+    {
+        if ($_ENV['mail_filter'] !== 0) {
+            $mail_suffix = explode('@', $email)[1];
+            if ($_ENV['mail_filter'] === 1) {
+                // 白名单模式
+                if (!in_array($mail_suffix, $_ENV['mail_filter_list'])) {
+                    return false;
+                }
+            } else {
+                // 黑名单模式
+                if (in_array($mail_suffix, $_ENV['mail_filter_list'])) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * 查询IP归属
      */
     public static function getIpInfo($ip)

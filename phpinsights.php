@@ -24,6 +24,7 @@ return [
     'config' => [
     ],
     'exclude' => [
+        'databases/migrations',
         'app/routes.php',
         'storage',
     ],

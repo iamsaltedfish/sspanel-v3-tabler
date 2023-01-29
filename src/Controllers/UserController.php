@@ -786,7 +786,7 @@ class UserController extends BaseController
             if (!Tools::emailCheck($newemail)) {
                 throw new \Exception('新邮箱格式有误');
             }
-            if (!Check::isEmailLegal($newemail)) {
+            if (!Tools::isEmailLegal($newemail)) {
                 throw new \Exception('新邮箱的域不受支持');
             }
             if ($newemail === $oldemail) {

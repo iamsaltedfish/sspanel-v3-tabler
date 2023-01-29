@@ -92,7 +92,7 @@ class AuthController extends BaseController
             if (!Tools::emailCheck($email)) {
                 throw new \Exception('邮箱格式不正确');
             }
-            if (!Check::isEmailLegal($email)) {
+            if (!Tools::isEmailLegal($email)) {
                 throw new \Exception('不支持此邮箱域');
             }
             $user = User::where('email', $email)->first();
@@ -185,7 +185,7 @@ class AuthController extends BaseController
             if (!Tools::emailCheck($email)) {
                 throw new \Exception('邮箱格式不正确');
             }
-            if (!Check::isEmailLegal($email)) {
+            if (!Tools::isEmailLegal($email)) {
                 throw new \Exception('不支持此邮箱域');
             }
             // 阻止邮箱地址包含.和+号的邮箱

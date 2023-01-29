@@ -133,7 +133,7 @@
                                                                         </h2>
                                                                         <div class="text-muted">
                                                                             <ul class="list-inline list-inline-dots mb-0">
-                                                                                <!-- {if ($server->get_node_online_status() == '1')}
+                                                                                <!-- {if ($server->getNodeOnlineStatus() == '1')}
                                                                                     <li class="list-inline-item"><span
                                                                                             class="text-green">Up</span></li>
                                                                                 {else}
@@ -142,7 +142,7 @@
                                                                                 {/if} -->
                                                                                 <li class="list-inline-item">
                                                                                     <i class="ti ti-users"></i>&nbsp;
-                                                                                    {$server->get_node_online_user_count()}
+                                                                                    {$server->getNodeOnlineUserCount()}
                                                                                 </li>
                                                                                 <li class="list-inline-item">
                                                                                     <i class="ti ti-rocket"></i>&nbsp;

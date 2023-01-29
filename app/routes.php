@@ -85,11 +85,6 @@ return function (SlimApp $app) {
 
         // 节点列表
         $this->get('/server',                   App\Controllers\User\NodeController::class . ':serverList');
-        if (!$_ENV['hide_old_server_list']) {
-            $this->get('/node',                 App\Controllers\User\NodeController::class . ':userNodePage');
-            $this->get('/node/{id}',            App\Controllers\User\NodeController::class . ':userNodeInfo');
-            $this->get('/node/{id}/ajax',       App\Controllers\User\NodeController::class . ':userNodeAjax');
-        }
 
         // 其他
         $this->get('/logout',                   App\Controllers\UserController::class . ':logout');

@@ -231,7 +231,7 @@ class Job extends Command
         //更新节点 IP，每分钟
         $nodes = Node::get();
         foreach ($nodes as $node) {
-            $server = $node->get_out_address();
+            $server = $node->getOutAddress();
             if (!Tools::is_ip($server) && $node->changeNodeIp($server)) {
                 $node->save();
             }

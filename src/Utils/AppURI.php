@@ -9,24 +9,24 @@ class AppURI
     {
         $ss_obfs_list = Config::getSupportParam('ss_obfs');
         if (!$is_ss) {
-            $ssurl = $item['address'] . ':' . $item['port'] . ':' . $item['protocol'] . ':' . $item['method'] . ':' . $item['obfs'] . ':' . Tools::base64_url_encode($item['passwd'])
-            . '/?obfsparam=' . Tools::base64_url_encode($item['obfs_param'])
-            . '&protoparam=' . Tools::base64_url_encode($item['protocol_param'])
-            . '&remarks=' . Tools::base64_url_encode($item['remark'])
-            . '&group=' . Tools::base64_url_encode($item['group']);
+            $ssurl = $item['address'] . ':' . $item['port'] . ':' . $item['protocol'] . ':' . $item['method'] . ':' . $item['obfs'] . ':' . Tools::base64UrlEncode($item['passwd'])
+            . '/?obfsparam=' . Tools::base64UrlEncode($item['obfs_param'])
+            . '&protoparam=' . Tools::base64UrlEncode($item['protocol_param'])
+            . '&remarks=' . Tools::base64UrlEncode($item['remark'])
+            . '&group=' . Tools::base64UrlEncode($item['group']);
 
-            return 'ssr://' . Tools::base64_url_encode($ssurl);
+            return 'ssr://' . Tools::base64UrlEncode($ssurl);
         }
 
         if ($is_ss == 2) {
             $personal_info = $item['method'] . ':' . $item['passwd'] . '@' . $item['address'] . ':' . $item['port'];
-            $ssurl = 'ss://' . Tools::base64_url_encode($personal_info);
+            $ssurl = 'ss://' . Tools::base64UrlEncode($personal_info);
             $ssurl .= ($_ENV['add_appName_to_ss_uri'] === true
                 ? '#' . rawurlencode($_ENV['appName'] . ' - ' . $item['remark'])
                 : '#' . rawurlencode($item['remark']));
         } else {
             $personal_info = $item['method'] . ':' . $item['passwd'];
-            $ssurl = 'ss://' . Tools::base64_url_encode($personal_info) . '@' . $item['address'] . ':' . $item['port'];
+            $ssurl = 'ss://' . Tools::base64UrlEncode($personal_info) . '@' . $item['address'] . ':' . $item['port'];
             $plugin = '';
             if ($item['obfs'] == 'v2ray' || in_array($item['obfs'], $ss_obfs_list)) {
                 if (strpos($item['obfs'], 'http') !== false) {
@@ -39,9 +39,9 @@ class AppURI
                 if ($item['obfs_param'] != '' && $item['obfs'] != 'v2ray') {
                     $plugin .= ';obfs-host=' . $item['obfs_param'];
                 }
-                $ssurl .= '/?plugin=' . rawurlencode($plugin) . '&group=' . Tools::base64_url_encode($_ENV['appName']);
+                $ssurl .= '/?plugin=' . rawurlencode($plugin) . '&group=' . Tools::base64UrlEncode($_ENV['appName']);
             } else {
-                $ssurl .= '/?group=' . Tools::base64_url_encode($_ENV['appName']);
+                $ssurl .= '/?group=' . Tools::base64UrlEncode($_ENV['appName']);
             }
             $ssurl .= ($_ENV['add_appName_to_ss_uri'] === true
                 ? '#' . rawurlencode($_ENV['appName'] . ' - ' . $item['remark'])
@@ -433,7 +433,7 @@ class AppURI
                             'mode' => 'websocket',
                         ];
                         $v2rayplugin['tls'] = $item['tls'] == 'tls' ? true : false;
-                        $return = ('ss://' . Tools::base64_url_encode($item['method'] . ':' . $item['passwd'] . '@' . $item['address'] . ':' . $item['port']) . '?v2ray-plugin=' . base64_encode(json_encode($v2rayplugin)) . '#' . rawurlencode($item['remark']));
+                        $return = ('ss://' . Tools::base64UrlEncode($item['method'] . ':' . $item['passwd'] . '@' . $item['address'] . ':' . $item['port']) . '?v2ray-plugin=' . base64_encode(json_encode($v2rayplugin)) . '#' . rawurlencode($item['remark']));
                     }
                     if ($item['obfs'] == 'plain') {
                         $return = (self::getItemUrl($item, 2));
@@ -479,7 +479,7 @@ class AppURI
                         ? ('&peer=' . $item['sni'])
                         : ('&peer=' . $item['host']));
                 }
-                $return = ('vmess://' . Tools::base64_url_encode('auto:' . $item['id'] . '@' . $item['add'] . ':' . $item['port']) . '?remarks=' . rawurlencode($item['remark']) . $obfs . $tls . '&alterId=' . $item['aid']);
+                $return = ('vmess://' . Tools::base64UrlEncode('auto:' . $item['id'] . '@' . $item['add'] . ':' . $item['port']) . '?remarks=' . rawurlencode($item['remark']) . $obfs . $tls . '&alterId=' . $item['aid']);
                 break;
             case 'trojan':
                 $return = ('trojan://' . $item['passwd'] . '@' . $item['address'] . ':' . $item['port']);
@@ -608,16 +608,16 @@ class AppURI
         switch ($item['type']) {
             case 'ss':
                 $personal_info = $item['method'] . ':' . $item['passwd'] . '@' . $item['address'] . ':' . $item['port'];
-                $return = 'ss://' . Tools::base64_url_encode($personal_info);
+                $return = 'ss://' . Tools::base64UrlEncode($personal_info);
                 $return .= '#' . rawurlencode($item['remark']);
                 break;
             case 'ssr':
-                $return = $item['address'] . ':' . $item['port'] . ':' . $item['protocol'] . ':' . $item['method'] . ':' . $item['obfs'] . ':' . Tools::base64_url_encode($item['passwd'])
-                . '/?obfsparam=' . Tools::base64_url_encode($item['obfs_param'])
-                . '&protoparam=' . Tools::base64_url_encode($item['protocol_param'])
-                . '&remarks=' . Tools::base64_url_encode($item['remark'])
-                . '&group=' . Tools::base64_url_encode($item['group']);
-                return 'ssr://' . Tools::base64_url_encode($return);
+                $return = $item['address'] . ':' . $item['port'] . ':' . $item['protocol'] . ':' . $item['method'] . ':' . $item['obfs'] . ':' . Tools::base64UrlEncode($item['passwd'])
+                . '/?obfsparam=' . Tools::base64UrlEncode($item['obfs_param'])
+                . '&protoparam=' . Tools::base64UrlEncode($item['protocol_param'])
+                . '&remarks=' . Tools::base64UrlEncode($item['remark'])
+                . '&group=' . Tools::base64UrlEncode($item['group']);
+                return 'ssr://' . Tools::base64UrlEncode($return);
                 break;
             case 'vmess':
                 $return = $item['vtype'] . $item['id'] . "@" . $item['add'] . ":" . $item['port'] . "?encryption=none";

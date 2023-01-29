@@ -40,13 +40,6 @@ class UserController extends BaseController
             ]);
         }
 
-        if (in_array($node->sort, [0, 10]) && $node->mu_only !== -1) {
-            $mu_port_migration = $_ENV['mu_port_migration'];
-            $muPort = Tools::get_MuOutPortArray($node->server);
-        } else {
-            $mu_port_migration = false;
-        }
-
         /*
          * 1. 请不要把管理员作为单端口承载用户
          * 2. 请不要把真实用户作为单端口承载用户
@@ -90,16 +83,6 @@ class UserController extends BaseController
                     $user_raw->node_speedlimit = 1;
                 } else {
                     continue;
-                }
-            }
-            if ($mu_port_migration === true && $user_raw->is_multi_user !== 0) {
-                // 下发偏移后端口
-                if ($muPort['type'] === 0) {
-                    if (in_array($user_raw->port, array_keys($muPort['port']))) {
-                        $user_raw->port = $muPort['port'][$user_raw->port]['backend'];
-                    }
-                } else {
-                    $user_raw->port += $muPort['type'];
                 }
             }
             $user_raw = Tools::keyFilter($user_raw, $key_list);

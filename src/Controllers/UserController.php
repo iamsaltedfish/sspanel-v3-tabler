@@ -1038,13 +1038,13 @@ class UserController extends BaseController
             if ($method === '') {
                 throw new \Exception('加密无效');
             }
-            if (!Tools::is_param_validate('obfs', $obfs)) {
+            if (!Tools::isParamValidate('obfs', $obfs)) {
                 throw new \Exception('混淆无效');
             }
             if (gethostbyname($obfs_param) == $obfs_param) {
                 throw new \Exception('混淆参数无效');
             }
-            if (!Tools::is_param_validate('protocol', $protocol)) {
+            if (!Tools::isParamValidate('protocol', $protocol)) {
                 throw new \Exception('协议无效');
             }
             if (!URL::SSCanConnect($user) && !URL::SSRCanConnect($user)) {

@@ -100,8 +100,8 @@ class Job extends Command
 
         // 重置自增ID
         $db = new DatatablesHelper();
-        Tools::reset_auto_increment($db, 'node_online_log');
-        Tools::reset_auto_increment($db, 'node_info');
+        Tools::resetAutoIncrement($db, 'node_online_log');
+        Tools::resetAutoIncrement($db, 'node_info');
 
         // 记录流量用量
         $lastday_total = 0;
@@ -232,7 +232,7 @@ class Job extends Command
         $nodes = Node::get();
         foreach ($nodes as $node) {
             $server = $node->getOutAddress();
-            if (!Tools::is_ip($server) && $node->changeNodeIp($server)) {
+            if (!Tools::isIp($server) && $node->changeNodeIp($server)) {
                 $node->save();
             }
         }

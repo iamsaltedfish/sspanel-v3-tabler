@@ -51,6 +51,6 @@ class Hash
         if (in_array($_ENV['pwdMethod'], ['bcrypt', 'argon2i', 'argon2id'])) {
             return password_verify($password, $hashedPassword);
         }
-        return ($hashedPassword == self::passwordHash($password));
+        return $hashedPassword === self::passwordHash($password);
     }
 }

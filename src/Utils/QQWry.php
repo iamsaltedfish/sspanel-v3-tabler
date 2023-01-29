@@ -20,16 +20,16 @@ class QQWry
     {
         $filename = BASE_PATH . '/storage/qqwry.dat';
 
-        $this->fp = 0;
+        $this->fp = fopen($filename, 'rb');
 
-        if (($this->fp = fopen($filename, 'rb')) !== false) {
+        if ($this->fp !== false) {
             $this->firstip = $this->getlong();
 
             $this->lastip = $this->getlong();
 
             $this->totalip = ($this->lastip - $this->firstip) / 7;
 
-            register_shutdown_function(array(&$this, '__destruct'));
+            register_shutdown_function([ & $this, '__destruct']);
         }
     }
 
@@ -107,6 +107,7 @@ class QQWry
             return null;
         }
 
+        $location = [];
         $location['ip'] = gethostbyname($ip);
 
         $ip = $this->packip($location['ip']);
@@ -202,11 +203,11 @@ class QQWry
                 break;
         }
 
-        if ($location['country'] == ' CZ88.NET') {
+        if ($location['country'] === ' CZ88.NET') {
             $location['country'] = '未知';
         }
 
-        if ($location['area'] == ' CZ88.NET') {
+        if ($location['area'] === ' CZ88.NET') {
             $location['area'] = '';
         }
 

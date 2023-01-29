@@ -81,8 +81,6 @@ final class TelegramTools
 
     /**
      * 待定
-     *
-     * @return mixed
      */
     public static function operationUser($User, $useOptionMethod, $value, $ChatID)
     {
@@ -394,7 +392,8 @@ final class TelegramTools
             &&
             is_numeric(substr($Value, 1))
         ) {
-            $Source = eval('return $Source ' . substr($Value, 0, 1) . '= ' . substr($Value, 1) . ';');
+            //$Source = eval('return $Source ' . substr($Value, 0, 1) . '= ' . substr($Value, 1) . ';');
+            $Source = '';
         } else {
             if (is_numeric($Value)) {
                 $Source = $Value;
@@ -439,7 +438,7 @@ final class TelegramTools
             if ($number === null) {
                 return null;
             }
-            $Source = eval('return $Source ' . $operator . '= ' . $number . ';');
+            //$Source = eval('return $Source ' . $operator . '= ' . $number . ';');
         } else {
             if (is_numeric($Value)) {
                 if ((int) $Value === 0) {

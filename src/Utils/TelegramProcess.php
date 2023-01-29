@@ -146,7 +146,7 @@ class TelegramProcess
                                 $name = 'telegram.' . $telegram_id;
                             }
                             $code = 0;
-                            $res = AuthController::register_helper($name, $email, $passwd, $code, $imtype, $imvalue, $telegram_id, false, 'null');
+                            $res = AuthController::registerHelper($name, $email, $passwd, $code, $imtype, $imvalue, $telegram_id, false, 'null');
 
                             if ($res['ret'] === 0) {
                                 $reply['message'] = $res['msg'];

@@ -10,7 +10,6 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Services\Auth;
 use App\Services\Mail;
-use App\Utils\Check;
 use App\Utils\GA;
 use App\Utils\Hash;
 use App\Utils\Tools;
@@ -254,7 +253,7 @@ class AuthController extends BaseController
                 }
             }
 
-            self::register_helper($name, $email, $passwd, $code, $imtype, $imvalue, 0, false, $fingerprint);
+            self::registerHelper($name, $email, $passwd, $code, $imtype, $imvalue, 0, false, $fingerprint);
         } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
@@ -282,8 +281,17 @@ class AuthController extends BaseController
         ]);
     }
 
-    public static function register_helper(
-        $name, $email, $passwd, $code, $imtype, $imvalue, $telegram_id, $auto_login = true, $fingerprint) {
+    public static function registerHelper(
+        $name,
+        $email,
+        $passwd,
+        $code,
+        $imtype,
+        $imvalue,
+        $telegram_id,
+        $auto_login = true,
+        $fingerprint
+    ) {
         $ga = new GA();
         $user = new User();
         $antiXss = new AntiXSS();

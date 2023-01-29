@@ -9,8 +9,7 @@ class Payback extends Model
 
     public function user()
     {
-        $user = User::where('id', $this->attributes['userid'])->first();
-        return $user;
+        return User::where('id', $this->attributes['userid'])->first();
     }
 
     public function getDatetimeAttribute($value)
@@ -20,12 +19,12 @@ class Payback extends Model
 
     public function getAssociatedOrderAttribute($value)
     {
-        return ($value == null) ? 'null' : $value;
+        return ($value === null) ? 'null' : $value;
     }
 
     public function getFraudDetectAttribute($value)
     {
-        return ($value == '0') ? '通过' : '欺诈';
+        return ($value === 0) ? '通过' : '欺诈';
     }
 
     public static function fraudDetection($user)
@@ -75,16 +74,16 @@ class Payback extends Model
                 return self::executeRebate($order_no, $user_id, $gift_user_id, $order_amount, null, true);
             }
         }
-        if ($invite_rebate_mode == 'continued') {
+        if ($invite_rebate_mode === 'continued') {
             // 不设限制
             self::executeRebate($order_no, $user_id, $gift_user_id, $order_amount);
-        } elseif ($invite_rebate_mode == 'limit_frequency') {
+        } elseif ($invite_rebate_mode === 'limit_frequency') {
             // 限制返利次数
             $rebate_frequency = self::where('userid', $user_id)->count();
             if ($rebate_frequency < $configs['rebate_frequency_limit']) {
                 self::executeRebate($order_no, $user_id, $gift_user_id, $order_amount);
             }
-        } elseif ($invite_rebate_mode == 'limit_amount') {
+        } elseif ($invite_rebate_mode === 'limit_amount') {
             // 限制返利金额
             $total_rebate_amount = self::where('userid', $user_id)->sum('ref_get');
             // 预计返利 (expected_rebate) 是指：订单金额 * 返点比例
@@ -100,7 +99,7 @@ class Payback extends Model
             } else {
                 self::executeRebate($order_no, $user_id, $gift_user_id, $order_amount);
             }
-        } elseif ($invite_rebate_mode == 'limit_time_range') {
+        } elseif ($invite_rebate_mode === 'limit_time_range') {
             if (strtotime($user->reg_date) + $configs['rebate_time_range_limit'] * 86400 > time()) {
                 self::executeRebate($order_no, $user_id, $gift_user_id, $order_amount);
             }
@@ -123,7 +122,7 @@ class Payback extends Model
         $payback_log->userid = $user_id;
         $payback_log->ref_by = $gift_user_id;
         $payback_log->ref_get = $adjust_rebate ?? $rebate_amount;
-        $payback_log->fraud_detect = ($fraud) ? '1' : '0'; // 0为通过; 1为欺诈
+        $payback_log->fraud_detect = ($fraud) ? 1 : 0; // 0为通过; 1为欺诈
         $payback_log->associated_order = $order_no;
         $payback_log->datetime = time();
         $payback_log->save();

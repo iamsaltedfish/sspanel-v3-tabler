@@ -15,7 +15,7 @@ class UserSubscribeLog extends Model
         return User::find($this->user_id);
     }
 
-    public function location(QQWry $QQWry = null)
+    public function location(?QQWry $QQWry = null)
     {
         if ($QQWry === null) {
             $QQWry = new QQWry();

@@ -130,56 +130,6 @@ class IpController extends AdminController
     }
 
     /**
-     * 后台登录记录页面 AJAX
-     *
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function ajaxLogin($request, $response, $args)
-    {
-        $query = LoginIp::getTableDataFromAdmin(
-            $request,
-            static function (&$order_field) {
-                if (in_array($order_field, ['user_name'])) {
-                    $order_field = 'userid';
-                }
-                if (in_array($order_field, ['location'])) {
-                    $order_field = 'ip';
-                }
-            }
-        );
-
-        $data = [];
-        $QQWry = new QQWry();
-        foreach ($query['datas'] as $value) {
-            /** @var LoginIp $value */
-
-            if ($value->user() === null) {
-                LoginIp::user_is_null($value);
-                continue;
-            }
-            $tempdata = [];
-            $tempdata['id'] = $value->id;
-            $tempdata['userid'] = $value->userid;
-            $tempdata['user_name'] = $value->user_name();
-            $tempdata['ip'] = $value->ip;
-            $tempdata['location'] = $value->location($QQWry);
-            $tempdata['datetime'] = $value->datetime();
-            $tempdata['type'] = $value->type();
-
-            $data[] = $tempdata;
-        }
-
-        return $response->withJson([
-            'draw' => $request->getParam('draw'),
-            'recordsTotal' => LoginIp::count(),
-            'recordsFiltered' => $query['count'],
-            'data' => $data,
-        ]);
-    }
-
-    /**
      * 后台在线 IP 页面
      *
      * @param Request   $request
@@ -244,13 +194,13 @@ class IpController extends AdminController
             $tempdata = [];
             $tempdata['id'] = $value->id;
             $tempdata['userid'] = $value->userid;
-            $tempdata['user_name'] = $value->user_name();
+            $tempdata['user_name'] = $value->userName();
             $tempdata['nodeid'] = $value->nodeid;
-            $tempdata['node_name'] = $value->node_name();
+            $tempdata['node_name'] = $value->nodeName();
             $tempdata['ip'] = Tools::getRealIp($value->ip);
             $tempdata['location'] = $value->location($QQWry);
             $tempdata['datetime'] = $value->datetime();
-            $tempdata['is_node'] = $value->is_node();
+            $tempdata['is_node'] = $value->isNode();
 
             $data[] = $tempdata;
         }
@@ -261,58 +211,5 @@ class IpController extends AdminController
             'recordsFiltered' => $query['count'],
             'data' => $data,
         ]);
-    }
-
-    /**
-     * 节点被封IP
-     *
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function block($request, $response, $args)
-    {
-        $table_config = [];
-        $table_config['total_column'] = [
-            'id' => 'ID',
-            'node_name' => '节点名称',
-            'ip' => 'IP',
-            'location' => '归属地',
-            'datetime' => '时间',
-        ];
-        $table_config['default_show_column'] = array_keys($table_config['total_column']);
-        $table_config['ajax_url'] = 'block/ajax';
-        return $response->write(
-            $this->view()
-                ->assign('table_config', $table_config)
-                ->display('admin/ip/block.tpl')
-        );
-    }
-
-    /**
-     * 解封IP记录
-     *
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function unblock($request, $response, $args)
-    {
-        $table_config = [];
-        $table_config['total_column'] = [
-            'id' => 'ID',
-            'userid' => '用户ID',
-            'user_name' => '用户名',
-            'ip' => 'IP',
-            'location' => '归属地',
-            'datetime' => '时间',
-        ];
-        $table_config['default_show_column'] = array_keys($table_config['total_column']);
-        $table_config['ajax_url'] = 'unblock/ajax';
-        return $response->write(
-            $this->view()
-                ->assign('table_config', $table_config)
-                ->display('admin/ip/unblock.tpl')
-        );
     }
 }

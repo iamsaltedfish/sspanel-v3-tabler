@@ -22,9 +22,9 @@ class Ip extends Model
     /**
      * 用户名
      */
-    public function user_name(): string
+    public function userName(): string
     {
-        if ($this->user() == null) {
+        if ($this->user() === null) {
             return '用户已不存在';
         }
         return $this->user()->user_name;
@@ -41,9 +41,9 @@ class Ip extends Model
     /**
      * 节点名
      */
-    public function node_name(): string
+    public function nodeName(): string
     {
-        if ($this->node() == null) {
+        if ($this->node() === null) {
             return '节点已不存在';
         }
         return $this->node()->name;
@@ -51,9 +51,8 @@ class Ip extends Model
 
     /**
      * 获取 IP 位置
-     *
      */
-    public function location(QQWry $QQWry = null): string
+    public function location(?QQWry $QQWry = null): string
     {
         if ($QQWry === null) {
             $QQWry = new QQWry();
@@ -73,7 +72,7 @@ class Ip extends Model
     /**
      * 是否为中转连接
      */
-    public function is_node(): string
+    public function isNode(): string
     {
         return Node::where('node_ip', Tools::getRealIp($this->ip))->first() ? '是' : '否';
     }

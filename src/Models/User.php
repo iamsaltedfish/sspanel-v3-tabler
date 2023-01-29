@@ -6,7 +6,6 @@ use App\Controllers\LinkController;
 use App\Services\Mail;
 use App\Utils\GA;
 use App\Utils\Hash;
-use App\Utils\Telegram;
 use App\Utils\Tools;
 use Exception;
 use Ramsey\Uuid\Uuid;

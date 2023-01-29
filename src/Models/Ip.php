@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Utils\DatatablesHelper;
 use App\Utils\QQWry;
 use App\Utils\Tools;
-use App\Utils\DatatablesHelper;
 
 class Ip extends Model
 {

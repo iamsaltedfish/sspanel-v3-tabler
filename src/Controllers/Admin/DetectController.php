@@ -190,7 +190,6 @@ class DetectController extends AdminController
     {
         $table_config = [
             'ajax_url' => 'log/ajax',
-            'default_show_column' => array_keys($table_config['total_column']),
             'total_column' => [
                 'id' => 'ID',
                 'user_id' => '用户ID',
@@ -205,6 +204,8 @@ class DetectController extends AdminController
                 'datetime' => '时间',
             ],
         ];
+        $table_config['default_show_column'] = array_keys($table_config['total_column']);
+
         return $response->write(
             $this->view()
                 ->assign('table_config', $table_config)
@@ -239,28 +240,28 @@ class DetectController extends AdminController
             /** @var DetectLog $value */
 
             if ($value->rule() === null) {
-                DetectLog::rule_is_null($value);
+                DetectLog::ruleIsNull($value);
                 continue;
             }
             if ($value->node() === null) {
-                DetectLog::node_is_null($value);
+                DetectLog::nodeIsNull($value);
                 continue;
             }
             if ($value->user() === null) {
-                DetectLog::user_is_null($value);
+                DetectLog::userIsNull($value);
                 continue;
             }
             $tempdata = [];
             $tempdata['id'] = $value->id;
             $tempdata['user_id'] = $value->user_id;
-            $tempdata['user_name'] = $value->user_name();
+            $tempdata['user_name'] = $value->userName();
             $tempdata['node_id'] = $value->node_id;
-            $tempdata['node_name'] = $value->node_name();
+            $tempdata['node_name'] = $value->nodeName();
             $tempdata['list_id'] = $value->list_id;
-            $tempdata['rule_name'] = $value->rule_name();
-            $tempdata['rule_text'] = $value->rule_text();
-            $tempdata['rule_regex'] = $value->rule_regex();
-            $tempdata['rule_type'] = $value->rule_type();
+            $tempdata['rule_name'] = $value->ruleName();
+            $tempdata['rule_text'] = $value->ruleText();
+            $tempdata['rule_regex'] = $value->ruleRegex();
+            $tempdata['rule_type'] = $value->ruleType();
             $tempdata['datetime'] = $value->datetime();
 
             $data[] = $tempdata;

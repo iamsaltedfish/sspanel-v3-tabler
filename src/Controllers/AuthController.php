@@ -328,7 +328,7 @@ class AuthController extends BaseController
         $user->expire_in = date('Y-m-d H:i:s', time() + $_ENV['reg_default_time'] * 3600);
         $user->class_expire = date('Y-m-d H:i:s', time() + $_ENV['reg_default_class_time'] * 3600);
         $user->reg_date = date('Y-m-d H:i:s');
-        $user->reg_ip = $_SERVER['REMOTE_ADDR'];
+        $user->reg_ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
         $user->theme = $_ENV['theme'];
         $groups = explode(',', $_ENV['random_group']);
         $user->node_group = $groups[array_rand($groups)];

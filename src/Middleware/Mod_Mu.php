@@ -25,7 +25,7 @@ class Mod_Mu
             ]);
         }
 
-        if (!in_array($key, Config::getMuKey())) {
+        if ($key !== $_ENV['muKey']) {
             // key 不存在
             return $response->withJson([
                 'ret' => 0,

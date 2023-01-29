@@ -83,7 +83,7 @@ class Config
             'enable_kill'             => $_ENV['enable_kill'],
             'enable_change_email'     => $_ENV['enable_change_email'],
             'pwdMethod'               => $_ENV['pwdMethod'],
-            'sentry_dsn'              => !empty($_ENV['sentry_dsn']) ? $_ENV['sentry_dsn'] : null,
+            'sentry_dsn'              => $_ENV['sentry_dsn'] !== '' ? $_ENV['sentry_dsn'] : null,
         ];
     }
 
@@ -102,17 +102,11 @@ class Config
         ];
     }
 
-    public static function getMuKey()
-    {
-        $muKeyList = array_key_exists('muKeyList', $_ENV) ? $_ENV['muKeyList'] : ['　'];
-        return array_merge(explode(',', $_ENV['muKey']), $muKeyList);
-    }
-
     public static function getSupportParam($type)
     {
         switch ($type) {
             case 'obfs':
-                $list = [
+                return [
                     'plain',
                     'http_simple',
                     'http_simple_compatible',
@@ -127,9 +121,8 @@ class Config
                     'simple_obfs_tls',
                     'simple_obfs_tls_compatible',
                 ];
-                return $list;
             case 'protocol':
-                $list = [
+                return [
                     'origin',
                     'verify_deflate',
                     'auth_sha1_v4',
@@ -143,9 +136,8 @@ class Config
                     'auth_chain_e',
                     'auth_chain_f',
                 ];
-                return $list;
             case 'allow_none_protocol':
-                $list = [
+                return [
                     'auth_chain_a',
                     'auth_chain_b',
                     'auth_chain_c',
@@ -153,26 +145,23 @@ class Config
                     'auth_chain_e',
                     'auth_chain_f',
                 ];
-                return $list;
             case 'ss_aead_method':
-                $list = [
+                return [
                     'aes-128-gcm',
                     'aes-192-gcm',
                     'aes-256-gcm',
                     'chacha20-ietf-poly1305',
                     'xchacha20-ietf-poly1305',
                 ];
-                return $list;
             case 'ss_obfs':
-                $list = [
+                return [
                     'simple_obfs_http',
                     'simple_obfs_http_compatible',
                     'simple_obfs_tls',
                     'simple_obfs_tls_compatible',
                 ];
-                return $list;
             default:
-                $list = [
+                return [
                     'rc4-md5',
                     'rc4-md5-6',
                     'aes-128-cfb',
@@ -202,7 +191,6 @@ class Config
                     'chacha20-ietf-poly1305',
                     'xchacha20-ietf-poly1305',
                 ];
-                return $list;
         }
     }
 }

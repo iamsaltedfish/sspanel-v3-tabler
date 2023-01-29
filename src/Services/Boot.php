@@ -33,7 +33,7 @@ class Boot
 
     public static function bootSentry()
     {
-        if (!empty($_ENV['sentry_dsn'])) {
+        if ($_ENV['sentry_dsn'] !== '') {
             Sentry\init([
                 'dsn' => $_ENV['sentry_dsn'],
                 'prefixes' => [

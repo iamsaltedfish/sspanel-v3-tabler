@@ -6,7 +6,7 @@ return [
     'preset' => 'default',
     'remove' => [
         NunoMaduro\PhpInsights\Domain\Insights\ForbiddenNormalClasses::class, // uim does not
-        NunoMaduro\PhpInsights\Domain\Sniffs\ForbiddenSetterSniff::class,NunoMaduro\PhpInsights\Domain\Insights\ForbiddenGlobals::class,
+        NunoMaduro\PhpInsights\Domain\Sniffs\ForbiddenSetterSniff::class, NunoMaduro\PhpInsights\Domain\Insights\ForbiddenGlobals::class,
         PHP_CodeSniffer\Standards\Generic\Sniffs\Files\LineLengthSniff::class,
         PHP_CodeSniffer\Standards\Generic\Sniffs\Formatting\SpaceAfterNotSniff::class,
         PHP_CodeSniffer\Standards\Generic\Sniffs\Strings\UnnecessaryStringConcatSniff::class, // uim does not

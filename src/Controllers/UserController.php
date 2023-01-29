@@ -18,7 +18,6 @@ use App\Models\ProductOrder;
 use App\Models\Setting;
 use App\Models\Statistics;
 use App\Models\StreamMedia;
-use App\Models\Token;
 use App\Models\User;
 use App\Models\UserSubscribeLog;
 use App\Services\Auth;
@@ -26,8 +25,6 @@ use App\Services\Config;
 use App\Services\Mail;
 use App\Services\Payment;
 use App\Utils\Check;
-use App\Utils\ClientProfiles;
-use App\Utils\Cookie;
 use App\Utils\DatatablesHelper;
 use App\Utils\GA;
 use App\Utils\Hash;
@@ -1047,9 +1044,6 @@ class UserController extends BaseController
             if (!Tools::isParamValidate('protocol', $protocol)) {
                 throw new \Exception('协议无效');
             }
-            if (!URL::SSCanConnect($user) && !URL::SSRCanConnect($user)) {
-                throw new \Exception('此组合无效，因为没有客户端可以连接');
-            }
 
             $antiXss = new AntiXSS();
             $user->obfs = $antiXss->xss_clean($obfs);
@@ -1156,7 +1150,7 @@ class UserController extends BaseController
         return $response->write(
             $this->view()
                 ->assign('ann', Ann::orderBy('id', 'desc')->first())
-                ->assign('subInfo', LinkController::getSubinfo($this->user, 0))
+                ->assign('subInfo', LinkController::getTheClientLink($this->user))
                 ->assign('chart_date_data', array_reverse($chart_date_data))
                 ->assign('chart_traffic_data', array_reverse($chart_traffic_data))
                 ->display('user/index.tpl')
@@ -1223,139 +1217,5 @@ class UserController extends BaseController
         return $this->view()
             ->assign('results', $results)
             ->display('user/media.tpl');
-    }
-
-    /*
-    上面是整理好的
-
-    下面是等待整理的
-     */
-
-    public function backtoadmin($request, $response, $args)
-    {
-        $userid = Cookie::get('uid');
-        $adminid = Cookie::get('old_uid');
-        $user = User::find($userid);
-        $admin = User::find($adminid);
-
-        if (!$admin->is_admin || !$user) {
-            Cookie::set([
-                'uid' => null,
-                'email' => null,
-                'key' => null,
-                'ip' => null,
-                'expire_in' => null,
-                'old_uid' => null,
-                'old_email' => null,
-                'old_key' => null,
-                'old_ip' => null,
-                'old_expire_in' => null,
-                'old_local' => null,
-            ], time() - 1000);
-        }
-        $expire_in = Cookie::get('old_expire_in');
-        $local = Cookie::get('old_local');
-        Cookie::set([
-            'uid' => Cookie::get('old_uid'),
-            'email' => Cookie::get('old_email'),
-            'key' => Cookie::get('old_key'),
-            'ip' => Cookie::get('old_ip'),
-            'expire_in' => $expire_in,
-            'old_uid' => null,
-            'old_email' => null,
-            'old_key' => null,
-            'old_ip' => null,
-            'old_expire_in' => null,
-            'old_local' => null,
-        ], $expire_in);
-        return $response->withStatus(302)->withHeader('Location', $local);
-    }
-
-    public function getUserAllURL($request, $response, $args)
-    {
-        $user = $this->user;
-        $type = $request->getQueryParams()["type"];
-        $return = '';
-        switch ($type) {
-            case 'ss':
-                $return .= URL::get_NewAllUrl($user, ['type' => 'ss']) . PHP_EOL;
-                break;
-            case 'ssr':
-                $return .= URL::get_NewAllUrl($user, ['type' => 'ssr']) . PHP_EOL;
-                break;
-            case 'v2ray':
-                $return .= URL::get_NewAllUrl($user, ['type' => 'vmess']) . PHP_EOL;
-                break;
-            default:
-                $return .= '悟空别闹！';
-                break;
-        }
-        $response = $response->withHeader('Content-type', ' application/octet-stream; charset=utf-8')
-            ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
-            ->withHeader('Content-Disposition', ' attachment; filename=node.txt');
-
-        return $response->write($return);
-    }
-
-    public function getPcClient($request, $response, $args)
-    {
-        $zipArc = new \ZipArchive();
-        $user_token = LinkController::GenerateSSRSubCode($this->user->id);
-        $type = trim($request->getQueryParams()['type']);
-        // 临时文件存放路径
-        $temp_file_path = BASE_PATH . '/storage/';
-        // 客户端文件存放路径
-        $client_path = BASE_PATH . '/resources/clients/';
-        switch ($type) {
-            case 'ss-win':
-                $user_config_file_name = 'gui-config.json';
-                $content = ClientProfiles::getSSPcConf($this->user);
-                break;
-            case 'ssr-win':
-                $user_config_file_name = 'gui-config.json';
-                $content = ClientProfiles::getSSRPcConf($this->user);
-                break;
-            case 'v2rayn-win':
-                $user_config_file_name = 'guiNConfig.json';
-                $content = ClientProfiles::getV2RayNPcConf($this->user);
-                break;
-            default:
-                return 'gg';
-        }
-        $temp_file_path .= $type . '_' . $user_token . '.zip';
-        $client_path .= $type . '/';
-        // 文件存在则先删除
-        if (is_file($temp_file_path)) {
-            unlink($temp_file_path);
-        }
-        // 超链接文件内容
-        $site_url_content = '[InternetShortcut]' . PHP_EOL . 'URL=' . $_ENV['baseUrl'];
-        // 创建 zip 并添加内容
-        $zipArc->open($temp_file_path, \ZipArchive::CREATE);
-        $zipArc->addFromString($user_config_file_name, $content);
-        $zipArc->addFromString('点击访问_' . $_ENV['appName'] . '.url', $site_url_content);
-        Tools::folderToZip($client_path, $zipArc, strlen($client_path));
-        $zipArc->close();
-
-        $newResponse = $response->withHeader('Content-type', ' application/octet-stream')->withHeader('Content-Disposition', ' attachment; filename=' . $type . '.zip');
-        $newResponse->write(file_get_contents($temp_file_path));
-        unlink($temp_file_path);
-
-        return $newResponse;
-    }
-
-    public function getClientfromToken($request, $response, $args)
-    {
-        $token = $args['token'];
-        $Etoken = Token::where('token', '=', $token)->where('create_time', '>', time() - 60 * 10)->first();
-        if ($Etoken === null) {
-            return '下载链接已失效，请刷新页面后重新点击.';
-        }
-        $user = User::find($Etoken->user_id);
-        if ($user === null) {
-            return null;
-        }
-        $this->user = $user;
-        return $this->getPcClient($request, $response, $args);
     }
 }

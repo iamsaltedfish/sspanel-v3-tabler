@@ -88,9 +88,6 @@ return function (SlimApp $app) {
 
         // 其他
         $this->get('/logout',                   App\Controllers\UserController::class . ':logout');
-        $this->get('/backtoadmin',              App\Controllers\UserController::class . ':backtoadmin');
-        $this->get('/getPcClient',              App\Controllers\UserController::class . ':getPcClient');
-        $this->get('/getUserAllURL',            App\Controllers\UserController::class . ':getUserAllURL');
     })->add(new Auth());
 
     $app->group('/payments', function () {
@@ -292,10 +289,6 @@ return function (SlimApp $app) {
         $this->get('/{token}',              App\Controllers\NewLinkController::class . ':requestEntry');
     });
 
-    $app->group('/oldlink', function () {
-        $this->get('/{token}',              App\Controllers\LinkController::class . ':GetContent');
-    });
-
     $app->group('/mail', function () {
         $this->get('/push/{token}',         App\Controllers\PushController::class . ':index');
         $this->post('/push/{token}',        App\Controllers\PushController::class . ':update');
@@ -304,9 +297,5 @@ return function (SlimApp $app) {
     //通用訂閲
     $app->group('/sub', function () {
         $this->get('/{token}/{subtype}',    App\Controllers\SubController::class . ':getContent');
-    });
-
-    $app->group('/getClient', function () {
-        $this->get('/{token}',              App\Controllers\UserController::class . ':getClientfromToken');
     });
 };

@@ -174,7 +174,7 @@ class DocsController extends BaseController
             $this->view()
                 ->assign('client', $client)
                 ->assign('groups', self::groups())
-                ->assign('subInfo', LinkController::getSubinfo($this->user, 0))
+                ->assign('subInfo', LinkController::getTheClientLink($this->user))
                 ->display('user/docs.tpl')
         );
     }

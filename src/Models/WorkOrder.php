@@ -17,7 +17,7 @@ class WorkOrder extends Model
         return date('Y-m-d H:i:s', $value);
     }
 
-    public function getClosedAtAttribute(int $value): string
+    public function getClosedAtAttribute($value): string
     {
         return ($value === null) ? 'null' : date('Y-m-d H:i', $value);
     }

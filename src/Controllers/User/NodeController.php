@@ -5,7 +5,6 @@ namespace App\Controllers\User;
 use App\Controllers\NewLinkController;
 use App\Controllers\UserController;
 use App\Models\Node;
-use App\Models\User;
 
 class NodeController extends UserController
 {

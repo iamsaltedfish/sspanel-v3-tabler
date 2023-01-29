@@ -24,7 +24,6 @@ use App\Services\Auth;
 use App\Services\Config;
 use App\Services\Mail;
 use App\Services\Payment;
-use App\Utils\Check;
 use App\Utils\DatatablesHelper;
 use App\Utils\GA;
 use App\Utils\Hash;

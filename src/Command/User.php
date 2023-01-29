@@ -5,7 +5,6 @@ namespace App\Command;
 use App\Controllers\AuthController;
 use App\Models\User as ModelsUser;
 use App\Services\Mail;
-use Exception;
 
 class User extends Command
 {

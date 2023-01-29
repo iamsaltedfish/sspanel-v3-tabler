@@ -3,7 +3,6 @@
 namespace App\Middleware;
 
 use App\Models\Node;
-use App\Services\Config;
 
 class Mod_Mu
 {

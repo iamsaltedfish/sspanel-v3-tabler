@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Controllers\LinkController;
 use App\Services\Mail;
 use App\Utils\GA;
 use App\Utils\Hash;

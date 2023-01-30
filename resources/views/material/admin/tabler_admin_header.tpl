@@ -172,6 +172,14 @@
                                         <i class="ti ti-barrier-block"></i>&nbsp;
                                         邮件黑名单
                                     </a>
+                                    <a class="dropdown-item" href="/admin/mail/push/task">
+                                        <i class="ti ti-checklist"></i>&nbsp;
+                                        推送任务
+                                    </a>
+                                    <a class="dropdown-item" href="/admin/mail/push/progress">
+                                        <i class="ti ti-separator"></i>&nbsp;
+                                        推送进度
+                                    </a>
                                 </div>
                             </li>
                             <li class="nav-item dropdown">

@@ -24,7 +24,7 @@ class Payback extends Model
 
     public function getFraudDetectAttribute($value)
     {
-        return ($value === 0) ? '通过' : '欺诈';
+        return ($value === 0 || $value === '0') ? '通过' : '欺诈';
     }
 
     public static function fraudDetection($user)

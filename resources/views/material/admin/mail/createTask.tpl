@@ -177,7 +177,7 @@
                                     </button>
                                 </div>
                                 <div class="col-6 col-sm-4 col-md-2 col-xl-auto py-3">
-                                    <a href="#" class="btn btn-tabler w-100">
+                                    <button id="submit_push_task" class="btn btn-tabler w-100">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             class="icon icon-tabler icon-tabler-circle-plus" width="24" height="24"
                                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -188,7 +188,7 @@
                                             <path d="M12 9l0 6"></path>
                                         </svg>
                                         提交推送任务
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -314,6 +314,40 @@
                     variable_x: $('#variable_x').val(),
                     variable_y: $('#variable_y').val(),
                     receiving_group: $('#receiving_group').val(),
+                    custom_filtering: $("#custom_filtering").is(":checked"),
+                    customize_filtering_conditions: $('#customize_filtering_conditions').val(),
+                },
+                success: function(data) {
+                    if (data.ret == 1) {
+                        $('#success-message').text(data.msg);
+                        $('#success-dialog').modal('show');
+                    } else {
+                        $('#fail-message').text(data.msg);
+                        $('#fail-dialog').modal('show');
+                    }
+                }
+            })
+        });
+
+        $("#submit_push_task").click(function() {
+            $('#notice-message').text('确定要提交任务么，此操作无法在后台撤销，创建任务可能耗时较久，期间请勿重复提交');
+            $('#notice-dialog').modal('show');
+        });
+
+        $("#notice-confirm").click(function() {
+            $.ajax({
+                type: 'POST',
+                url: '/admin/mail/push/progress',
+                dataType: 'json',
+                data: {
+                    variable_x: $('#variable_x').val(),
+                    variable_y: $('#variable_y').val(),
+                    push_title: $('#push_title').val(),
+                    push_content: $('#push_content').val(),
+                    task_coding: $('#task_coding').val(),
+                    receiving_group: $('#receiving_group').val(),
+                    mail_category: $('#mail_category').val(),
+                    mail_category_text: $('#mail_category option:selected').text(),
                     custom_filtering: $("#custom_filtering").is(":checked"),
                     customize_filtering_conditions: $('#customize_filtering_conditions').val(),
                 },

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use Slim\Container;
 use App\Services\View;
+use Slim\Container;
 
 /**
  * Container Builder
@@ -16,7 +16,7 @@ $configuration = [
         'debug' => $_ENV['debug'],
         'whoops.editor' => 'sublime',
         'displayErrorDetails' => $_ENV['debug'],
-    ]
+    ],
 ];
 $container = new Container($configuration);
 

@@ -3,6 +3,9 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
+use App\Models\EmailQueue;
+use App\Models\EmailTask;
+use App\Models\MailPush;
 use App\Models\MailStatistics;
 use App\Models\User;
 use App\Utils\Tools;
@@ -335,5 +338,107 @@ class MailController extends AdminController
 
     public function progress($request, $response, $args)
     {
+        $variable_x = $request->getParam('variable_x'); // int or datetime
+        $variable_y = $request->getParam('variable_y'); // int or datetime
+        $task_coding = $request->getParam('task_coding'); // random string
+        $push_title = $request->getParam('push_title');
+        $push_content = $request->getParam('push_content');
+        $mail_category = $request->getParam('mail_category');
+        $mail_category_text = $request->getParam('mail_category_text');
+        $receiving_group = $request->getParam('receiving_group'); // text (array index)
+        $custom_filtering = $request->getParam('custom_filtering'); // (string) true / false
+
+        try {
+            if ($custom_filtering === 'true') {
+                $customize_filtering_conditions = $request->getParam('customize_filtering_conditions');
+                $condition = json_decode($customize_filtering_conditions, true);
+                $decode_error = json_last_error();
+                if ($decode_error !== 0) {
+                    throw new \Exception('未能正确解析 JSON 自定义筛选配置');
+                }
+            } else {
+                $default_filter = self::getDefaultGroup($variable_x, $variable_y);
+                if (!isset($default_filter[$receiving_group])) {
+                    throw new \Exception('不存在的条件');
+                }
+                $display_name = $default_filter[$receiving_group]['display_name'];
+                if (strpos($display_name, 'x') && $variable_x === '') {
+                    throw new \Exception('没有设置变量 x 的值');
+                }
+                if (strpos($display_name, 'y') && $variable_y === '') {
+                    throw new \Exception('没有设置变量 y 的值');
+                }
+                if (strpos($display_name, '时间') && strpos($display_name, 'x') && !self::checkValidTime($variable_x)) {
+                    throw new \Exception('未能正确解析变量 x 的时间');
+                }
+                if (strpos($display_name, '时间') && strpos($display_name, 'y') && !self::checkValidTime($variable_y)) {
+                    throw new \Exception('未能正确解析变量 y 的时间');
+                }
+                $condition = $default_filter[$receiving_group]['condition'];
+            }
+            // 创建任务
+            $users = User::where($condition)->get();
+            $insert_queue = [];
+            foreach ($users as $user) {
+                if (MailPush::allow($mail_category, $user->id)) {
+                    $unsub_link = $_ENV['mail_baseUrl'] . '/mail/push/' . $user->getMailUnsubToken();
+                    $concluding_remarks = "此邮件由系统自动发送，分类是 <b>${mail_category_text}</b>。取消此类通知推送，请前往 <a href=\"{$unsub_link}\">邮件推送</a> 页面设置";
+                    // insert
+                    $insert_queue[] = [
+                        'to_email' => $user->email,
+                        'task_coding' => $task_coding,
+                        'subject' => $push_title,
+                        'template' => 'notice.tpl',
+                        'array' => json_encode([
+                            'title' => $push_title,
+                            'content' => $push_content,
+                            'concluding_remarks' => $concluding_remarks,
+                        ]),
+                        'time' => time(),
+                    ];
+                }
+            }
+            EmailQueue::insert($insert_queue);
+            // 记录任务
+            $record = new EmailTask();
+            $record->task_coding = $task_coding;
+            $record->push_title = $push_title;
+            $record->push_content = $push_content;
+            $record->params = json_encode([
+                'variable_x' => $variable_x,
+                'variable_y' => $variable_y,
+                'mail_category' => $mail_category,
+                'mail_category_text' => $mail_category_text,
+                'receiving_group' => $receiving_group,
+                'custom_filtering' => $custom_filtering,
+            ]);
+            $record->recipients_count = $users->count();
+            $record->created_at = time();
+            $record->save();
+            // 输出
+            return $response->withJson([
+                'ret' => 1,
+                'msg' => "任务添加成功",
+            ]);
+        } catch (\Exception $e) {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function progressList($request, $response, $args)
+    {
+        $tasks = EmailTask::orderBy('id', 'desc')
+            ->limit(5)
+            ->get();
+
+        return $response->write(
+            $this->view()
+                ->assign('tasks', $tasks)
+                ->registerClass('EmailQueue', EmailQueue::class)
+                ->display('admin/mail/tasks.tpl')
+        );
     }
 }

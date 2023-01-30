@@ -176,7 +176,8 @@ return function (SlimApp $app) {
         $this->get('/mail/push/task',           App\Controllers\Admin\MailController::class . ':task');
         $this->get('/mail/push/preview',        App\Controllers\Admin\MailController::class . ':preview');
         $this->post('/mail/push/filter',        App\Controllers\Admin\MailController::class . ':filter');
-        $this->get('/mail/push/progress',       App\Controllers\Admin\MailController::class . ':progress');
+        $this->get('/mail/push/progress',       App\Controllers\Admin\MailController::class . ':progressList');
+        $this->post('/mail/push/progress',      App\Controllers\Admin\MailController::class . ':progress');
 
         // Mail Block Mange
         $this->get('/mail/block',               App\Controllers\Admin\MailBlockController::class . ':index');

@@ -127,6 +127,12 @@ class MailController extends AdminController
                     ['is_admin', '=', 1],
                 ],
             ],
+            'non_administrator_only' => [
+                'display_name' => '仅限非管理员',
+                'condition' => [
+                    ['is_admin', '!=', 1],
+                ],
+            ],
             'remark_eq_x' => [
                 'display_name' => '限定备注为 x',
                 'condition' => [
@@ -259,7 +265,7 @@ class MailController extends AdminController
         return $response->write(
             $this->view()
                 ->assign('default_group', self::getDefaultGroup(1, 1))
-                ->assign('task_coding', Tools::genRandomChar(10))
+                ->assign('task_coding', strtoupper(Tools::genRandomChar(10)))
                 ->display('admin/mail/createTask.tpl')
         );
     }
@@ -270,7 +276,7 @@ class MailController extends AdminController
         $content = $request->getParam('content');
         $mail_category = $request->getParam('mail_category');
         $unsub_link = $_ENV['mail_baseUrl'] . '/mail/push/' . $this->user->getMailUnsubToken();
-        $concluding_remarks = "此邮件由系统自动发送，分类是 <b>${mail_category}</b>。取消此类通知推送，请前往 <a href=\"{$unsub_link}\">邮件推送</a> 页面设置";
+        $concluding_remarks = "此邮件由系统自动发送，分类是 <b>${mail_category}</b>。取消此类通知，请前往 <a href=\"{$unsub_link}\">邮件推送</a> 页面设置";
 
         return $response->write(
             $this->view()
@@ -349,6 +355,12 @@ class MailController extends AdminController
         $custom_filtering = $request->getParam('custom_filtering'); // (string) true / false
 
         try {
+            if ($push_title === '') {
+                throw new \Exception('请输入推送标题');
+            }
+            if ($push_content === '') {
+                throw new \Exception('请输入推送正文');
+            }
             if ($custom_filtering === 'true') {
                 $customize_filtering_conditions = $request->getParam('customize_filtering_conditions');
                 $condition = json_decode($customize_filtering_conditions, true);
@@ -382,7 +394,7 @@ class MailController extends AdminController
             foreach ($users as $user) {
                 if (MailPush::allow($mail_category, $user->id)) {
                     $unsub_link = $_ENV['mail_baseUrl'] . '/mail/push/' . $user->getMailUnsubToken();
-                    $concluding_remarks = "此邮件由系统自动发送，分类是 <b>${mail_category_text}</b>。取消此类通知推送，请前往 <a href=\"{$unsub_link}\">邮件推送</a> 页面设置";
+                    $concluding_remarks = "此邮件由系统自动发送，分类是 <b>${mail_category_text}</b>。取消此类通知，请前往 <a href=\"{$unsub_link}\">邮件推送</a> 页面设置";
                     // insert
                     $insert_queue[] = [
                         'to_email' => $user->email,
@@ -431,7 +443,7 @@ class MailController extends AdminController
     public function progressList($request, $response, $args)
     {
         $tasks = EmailTask::orderBy('id', 'desc')
-            ->limit(5)
+            ->limit(6)
             ->get();
 
         return $response->write(

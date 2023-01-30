@@ -29,9 +29,9 @@
                                 <div class="mb-3 col-md-6 col-sm-12">
                                     <div class="form-label">邮件类别</div>
                                     <select class="form-select" id="mail_category">
-                                        <option value="market">营销</option>
                                         <option value="general_notice">一般公告</option>
                                         <option value="important_notice">重要公告</option>
+                                        <option value="market">营销</option>
                                     </select>
                                 </div>
                             </div>
@@ -82,12 +82,12 @@
                                     <div class="mb-3">
                                         <label class="form-label">变量 x</label>
                                         <input type="text" class="form-control" id="variable_x"
-                                            placeholder="筛选条件中变量 x 的值">
+                                            placeholder="预设筛选条件中变量 x 的值">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">变量 y</label>
                                         <input type="text" class="form-control" id="variable_y"
-                                            placeholder="筛选条件中变量 y 的值">
+                                            placeholder="预设筛选条件中变量 y 的值">
                                     </div>
                                     <div class="card bg-primary-lt">
                                         <div class="card-body">
@@ -355,6 +355,7 @@
                     if (data.ret == 1) {
                         $('#success-message').text(data.msg);
                         $('#success-dialog').modal('show');
+                        setTimeout("window.location.href = '/admin/mail/push/progress'", 1500);
                     } else {
                         $('#fail-message').text(data.msg);
                         $('#fail-dialog').modal('show');

@@ -19,7 +19,7 @@ final class CreateEmailTaskTable extends AbstractMigration
     public function change(): void
     {
         $table = $this->table('email_task');
-        $table->addColumn('task_coding', 'text', ['comment' => '任务编号'])
+        $table->addColumn('task_coding', 'string', ['comment' => '任务编号', 'limit' => 16])
             ->addColumn('push_title', 'text', ['comment' => '推送标题'])
             ->addColumn('push_content', 'text', ['comment' => '推送内容'])
             ->addColumn('params', 'text', ['comment' => '推送参数'])

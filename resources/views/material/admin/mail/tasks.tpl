@@ -8,7 +8,7 @@
                         <span class="home-title">推送进度</span>
                     </h2>
                     <div class="page-pretitle">
-                        <span class="home-subtitle">浏览推送任务执行进度</span>
+                        <span class="home-subtitle">浏览最近6条推送任务的执行进度</span>
                     </div>
                 </div>
             </div>

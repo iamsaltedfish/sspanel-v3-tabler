@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\AdminController;
 use App\Models\MailStatistics;
 use App\Models\User;
+use App\Utils\Tools;
 
 class MailController extends AdminController
 {
@@ -255,6 +256,7 @@ class MailController extends AdminController
         return $response->write(
             $this->view()
                 ->assign('default_group', self::getDefaultGroup(1, 1))
+                ->assign('task_coding', Tools::genRandomChar(10))
                 ->display('admin/mail/createTask.tpl')
         );
     }
@@ -310,10 +312,10 @@ class MailController extends AdminController
                 if (strpos($display_name, 'y') && $variable_y === '') {
                     throw new \Exception('没有设置变量 y 的值');
                 }
-                if (strpos($display_name, '时间') && !self::checkValidTime($variable_x)) {
+                if (strpos($display_name, '时间') && strpos($display_name, 'x') && !self::checkValidTime($variable_x)) {
                     throw new \Exception('未能正确解析变量 x 的时间');
                 }
-                if (strpos($display_name, '时间') && !self::checkValidTime($variable_y)) {
+                if (strpos($display_name, '时间') && strpos($display_name, 'y') && !self::checkValidTime($variable_y)) {
                     throw new \Exception('未能正确解析变量 y 的时间');
                 }
                 $condition = $default_filter[$receiving_group]['condition'];

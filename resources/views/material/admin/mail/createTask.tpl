@@ -22,11 +22,12 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="mb-3 col-md-6 col-sm-12">
-                                    <label class="form-label required">任务编号</label>
-                                    <input type="text" class="form-control" id="task_name" value="" disabled />
+                                    <label class="form-label">任务编码</label>
+                                    <input type="text" class="form-control" id="task_coding" value="{$task_coding}"
+                                        disabled />
                                 </div>
                                 <div class="mb-3 col-md-6 col-sm-12">
-                                    <div class="form-label required">邮件类别</div>
+                                    <div class="form-label">邮件类别</div>
                                     <select class="form-select" id="mail_category">
                                         <option value="market">营销</option>
                                         <option value="general_notice">一般公告</option>
@@ -35,7 +36,7 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <!-- <label class="form-label required">推送标题</label> -->
+                                <!-- <label class="form-label">推送标题</label> -->
                                 <input type="text" class="form-control" id="push_title" placeholder="请输入推送标题" />
                             </div>
                             <div class="mb-3">
@@ -145,16 +146,15 @@
                                 <div class="col-6 col-sm-4 col-md-2 col-xl-auto py-3">
                                     <button id="preview_effect" class="btn btn-tabler w-100">
                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-live-view" width="24" height="24"
+                                            class="icon icon-tabler icon-tabler-eye-check" width="24" height="24"
                                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                             stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <path d="M4 8v-2a2 2 0 0 1 2 -2h2"></path>
-                                            <path d="M4 16v2a2 2 0 0 0 2 2h2"></path>
-                                            <path d="M16 4h2a2 2 0 0 1 2 2v2"></path>
-                                            <path d="M16 20h2a2 2 0 0 0 2 -2v-2"></path>
-                                            <path d="M12 11l0 .01"></path>
-                                            <path d="M12 18l-3.5 -5a4 4 0 1 1 7 0l-3.5 5"></path>
+                                            <path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                                            <path
+                                                d="M12 19c-4 0 -7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7c-.42 .736 -.858 1.414 -1.311 2.033">
+                                            </path>
+                                            <path d="M15 19l2 2l4 -4"></path>
                                         </svg>
                                         预览邮件推送效果
                                     </button>

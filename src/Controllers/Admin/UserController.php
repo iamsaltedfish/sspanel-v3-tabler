@@ -139,8 +139,6 @@ class UserController extends AdminController
                 'protocol_param',
                 'obfs',
                 'obfs_param',
-                'forbidden_ip',
-                'forbidden_port',
             ],
         ];
 
@@ -253,8 +251,6 @@ class UserController extends AdminController
             }
             // 特殊处理一些字段
             $user->transfer_enable = Tools::toGB($request->getParam('transfer_enable'));
-            $user->forbidden_ip = str_replace(PHP_EOL, ',', $request->getParam('forbidden_ip'));
-            $user->forbidden_port = str_replace(PHP_EOL, ',', $request->getParam('forbidden_port'));
             $user->is_admin = ($request->getParam('is_admin') === 'true') ? 1 : 0; // 值为1时是管理员
             $user->enable = ($request->getParam('enable') === 'true') ? 0 : 1; // 值为1时是正常状态
             $user->ga_enable = ($request->getParam('ga_enable') === 'true') ? 1 : 0; // 值为0时是关闭状态

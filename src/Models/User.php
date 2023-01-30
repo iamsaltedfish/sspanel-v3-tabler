@@ -108,16 +108,6 @@ class User extends Model
         return $this->save();
     }
 
-    public function getForbiddenIp()
-    {
-        return str_replace(',', PHP_EOL, $this->forbidden_ip);
-    }
-
-    public function getForbiddenPort()
-    {
-        return str_replace(',', PHP_EOL, $this->forbidden_port);
-    }
-
     /**
      * 更新连接密码
      *

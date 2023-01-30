@@ -303,26 +303,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="hr-text">
-                                <span>访问限制</span>
-                            </div>
-                            <div class="form-group mb-3 row">
-                                <label class="form-label col-3 col-form-label">IP / CIDR</label>
-                                <div class="col">
-                                    <textarea id="forbidden_ip" class="col form-control"
-                                        rows="2">{$edit_user->getForbiddenIp()}</textarea>
-                                </div>
-                            </div>
-                            <div class="form-group mb-3 row">
-                                <label class="form-label col-3 col-form-label">PORT</label>
-                                <div class="col">
-                                    <textarea id="forbidden_port" class="col form-control"
-                                        rows="2">{$edit_user->getForbiddenPort()}</textarea>
-                                </div>
-                            </div>
-                            <blockquote class="blockquote">
-                                <p>上方 textarea 写法均为一行一个</p>
-                            </blockquote>
                         </div>
                     </div>
                 </div>

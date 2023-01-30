@@ -315,8 +315,6 @@ class AuthController extends BaseController
         $user->protocol = $_ENV['reg_protocol'];
         $user->obfs_param = $_ENV['reg_obfs_param'];
         $user->protocol_param = $_ENV['reg_protocol_param'];
-        $user->forbidden_ip = $_ENV['reg_forbidden_ip'];
-        $user->forbidden_port = $_ENV['reg_forbidden_port'];
         if ($telegram_id) {
             $user->telegram_id = $telegram_id;
         }

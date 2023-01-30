@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use Slim\App as SlimApp;
-use App\Middleware\{Auth, Guest, Admin, Mod_Mu, AuthorizationBearer};
+use App\Middleware\{Auth, Guest, Admin, WebApiAuth, AuthorizationBearer};
 
 return function (SlimApp $app) {
     // Home
@@ -269,26 +269,26 @@ return function (SlimApp $app) {
     // mu
     $app->group('/mod_mu', function () {
         // 流媒体检测
-        $this->post('/media/saveReport',    App\Controllers\Mod_Mu\NodeController::class . ':saveReport');
+        $this->post('/media/saveReport',    App\Controllers\WebApi\NodeController::class . ':saveReport');
         // 其他
-        $this->get('/nodes',                App\Controllers\Mod_Mu\NodeController::class . ':getAllInfo');
-        $this->get('/nodes/{id}/info',      App\Controllers\Mod_Mu\NodeController::class . ':getInfo');
-        $this->post('/nodes/{id}/info',     App\Controllers\Mod_Mu\NodeController::class . ':info');
+        $this->get('/nodes',                App\Controllers\WebApi\NodeController::class . ':getAllInfo');
+        $this->get('/nodes/{id}/info',      App\Controllers\WebApi\NodeController::class . ':getInfo');
+        $this->post('/nodes/{id}/info',     App\Controllers\WebApi\NodeController::class . ':info');
 
-        $this->get('/users',                App\Controllers\Mod_Mu\UserController::class . ':index');
-        $this->get('/users/traffic',        App\Controllers\Mod_Mu\UserController::class . ':getTraffic');
-        $this->post('/users/traffic',       App\Controllers\Mod_Mu\UserController::class . ':addTraffic');
-        $this->post('/users/aliveip',       App\Controllers\Mod_Mu\UserController::class . ':addAliveIp');
-        $this->post('/users/detectlog',     App\Controllers\Mod_Mu\UserController::class . ':addDetectLog');
+        $this->get('/users',                App\Controllers\WebApi\UserController::class . ':index');
+        $this->get('/users/traffic',        App\Controllers\WebApi\UserController::class . ':getTraffic');
+        $this->post('/users/traffic',       App\Controllers\WebApi\UserController::class . ':addTraffic');
+        $this->post('/users/aliveip',       App\Controllers\WebApi\UserController::class . ':addAliveIp');
+        $this->post('/users/detectlog',     App\Controllers\WebApi\UserController::class . ':addDetectLog');
 
-        $this->get('/func/detect_rules',    App\Controllers\Mod_Mu\FuncController::class . ':getDetectLogs');
-        $this->post('/func/block_ip',       App\Controllers\Mod_Mu\FuncController::class . ':addBlockIp');
-        $this->get('/func/block_ip',        App\Controllers\Mod_Mu\FuncController::class . ':getBlockip');
-        $this->get('/func/unblock_ip',      App\Controllers\Mod_Mu\FuncController::class . ':getUnblockip');
-        $this->get('/func/ping',            App\Controllers\Mod_Mu\FuncController::class . ':ping');
-        $this->post('/func/log',            App\Controllers\Mod_Mu\FuncController::class . ':log');
+        $this->get('/func/detect_rules',    App\Controllers\WebApi\FuncController::class . ':getDetectLogs');
+        $this->post('/func/block_ip',       App\Controllers\WebApi\FuncController::class . ':addBlockIp');
+        $this->get('/func/block_ip',        App\Controllers\WebApi\FuncController::class . ':getBlockip');
+        $this->get('/func/unblock_ip',      App\Controllers\WebApi\FuncController::class . ':getUnblockip');
+        $this->get('/func/ping',            App\Controllers\WebApi\FuncController::class . ':ping');
+        $this->post('/func/log',            App\Controllers\WebApi\FuncController::class . ':log');
         // e.g curl -X POST https:///domain.com/mod_mu/func/log?key=123456 -d 'type=1&reporter=2&level=low&msg=4'
-    })->add(new Mod_Mu());
+    })->add(new WebApiAuth());
 
     $app->group('/link', function () {
         $this->get('/{token}',              App\Controllers\NewLinkController::class . ':requestEntry');

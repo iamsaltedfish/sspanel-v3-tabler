@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Mod_Mu;
+namespace App\Controllers\WebApi;
 
 use App\Controllers\BaseController;
 use App\Models\DetectRule;

@@ -4,7 +4,7 @@ namespace App\Middleware;
 
 use App\Models\Node;
 
-class Mod_Mu
+class WebApiAuth
 {
     /**
      * @param \Slim\Http\Request    $request

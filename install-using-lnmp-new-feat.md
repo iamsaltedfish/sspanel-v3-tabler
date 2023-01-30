@@ -8,15 +8,15 @@ apt -y install jq git tar vim wget ca-certificates
 # 安装 lnmp 环境
 ```
 cd /root
-wget http://soft.vpser.net/lnmp/lnmp1.9beta.tar.gz
-tar -zxvf lnmp1.9beta.tar.gz
+wget http://soft.vpser.net/lnmp/lnmp1.9.tar.gz
+tar -zxvf lnmp1.9.tar.gz
 cd lnmp1.9
 ./install.sh lnmp
 ```
 建议选项
-- MariaDB 10.3.32 +
+- MariaDB 10.6.8
 - Do you want to enable or disable the InnoDB Storage Engine > Y
-- php 7.4.29
+- php 7.4.30
 - You have 3 options for your Memory Allocator install, Enter your choice (1, 2 or 3) > 1
 
 等待安装完成
@@ -176,7 +176,6 @@ git clone https://github.com/iamsaltedfish/sspanel-v3-tabler .
 然后继续
 ```
 cp config/.config.example.php config/.config.php
-cp config/appprofile.example.php config/appprofile.php
 wget https://getcomposer.org/installer -O composer.phar
 php composer.phar
 php composer.phar install
@@ -281,16 +280,6 @@ echo "*/1 * * * * /usr/bin/php /home/wwwroot/tabler/xcat Job SendMail
 
 crontab crontab.list
 rm crontab.list
-```
-
-# 可选定时任务
-
-财务报表，注意按需修改网站目录
-
-```
-5 0 * * * /usr/bin/php /home/wwwroot/tabler/xcat FinanceMail day
-6 0 * * 0 /usr/bin/php /home/wwwroot/tabler/xcat FinanceMail week
-7 0 1 * * /usr/bin/php /home/wwwroot/tabler/xcat FinanceMail month
 ```
 
 # 安全建议

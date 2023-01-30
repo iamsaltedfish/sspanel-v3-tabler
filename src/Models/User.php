@@ -50,38 +50,6 @@ class User extends Model
     }
 
     /**
-     * 联系方式类型
-     */
-    public function im_type(): string
-    {
-        switch ($this->im_type) {
-            case 1:
-                return '微信';
-            case 2:
-                return 'QQ';
-            case 5:
-                return 'Discord';
-            default:
-                return 'Telegram';
-        }
-    }
-
-    /**
-     * 联系方式
-     */
-    public function im_value(): string
-    {
-        switch ($this->im_type) {
-            case 1:
-            case 2:
-            case 5:
-                return $this->im_value;
-            default:
-                return '<a href="https://telegram.me/' . $this->im_value . '">' . $this->im_value . '</a>';
-        }
-    }
-
-    /**
      * 最后使用时间
      */
     public function lastUseTime(): string

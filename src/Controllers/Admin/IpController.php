@@ -14,7 +14,7 @@ class IpController extends AdminController
 {
     public static function page()
     {
-        $details = [
+        return [
             'route' => 'login',
             'title' => [
                 'title' => '登录记录',
@@ -71,8 +71,6 @@ class IpController extends AdminController
                 ],
             ],
         ];
-
-        return $details;
     }
 
     public function index($request, $response, $args)

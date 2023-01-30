@@ -10,7 +10,7 @@ class NodeController extends AdminController
 {
     public static function page()
     {
-        $details = [
+        return [
             'route' => 'node',
             'title' => [
                 'title' => '节点列表',
@@ -171,8 +171,6 @@ class NodeController extends AdminController
                 'transit_json',
             ],
         ];
-
-        return $details;
     }
 
     public function index($request, $response, $args)
@@ -256,12 +254,10 @@ class NodeController extends AdminController
             $chart_y[] = round($record->value / 1024, 2);
         }
 
-        $result = [
+        return [
             'x' => array_reverse($chart_x),
             'y' => array_reverse($chart_y),
         ];
-
-        return $result;
     }
 
     public function edit($request, $response, $args)

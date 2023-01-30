@@ -9,7 +9,7 @@ class LogController extends AdminController
 {
     public static function page()
     {
-        $details = [
+        return [
             'route' => 'log',
             'title' => [
                 'title' => '日志中心',
@@ -71,8 +71,6 @@ class LogController extends AdminController
                 ],
             ],
         ];
-
-        return $details;
     }
 
     public function index($request, $response, $args)

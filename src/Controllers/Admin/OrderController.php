@@ -55,7 +55,7 @@ class OrderController extends AdminController
             $result->order_price = sprintf("%.2f", $result->order_price / 100);
             $result->product_price = sprintf("%.2f", $result->product_price / 100);
             $result->balance_payment = sprintf("%.2f", $result->balance_payment / 100);
-            if ($result->order_status == 'paid') {
+            if ($result->order_status === 'paid') {
                 $result->paid_at = date('Y-m-d H:i:s', $result->paid_at);
             } else {
                 $result->paid_at = 'null';
@@ -63,7 +63,7 @@ class OrderController extends AdminController
             if ($result->order_coupon === null) {
                 $result->order_coupon = 'null';
             }
-            $result->execute_status = ($result->execute_status === 0) ? '未执行' : (($result->order_status == 'refunded') ? '已撤销' : '已执行');
+            $result->execute_status = ($result->execute_status === 0) ? '未执行' : (($result->order_status === 'refunded') ? '已撤销' : '已执行');
             $result->order_status = $result->translateOrderStatus($result->order_status, $result->expired_at);
         }
 
@@ -135,7 +135,7 @@ class OrderController extends AdminController
                 // 避免样式冲突
                 throw new \Exception('请稍后再试');
             }
-            if ($order->order_status == 'refunded') {
+            if ($order->order_status === 'refunded') {
                 throw new \Exception('订单内容已撤销，不可重复操作');
             }
             $user = User::find($order->user_id);

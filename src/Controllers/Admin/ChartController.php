@@ -25,12 +25,10 @@ class ChartController extends AdminController
             $chart_y[] = $record->value;
         }
 
-        $result = [
+        return [
             'x' => array_reverse($chart_x),
             'y' => array_reverse($chart_y),
         ];
-
-        return $result;
     }
 
     public function index($request, $response, $args)

@@ -609,7 +609,7 @@ class UserController extends BaseController
     {
         $temp = $this->user->resetPort();
         return $response->withJson([
-            'ret' => ($temp['ok'] == true ? 1 : 0),
+            'ret' => ($temp['ok'] === true ? 1 : 0),
             'msg' => '新的端口是 ' . $temp['msg'],
         ]);
     }
@@ -1035,7 +1035,7 @@ class UserController extends BaseController
             if (!Tools::isParamValidate('obfs', $obfs)) {
                 throw new \Exception('混淆无效');
             }
-            if (gethostbyname($obfs_param) == $obfs_param) {
+            if (gethostbyname($obfs_param) === $obfs_param) {
                 throw new \Exception('混淆参数无效');
             }
             if (!Tools::isParamValidate('protocol', $protocol)) {

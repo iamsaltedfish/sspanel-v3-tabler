@@ -39,7 +39,7 @@ class AuthorizationBearer
 
         $realToken = substr($authHeader, 7);
 
-        if ($realToken != $this->token) {
+        if ($realToken !== $this->token) {
             return $response->withStatus(401)->withJson([
                 'ret' => 0,
                 'data' => 'The admin key is incorrect.',

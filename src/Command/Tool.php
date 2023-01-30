@@ -40,32 +40,34 @@ class Tool extends Command
     public function setTelegram()
     {
         if ($_ENV['use_new_telegram_bot'] === true) {
-            $WebhookUrl = ($_ENV['baseUrl'] . '/telegram_callback?token=' . $_ENV['telegram_request_token']);
+            $web_hook_url = $_ENV['baseUrl'] . '/telegram_callback?token=' . $_ENV['telegram_request_token'];
             $telegram = new \Telegram\Bot\Api($_ENV['telegram_token']);
             $telegram->removeWebhook();
-            if ($telegram->setWebhook(['url' => $WebhookUrl])) {
-                echo 'New Bot @' . $telegram->getMe()->getUsername() . ' 设置成功！' . PHP_EOL;
+            if ($telegram->setWebhook(['url' => $web_hook_url])) {
+                $bot_name = $telegram->getMe()->getUsername();
+                echo "The new version telegram robot @{$bot_name} has been set up." . PHP_EOL;
             }
         } else {
-            $bot = new \TelegramBot\Api\BotApi($_ENV['telegram_token']);
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, sprintf('https://api.telegram.org/bot%s/deleteWebhook', $_ENV['telegram_token']));
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-            $deleteWebhookReturn = json_decode(curl_exec($ch));
-            curl_close($ch);
-            if ($deleteWebhookReturn->ok && $deleteWebhookReturn->result && $bot->setWebhook($_ENV['baseUrl'] . '/telegram_callback?token=' . $_ENV['telegram_request_token']) == 1) {
-                echo 'Old Bot 设置成功！' . PHP_EOL;
+            $telegram_token = $_ENV['telegram_token'];
+            $bot = new \TelegramBot\Api\BotApi($telegram_token);
+            $request_url = "https://api.telegram.org/bot{$telegram_token}/deleteWebhook";
+            $response = file_get_contents($request_url); // return json content
+            $response_array = json_decode($response, true);
+            if ($response_array['ok'] && $response_array['result']) {
+                if ($bot->setWebhook($_ENV['baseUrl'] . '/telegram_callback?token=' . $_ENV['telegram_request_token']) === 1) {
+                    echo 'The old version telegram robot has been set up.' . PHP_EOL;
+                }
             }
         }
     }
 
     public function initQQWry()
     {
-        echo '正在下载或更新纯真ip数据库...' . PHP_EOL;
+        echo 'Files are being pulled from source...' . PHP_EOL;
+
         $path = BASE_PATH . '/storage/qqwry.dat';
-        $qqwry = file_get_contents('https://qqwry.mirror.noc.one/QQWry.Dat?from=sspanel_uim');
-        if ($qqwry != '') {
+        $qqwry = file_get_contents('https://github.com/out0fmemory/qqwry.dat/raw/master/historys/2022_04_20/qqwry.dat');
+        if ($qqwry !== '') {
             if (is_file($path)) {
                 rename($path, $path . '.bak');
             }
@@ -73,22 +75,22 @@ class Tool extends Command
             if ($fp) {
                 fwrite($fp, $qqwry);
                 fclose($fp);
-                echo '纯真ip数据库下载成功.' . PHP_EOL;
                 $iplocation = new QQWry();
                 $location = $iplocation->getlocation('8.8.8.8');
-                $Userlocation = $location['country'];
-                if (iconv('gbk', 'utf-8//IGNORE', $Userlocation) !== '美国') {
+                if (iconv('gbk', 'utf-8//IGNORE', $location['country']) !== '美国') {
                     unlink($path);
                     if (is_file($path . '.bak')) {
                         rename($path . '.bak', $path);
                     }
                 }
             } else {
-                echo '纯真ip数据库保存失败，请检查权限' . PHP_EOL;
+                echo 'Unable to save file, please check write permissions.' . PHP_EOL;
             }
         } else {
-            echo '纯真ip数据库下载失败，请检查下载地址' . PHP_EOL;
+            echo 'Invalid download source or network error.' . PHP_EOL;
         }
+
+        echo 'The local files have been synchronized with the source.' . PHP_EOL;
     }
 
     public function resetAllSettings()

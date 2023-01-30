@@ -35,7 +35,7 @@ class MailAnalyzeController extends AdminController
         foreach ($datas as $data) {
             // 第x天生成x-1天的数据所以created_at减60秒将数据对应的时间向前推一天
             $timestamp = $data['created_at'] - 60;
-            if (date('d', $timestamp) == 1) {
+            if (date('d', $timestamp) === '1') {
                 $categories[] = '"' . date('m-d', $timestamp) . '"';
             } else {
                 $categories[] = '"' . date('j', $timestamp) . '"';

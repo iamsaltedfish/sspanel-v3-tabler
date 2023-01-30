@@ -28,62 +28,6 @@ class Node extends Model
     }
 
     /**
-     * 节点类型
-     */
-    public function sort(): string
-    {
-        switch ($this->sort) {
-            case 0:
-                $sort = 'Shadowsocks';
-                break;
-            case 9:
-                $sort = 'Shadowsocks - 单端口多用户';
-                break;
-            case 11:
-                $sort = 'V2Ray 节点';
-                break;
-            case 13:
-                $sort = 'Shadowsocks - V2Ray-Plugin&Obfs';
-                break;
-            case 14:
-                $sort = 'Trojan';
-                break;
-            default:
-                $sort = '系统保留';
-        }
-        return $sort;
-    }
-
-    /**
-     * 单端口多用户启用类型
-     */
-    public function mu_only(): string
-    {
-        switch ($this->mu_only) {
-            case -1:
-                $mu_only = '只启用普通端口';
-                break;
-            case 0:
-                $mu_only = '单端口多用户与普通端口并存';
-                break;
-            case 1:
-                $mu_only = '只启用单端口多用户';
-                break;
-            default:
-                $mu_only = '错误类型';
-        }
-        return $mu_only;
-    }
-
-    /**
-     * 节点最后活跃时间
-     */
-    public function node_heartbeat(): string
-    {
-        return date('Y-m-d H:i:s', $this->node_heartbeat);
-    }
-
-    /**
      * 获取节点 5 分钟内最新的在线人数
      */
     public function getNodeOnlineUserCount(): int

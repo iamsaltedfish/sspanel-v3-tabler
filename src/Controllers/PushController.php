@@ -27,7 +27,7 @@ class PushController
 
     public static function getLists()
     {
-        $lists = [
+        return [
             'basic' => '基础',
             'market' => '营销',
             'due_reminder' => '到期提醒	',
@@ -37,8 +37,6 @@ class PushController
             'general_notice' => '一般公告',
             'important_notice' => '重要公告',
         ];
-
-        return $lists;
     }
 
     public function index($request, $response, $args)

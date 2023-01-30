@@ -14,7 +14,7 @@ class MailController extends AdminController
 {
     public static function page()
     {
-        $details = [
+        return [
             'route' => 'mail/log',
             'title' => [
                 'title' => '邮件日志',
@@ -64,8 +64,6 @@ class MailController extends AdminController
                 ],
             ],
         ];
-
-        return $details;
     }
 
     public function index($request, $response, $args)

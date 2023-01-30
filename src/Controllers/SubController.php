@@ -213,9 +213,9 @@ class SubController extends BaseController
                     $host = $node_custom_config['host'] ?? '';
                     $allow_insecure = $node_custom_config['allow_insecure'] ?? '0';
                     //Trojan-Go 啥都好，就是特性連個支持的付費後端都沒有
-                    $security = $node_custom_config['security'] ?? $node_custom_config['enable_xtls'] == '1' ? 'xtls' : 'tls';
+                    $security = $node_custom_config['security'] ?? $node_custom_config['enable_xtls'] === '1' ? 'xtls' : 'tls';
                     $mux = $node_custom_config['mux'] ?? '';
-                    $transport = $node_custom_config['transport'] ?? $node_custom_config['grpc'] == '1' ? 'grpc' : 'tcp';
+                    $transport = $node_custom_config['transport'] ?? $node_custom_config['grpc'] === '1' ? 'grpc' : 'tcp';
                     $transport_plugin = $node_custom_config['transport_plugin'] ?? '';
                     $transport_method = $node_custom_config['transport_method'] ?? '';
                     $servicename = $node_custom_config['servicename'] ?? '';
@@ -265,7 +265,7 @@ class SubController extends BaseController
         //Etag相關，從 WebAPI 那邊抄的
         $header_etag = $request->getHeaderLine('IF_NONE_MATCH');
         $etag = Tools::etag($sub_info);
-        if ($header_etag == $etag) {
+        if ($header_etag === $etag) {
             return $response->withStatus(304);
         }
         return $response->withHeader('ETAG', $etag)->withJson([

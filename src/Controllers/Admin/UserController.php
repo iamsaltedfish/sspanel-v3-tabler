@@ -15,7 +15,7 @@ class UserController extends AdminController
 {
     public static function page()
     {
-        $details = [
+        return [
             'route' => 'user',
             'title' => [
                 'title' => '用户列表',
@@ -141,8 +141,6 @@ class UserController extends AdminController
                 'obfs_param',
             ],
         ];
-
-        return $details;
     }
 
     public function index($request, $response, $args)

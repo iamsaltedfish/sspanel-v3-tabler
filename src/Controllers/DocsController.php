@@ -6,7 +6,7 @@ class DocsController extends BaseController
 {
     public static function groups()
     {
-        $groups = [
+        return [
             'Windows' => [
                 [
                     'name' => 'Netch',
@@ -162,8 +162,6 @@ class DocsController extends BaseController
                 ],
             ],
         ];
-
-        return $groups;
     }
 
     public function index($request, $response, $args)

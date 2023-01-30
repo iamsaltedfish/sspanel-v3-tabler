@@ -20,7 +20,6 @@ class DetectController extends AdminController
     {
         $table_config = [
             'ajax_url' => 'detect/ajax',
-            'default_show_column' => array_keys($table_config['total_column']),
             'total_column' => [
                 'op' => '操作',
                 'id' => 'ID',
@@ -30,6 +29,7 @@ class DetectController extends AdminController
                 'type' => '类型',
             ],
         ];
+        $table_config['default_show_column'] = array_keys($table_config['total_column']);
         return $response->write(
             $this->view()
                 ->assign('table_config', $table_config)

@@ -183,51 +183,6 @@ class Job extends Command
 
     public function CheckJob()
     {
-        //节点掉线检测
-        if ($_ENV['enable_detect_offline'] === true) {
-            echo '节点掉线检测开始' . PHP_EOL;
-            $adminUser = User::where('is_admin', '=', '1')->get();
-            $nodes = Node::all();
-            foreach ($nodes as $node) {
-                if ($node->isNodeOnline() === false && $node->online == true) {
-                    foreach ($adminUser as $user) {
-                        echo 'Send offline mail to user: ' . $user->id . PHP_EOL;
-                        $user->sendMail(
-                            $_ENV['appName'] . ' - 系统警告',
-                            'news/warn.tpl',
-                            'system',
-                            [
-                                'text' => '管理员您好，系统发现节点 ' . $node->name . ' 掉线了，请您及时处理。',
-                            ],
-                            [],
-                            $_ENV['email_queue']
-                        );
-                    }
-
-                    $node->online = false;
-                    $node->save();
-                } elseif ($node->isNodeOnline() === true && $node->online == false) {
-                    foreach ($adminUser as $user) {
-                        echo 'Send offline mail to user: ' . $user->id . PHP_EOL;
-                        $user->sendMail(
-                            $_ENV['appName'] . ' - 系统提示',
-                            'news/warn.tpl',
-                            'system',
-                            [
-                                'text' => '管理员您好，系统发现节点 ' . $node->name . ' 恢复上线了。',
-                            ],
-                            [],
-                            $_ENV['email_queue']
-                        );
-                    }
-
-                    $node->online = true;
-                    $node->save();
-                }
-            }
-            echo '节点掉线检测结束' . PHP_EOL;
-        }
-
         //更新节点 IP，每分钟
         $nodes = Node::get();
         foreach ($nodes as $node) {

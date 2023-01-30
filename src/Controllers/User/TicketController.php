@@ -42,7 +42,7 @@ class TicketController extends UserController
         $anti_xss = new AntiXSS();
         $title = $request->getParam('title');
         $content = $request->getParam('content');
-        $ticket_client = (int) $request->getParam('ticket_client');
+        $ticket_client = (string) $request->getParam('ticket_client');
 
         try {
             if ($title === '') {
@@ -57,7 +57,7 @@ class TicketController extends UserController
                     throw new \Exception('工单内容长度不得超过500字符');
                 }
             }
-            if ($ticket_client === 0) {
+            if ($ticket_client === '0') {
                 throw new \Exception('请选择有问题的设备系统类型');
             }
             if (strpos($content, 'admin') !== false || strpos($content, 'user') !== false) {

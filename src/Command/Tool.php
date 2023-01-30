@@ -83,14 +83,13 @@ class Tool extends Command
                         rename($path . '.bak', $path);
                     }
                 }
+                echo 'The local files have been synchronized with the source.' . PHP_EOL;
             } else {
                 echo 'Unable to save file, please check write permissions.' . PHP_EOL;
             }
         } else {
             echo 'Invalid download source or network error.' . PHP_EOL;
         }
-
-        echo 'The local files have been synchronized with the source.' . PHP_EOL;
     }
 
     public function resetAllSettings()

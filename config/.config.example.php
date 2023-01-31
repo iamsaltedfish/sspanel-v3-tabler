@@ -118,7 +118,6 @@ $_ENV['active_payments'] = [
 
 $_ENV['WebAPI'] = true;
 $_ENV['muKey'] = '3a7caa4b32ffb47e7bb2d0ec7d097110'; // 通信密钥
-$_ENV['muKeyList'] = []; // 多key列表
 $_ENV['checkNodeIp'] = true; // 是否验证节点ip
 
 $_ENV['enableAdminApi'] = false; // 是否启用 Admin API, 如果不知道此项用途请保持为 false
@@ -165,9 +164,8 @@ $_ENV['enable_expired_checkin'] = true; // 是否允许过期用户签到
 $_ENV['checkinMin'] = 100; // 签到可获得的最低流量(MB)
 $_ENV['checkinMax'] = 300; // 签到可获得的最多流量(MB)
 $_ENV['checkin_add_time'] = false; // 签到是否增加时间
-$_ENV['checkin_add_time_hour'] = '4'; // 签到增加多长小时的时间
+$_ENV['checkin_add_time_hour'] = 4; // 签到增加多长小时的时间
 $_ENV['gift_card_rebate'] = false; // 当用户兑换礼品卡添加余额时，是否执行返利
-$_ENV['clear_traffic_after_expire'] = false; // 当用户到期后，是否清空账号的剩余流量
 $_ENV['hide_old_server_list'] = false; // 是否隐藏旧的服务器列表入口
 $_ENV['hide_audit_rules_and_logs'] = false; // 是否隐藏审计规则与日志入口
 $_ENV['show_live_chat_on_logout_page'] = false; // 是否在未登录页面显示livechat
@@ -255,11 +253,6 @@ $_ENV['disconnect_time'] = 60; // 在用户超过套餐连接IP数后多久才�
 $_ENV['min_port'] = 10000; // 0为不分配; 其他值时为分配起始端口
 $_ENV['max_port'] = 60000; // 0为不分配; 其他值时为分配终止端口
 
-$_ENV['v2ray_port'] = 443;
-$_ENV['v2ray_level'] = 0;
-$_ENV['v2ray_alter_id'] = 2;
-$_ENV['v2ray_protocol'] = 'HTTP/2 + TLS';
-
 /*
     Telegram bot
 */
@@ -297,64 +290,41 @@ $_ENV['group_bound_user'] = false; // 仅允许绑定的用户加入群组
 
 $_ENV['Subscribe'] = true; // 本站是否提供订阅功能
 $_ENV['subUrl'] = $_ENV['baseUrl'] . '/link/'; // 订阅地址，如需和站点名称相同，请不要修改
-$_ENV['mergeSub'] = true; // 合并订阅设置 可选项 false / true
-$_ENV['enable_sub_extend'] = true; // 是否开启订阅中默认显示流量剩余以及账户到期时间以及 sub_message 中的信息
-$_ENV['sub_overlay_node'] = false; // 是否使用可用的节点覆盖显示流量和到期时间的节点
-$_ENV['sub_overlay_node_list'] = ['']; // 如果启用上面的开关，此处填用于覆盖配置的节点id，订阅时随机分配
 $_ENV['enable_forced_replacement'] = true; // 用户修改账户登录密码时，是否强制更换订阅地址
-$_ENV['sub_message'] = []; // 订阅中的营销信息，使用数组形式，将会添加在订阅列表的顶端，可用于为用户推送最新地址等信息，尽可能简短且数量不宜太多
-$_ENV['disable_sub_mu_port'] = false; // 将订阅中单端口的信息去除
+
+/*
+    订阅日志设置
+*/
+
 $_ENV['subscribeLog'] = true; // 是否记录用户订阅日志
 $_ENV['subscribeLog_show'] = true; // 是否允许用户查看订阅记录
 $_ENV['subscribeLog_keep_days'] = 7; // 订阅记录保留天数
-$_ENV['mu_port_migration'] = false; // 为后端直接下发偏移后的端口
-$_ENV['add_emoji_to_node_name'] = false; // 为部分订阅中默认添加 emoji
-$_ENV['add_appName_to_ss_uri'] = true; // 为 SS 节点名称中添加站点名
-$_ENV['subscribe_client'] = true; // 下载协议客户端时附带节点和订阅信息
-$_ENV['subscribe_client_url'] = ''; // 使用独立的服务器提供附带节点和订阅信息的协议客户端下载，为空表示不使用
-$_ENV['Clash_DefaultProfiles'] = 'default'; // Clash 默认配置方案
-$_ENV['Surge_DefaultProfiles'] = 'default'; // Surge 默认配置方案
-$_ENV['Surge2_DefaultProfiles'] = 'default'; // Surge2 默认配置方案
-$_ENV['Surfboard_DefaultProfiles'] = 'default'; // Surfboard 默认配置方案
 
 /*
     注册设置
 */
 
-$_ENV['random_group'] = '0'; // 注册时随机分配到的分组，英文半角逗号分隔
+$_ENV['random_group'] = '0'; // 注册时随机分配到的分组，多个用英文半角逗号分隔
 $_ENV['enable_reg_im'] = true; // 注册时是否要求用户输入IM联系方式
-$_ENV['reg_invite_num'] = '100'; // 注册时默认的邀请码可用次数，开放注册模式下不扣减邀请码次数，仅在仅允许邀请注册的情况下扣减
+$_ENV['reg_invite_num'] = 100; // 注册时默认的邀请码可用次数，开放注册模式下不扣减邀请码次数，仅在仅允许邀请注册的情况下扣减
 $_ENV['disposable_invite_code'] = false; // 一次性邀请码，开启时，用户的邀请码会在每次使用后随机一个新的
 $_ENV['reg_money'] = 0; // 注册时默认的账户余额，可以设置一个数，然后引导用户在商店购买试用套餐
-$_ENV['reg_default_traffic'] = '20'; // 注册时赠送的流量，单位gb
-$_ENV['reg_default_time'] = '24'; // 注册时赠送的账户时长，单位hour
-$_ENV['reg_default_class'] = '0'; // 注册时默认设置的等级
-$_ENV['reg_default_class_time'] = '24'; // 注册时赠送的等级时长，单位hour
-$_ENV['reg_forbidden_ip'] = '127.0.0.0/8,::1/128'; // 注册时默认禁止访问IP列表，英文半角逗号分隔
-$_ENV['reg_forbidden_port'] = ''; // 注册时默认禁止访问端口列表，英文半角逗号分隔，支持端口段
+$_ENV['reg_default_traffic'] = 20; // 注册时赠送的流量，单位gb
+$_ENV['reg_default_time'] = 24; // 注册时赠送的账户时长，单位hour
+$_ENV['reg_default_class'] = 0; // 注册时默认设置的等级
+$_ENV['reg_default_class_time'] = 24; // 注册时赠送的等级时长，单位hour
 $_ENV['reg_obfs'] = 'plain'; // 注册时默认的混淆
 $_ENV['reg_method'] = 'rc4-md5'; // 注册时默认的加密
 $_ENV['reg_protocol'] = 'origin'; // 注册时默认的协议
 $_ENV['reg_obfs_param'] = 'world.taobao.com'; // 注册时默认的混淆参数
 $_ENV['reg_protocol_param'] = ''; // 注册时默认的协议参数
-$_ENV['mu_suffix'] = 'microsoft.com'; // 单端口多用户混淆参数后缀，可以随意修改，但请保持前后端一致
-$_ENV['mu_regex'] = '%5m%id.%suffix'; // 单端口多用户混淆参数表达式，%5m代表取用户特征 md5 的前五位，%id 代表用户id, %suffix 代表上面这个后缀
 
 /*
     第三方服务
 */
 
-// cloudflare.com
-$_ENV['cloudflare_enable'] = false; // 是否开启 Cloudflare 解析
-$_ENV['cloudflare_email'] = ''; // Cloudflare 邮箱地址
-$_ENV['cloudflare_key'] = ''; // Cloudflare API Key
-$_ENV['cloudflare_name'] = ''; // 域名
-
 // sentry.io
 $_ENV['sentry_dsn'] = '';
-
-// github.com
-$_ENV['github_access_token'] = '';
 
 /*
     杂项
@@ -363,20 +333,16 @@ $_ENV['github_access_token'] = '';
 $_ENV['authDriver'] = 'cookie'; // 不能更改
 $_ENV['pwdMethod'] = 'md5'; // md5,sha256,bcrypt,argon2i,argon2id
 $_ENV['salt'] = ''; // 加盐仅支持 md5,sha256
-$_ENV['tokenDriver'] = 'db';
-$_ENV['cacheDriver'] = 'cookie';
-$_ENV['sessionDriver'] = 'cookie';
 $_ENV['theme'] = 'material'; // 默认主题
 $_ENV['timeZone'] = 'PRC'; // PRC / UTC
 $_ENV['jump_delay'] = 1200;
 $_ENV['enable_login_bind_ip'] = true; // 是否将登陆线程和IP绑定
-$_ENV['php_user_group'] = 'www:www';
 
 /*
     获取客户端地址
 */
 
-$_ENV['cdn_forwarded_ip'] = array('HTTP_X_FORWARDED_FOR', 'HTTP_ALI_CDN_REAL_IP', 'X-Real-IP', 'True-Client-Ip');
+$_ENV['cdn_forwarded_ip'] = ['HTTP_X_FORWARDED_FOR', 'HTTP_ALI_CDN_REAL_IP', 'X-Real-IP', 'True-Client-Ip'];
 foreach ($_ENV['cdn_forwarded_ip'] as $cdn_forwarded_ip) {
     if (isset($_SERVER[$cdn_forwarded_ip])) {
         $list = explode(',', $_SERVER[$cdn_forwarded_ip]);

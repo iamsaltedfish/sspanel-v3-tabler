@@ -30,6 +30,7 @@
         "symfony/string": "^5.4",
         "symfony/yaml": "^4.4@dev",
         "telegram-bot/api": "^2.2",
+        "vectorface/googleauthenticator": "^3.0",
         "voku/anti-xss": "^4",
         "zeuxisoo/slim-whoops": "0.6.*"
     },

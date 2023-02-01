@@ -10,10 +10,10 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Services\Auth;
 use App\Services\Mail;
-use App\Utils\GA;
 use App\Utils\Hash;
 use App\Utils\Tools;
 use Ramsey\Uuid\Uuid;
+use Vectorface\GoogleAuthenticator;
 use voku\helper\AntiXSS;
 
 class AuthController extends BaseController
@@ -40,7 +40,7 @@ class AuthController extends BaseController
                 throw new \Exception('登录密码不正确');
             }
             if ($user->ga_enable === 1) {
-                $ga = new GA();
+                $ga = new GoogleAuthenticator();
                 if (!$ga->verifyCode($user->ga_token, $code)) {
                     throw new \Exception('两步验证码错误，如丢失密钥，请重置密码');
                 }
@@ -292,7 +292,7 @@ class AuthController extends BaseController
         $auto_login = true,
         $fingerprint
     ) {
-        $ga = new GA();
+        $ga = new GoogleAuthenticator();
         $user = new User();
         $antiXss = new AntiXSS();
 

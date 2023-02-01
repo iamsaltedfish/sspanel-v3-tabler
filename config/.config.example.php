@@ -331,11 +331,11 @@ $_ENV['sentry_dsn'] = '';
 */
 
 $_ENV['authDriver'] = 'cookie'; // 不能更改
-$_ENV['pwdMethod'] = 'md5'; // md5,sha256,bcrypt,argon2i,argon2id
-$_ENV['salt'] = ''; // 加盐仅支持 md5,sha256
+$_ENV['pwdMethod'] = 'md5'; // md5, sha256, bcrypt, argon2i, argon2id
+$_ENV['salt'] = ''; // 加盐仅支持 md5, sha256
 $_ENV['theme'] = 'material'; // 默认主题
 $_ENV['timeZone'] = 'PRC'; // PRC / UTC
-$_ENV['jump_delay'] = 1200;
+$_ENV['jump_delay'] = 1200; // 页面跳转延时
 $_ENV['enable_login_bind_ip'] = true; // 是否将登陆线程和IP绑定
 
 /*

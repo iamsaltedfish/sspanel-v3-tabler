@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Services\Mail;
-use App\Utils\GA;
 use App\Utils\Hash;
 use App\Utils\Tools;
 use Exception;
 use Ramsey\Uuid\Uuid;
+use Vectorface\GoogleAuthenticator;
 
 class User extends Model
 {
@@ -245,7 +245,7 @@ class User extends Model
 
     public function getGAurl()
     {
-        $ga = new GA();
+        $ga = new GoogleAuthenticator();
         $url = $ga->getUrl(
             urlencode($_ENV['appName'] . '-' . $this->user_name . '-两步验证码'),
             $this->ga_token

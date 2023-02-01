@@ -25,11 +25,11 @@ use App\Services\Config;
 use App\Services\Mail;
 use App\Services\Payment;
 use App\Utils\DatatablesHelper;
-use App\Utils\GA;
 use App\Utils\Hash;
 use App\Utils\TelegramSessionManager;
 use App\Utils\Tools;
 use Ramsey\Uuid\Uuid;
+use Vectorface\GoogleAuthenticator;
 use voku\helper\AntiXSS;
 
 class UserController extends BaseController
@@ -668,9 +668,9 @@ class UserController extends BaseController
                 throw new \Exception('请填写验证码');
             }
 
-            $ga = new GA();
+            $ga = new GoogleAuthenticator();
             $user = $this->user;
-            $rcode = $ga->verifyCode($user->ga_token, $code);
+            $rcode = $ga->verifyCode($user->ga_token, $code, 2);
 
             if (!$rcode) {
                 throw new \Exception('验证码错误');
@@ -703,7 +703,7 @@ class UserController extends BaseController
 
     public function gaReset($request, $response, $args)
     {
-        $ga = new GA();
+        $ga = new GoogleAuthenticator();
         $user = $this->user;
         $secret = $ga->createSecret();
         $user->ga_token = $secret;

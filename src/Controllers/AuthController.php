@@ -41,7 +41,7 @@ class AuthController extends BaseController
             }
             if ($user->ga_enable === 1) {
                 $ga = new GoogleAuthenticator();
-                if (!$ga->verifyCode($user->ga_token, $code)) {
+                if (!$ga->verifyCode($user->ga_token, $code, 2)) {
                     throw new \Exception('两步验证码错误，如丢失密钥，请重置密码');
                 }
             }

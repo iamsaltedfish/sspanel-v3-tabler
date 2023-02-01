@@ -7,7 +7,6 @@ use App\Utils\Hash;
 use App\Utils\Tools;
 use Exception;
 use Ramsey\Uuid\Uuid;
-use Vectorface\GoogleAuthenticator;
 
 class User extends Model
 {
@@ -245,11 +244,8 @@ class User extends Model
 
     public function getGAurl()
     {
-        $ga = new GoogleAuthenticator();
-        $url = $ga->getUrl(
-            urlencode($_ENV['appName'] . '-' . $this->user_name . '-两步验证码'),
-            $this->ga_token
-        );
+        $site_name = urlencode($_ENV['appName']);
+        $url = "otpauth://totp/${site_name}?secret={$this->ga_token}";
         return $url;
     }
 

@@ -36,7 +36,7 @@ class OrderController extends AdminController
 
         $condition = [];
 
-        ($no !== '') && array_push($condition, ['no', '=', $no]);
+        ($no !== '') && array_push($condition, ['no', 'like', '%' . $no . '%']);
         ($user_id !== '') && array_push($condition, ['user_id', '=', $user_id]);
         ($product_name !== '') && array_push($condition, ['product_name', 'like', '%' . $product_name . '%']);
         ($order_coupon !== '') && array_push($condition, ['order_coupon', '=', $order_coupon]);

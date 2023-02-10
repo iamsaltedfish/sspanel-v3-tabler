@@ -20,6 +20,7 @@ class NodeController extends AdminController
                 'id' => '#',
                 'name' => '名称',
                 'server' => '地址',
+                'node_ip' => '公网地址',
                 'sort' => '类型',
                 'traffic_rate' => '倍率',
                 'node_class' => '等级',

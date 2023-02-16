@@ -116,6 +116,10 @@
                                                 <i class="ti ti-tool"></i>&nbsp;
                                                 设置
                                             </a>
+                                            <a class="dropdown-item" href="/admin/config">
+                                                <i class="ti ti-file-settings"></i>&nbsp;
+                                                配置
+                                            </a>
                                             <a class="dropdown-item" href="/admin/user">
                                                 <i class="ti ti-users"></i>&nbsp;
                                                 用户

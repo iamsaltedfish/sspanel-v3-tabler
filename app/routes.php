@@ -246,6 +246,9 @@ return function (SlimApp $app) {
         $this->get('/setting',                  App\Controllers\Admin\SettingController::class . ':index');
         $this->post('/setting',                 App\Controllers\Admin\SettingController::class . ':save');
         $this->post('/setting/email',           App\Controllers\Admin\SettingController::class . ':test');
+
+        // 配置文件
+        $this->get('/config',                   App\Controllers\Admin\ConfigController::class . ':index');
     })->add(new Admin());
 
     if ($_ENV['enableAdminApi']){

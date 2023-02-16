@@ -22,7 +22,7 @@ class PaybackController extends AdminController
                 'userid' => '订单用户',
                 'ref_by' => '邀请人',
                 'ref_get' => '返利金额',
-                'fraud_detect' => '是否欺诈',
+                'fraud_detect' => '是否存疑',
                 'associated_order' => '关联订单',
                 'datetime' => '返利时间',
             ],
@@ -57,12 +57,12 @@ class PaybackController extends AdminController
                 ],
                 [
                     'id' => 'fraud_detect',
-                    'info' => '是否欺诈',
+                    'info' => '是否存疑',
                     'type' => 'select',
                     'select' => [
                         'all' => '所有状态',
                         '0' => '通过',
-                        '1' => '欺诈',
+                        '1' => '存疑',
                     ],
                     'exact' => true,
                 ],
@@ -134,7 +134,7 @@ class PaybackController extends AdminController
         if ($reward->getOriginal('fraud_detect') === 0) {
             return $response->withJson([
                 'ret' => 0,
-                'msg' => '此功能仅适用于认定为欺诈的返利记录',
+                'msg' => '此功能仅适用于认定为存疑的返利记录',
             ]);
         }
 

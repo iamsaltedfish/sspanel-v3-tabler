@@ -26,7 +26,7 @@
                             <ul>
                                 <li>邀请注册的用户在账单确认后，您可获得其账单金额的 <code>{$config['code_payback'] * 100} %</code>
                                     作为返利</li>
-                                <li>请不要注册小号来自己邀请自己，相关订单返利可能会被认定为欺诈</li>
+                                <li>请不要注册小号来自己邀请自己，相关订单返利可能会被认定为存疑</li>
                                 <li>具体邀请返利规则请查看公告，或通过工单系统询问管理员</li>
                                 <li>部分商品的返利比例可能不遵循上面的比例</li>
                                 <li>若邀请注册的用户申请退款，返利金额也将撤销</li>
@@ -85,7 +85,7 @@
                                             <th>#</th>
                                             <th>邀请用户昵称</th>
                                             <th>返利金额</th>
-                                            <th>结算审核</th>
+                                            <th>系统自动审核</th>
                                             <th>关联订单状态</th>
                                             <th>返利时间</th>
                                         </tr>
@@ -184,7 +184,7 @@
         $("td:contains('通过')").css("color", "green");
         $("td:contains('未退')").css("color", "green");
         $("td:contains('已退')").css("color", "purple");
-        $("td:contains('欺诈')").css("color", "red");
+        $("td:contains('存疑')").css("color", "orange");
 
         var clipboard = new ClipboardJS('.copy');
         clipboard.on('success', function(e) {

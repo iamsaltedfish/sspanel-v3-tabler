@@ -476,7 +476,7 @@ class UserController extends BaseController
                     $payback->ref_get = $product->rebate_amount / 100;
                     $payback->associated_order = $order->no;
                     if (!Payback::fraudDetection($user) && $_ENV['rebate_risk_control'] === true) {
-                        $payback->fraud_detect = 1; // 0为通过; 1为欺诈
+                        $payback->fraud_detect = 1; // 0为通过; 1为存疑
                     } else {
                         $invite_user->money += $product->rebate_amount / 100;
                         $invite_user->save();
@@ -645,7 +645,7 @@ class UserController extends BaseController
         }
 
         $paybacks = Payback::where('ref_by', $user_id)->get();
-        $paybacks_sum = $paybacks->where('fraud_detect', 0) // 不统计被判定为欺诈的
+        $paybacks_sum = $paybacks->where('fraud_detect', 0) // 不统计被判定为存疑的
             ->where('associated_order_status', 1) // 不统计邀请用户已退款的
             ->sum('ref_get');
         $invite_url = $_ENV['baseUrl'] . '/auth/register?code=' . $code->code;

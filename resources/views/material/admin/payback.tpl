@@ -212,7 +212,7 @@
     <script>
         function adjustStyle() {
             $("td:contains('通过')").css("color", "green");
-            $("td:contains('欺诈')").css("color", "red");
+            $("td:contains('存疑')").css("color", "orange");
             $("td:contains('null')").css("font-style", "italic");
         }
 
@@ -266,7 +266,7 @@
             item_id = id;
             http_method = 'PUT';
 
-            $('#notice-message').text('此功能仅适用于认定为欺诈的返利记录，确定要修正此结果吗');
+            $('#notice-message').text('此功能仅适用于认定为存疑的返利记录，确定要修正此结果吗');
             $('#notice-dialog').modal('show');
         }
 
@@ -323,9 +323,9 @@
             })
         });
 
-        $("#success-confirm").click(function() {
+        /*  $("#success-confirm").click(function() {
             location.reload();
-        });
+        }); */
 
         loadTable();
     </script>

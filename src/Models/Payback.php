@@ -24,7 +24,7 @@ class Payback extends Model
 
     public function getFraudDetectAttribute($value)
     {
-        return ($value === 0 || $value === '0') ? '通过' : '欺诈';
+        return ($value === 0 || $value === '0') ? '通过' : '存疑';
     }
 
     public static function fraudDetection($user)
@@ -122,7 +122,7 @@ class Payback extends Model
         $payback_log->userid = $user_id;
         $payback_log->ref_by = $gift_user_id;
         $payback_log->ref_get = $adjust_rebate ?? $rebate_amount;
-        $payback_log->fraud_detect = ($fraud) ? 1 : 0; // 0为通过; 1为欺诈
+        $payback_log->fraud_detect = ($fraud) ? 1 : 0; // 0为通过; 1为存疑
         $payback_log->associated_order = $order_no;
         $payback_log->datetime = time();
         $payback_log->save();

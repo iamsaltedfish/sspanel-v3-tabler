@@ -266,7 +266,7 @@
             item_id = id;
             http_method = 'PUT';
 
-            $('#notice-message').text('此功能仅适用于认定为存疑的返利记录，确定要修正此结果吗');
+            $('#notice-message').text('此功能仅适用于认定为存疑的返利记录，操作后会删除记录的所有的被邀请人的浏览器指纹记录。确定要修正此结果吗');
             $('#notice-dialog').modal('show');
         }
 

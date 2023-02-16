@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\AdminController;
+use App\Models\Fingerprint;
 use App\Models\Payback;
 use App\Models\User;
 
@@ -143,9 +144,10 @@ class PaybackController extends AdminController
             $invite_sponsor_user->money += $reward->ref_get;
             $invite_sponsor_user->save();
         }
-
         $reward->fraud_detect = 0;
         $reward->save();
+
+        Fingerprint::where('user_id', $reward->userid)->delete();
 
         return $response->withJson([
             'ret' => 1,

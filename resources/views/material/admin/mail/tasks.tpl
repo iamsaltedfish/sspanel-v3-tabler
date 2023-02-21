@@ -45,6 +45,15 @@
                         </div>
                     </div>
                 {/foreach}
+                {if $tasks->count() === 0}
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <p>没有历史推送任务</p>
+                            </div>
+                        </div>
+                    </div>
+                {/if}
             </div>
         </div>
     </div>

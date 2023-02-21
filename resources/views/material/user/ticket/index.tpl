@@ -45,7 +45,6 @@
         <div class="container-xl">
             <div class="row row-deck row-cards">
                 <div class="col-12">
-                    <div class="row row-cards row-deck">
                         {if $tickets->count() !== 0}
                             {foreach $tickets as $ticket}
                                 <div class="col-md-4 col-sm-12">
@@ -112,7 +111,6 @@
                                 <div class="card-body">如需帮助，请点击右上角按钮开启新工单</div>
                             </div>
                         {/if}
-                    </div>
                 </div>
             </div>
         </div>

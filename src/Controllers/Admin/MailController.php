@@ -399,6 +399,7 @@ class MailController extends AdminController
                         'task_coding' => $task_coding,
                         'subject' => $push_title,
                         'template' => 'notice.tpl',
+                        'mail_type' => $mail_category,
                         'array' => json_encode([
                             'title' => $push_title,
                             'content' => $push_content,

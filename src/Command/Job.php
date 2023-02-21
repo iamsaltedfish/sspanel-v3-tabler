@@ -29,10 +29,10 @@ class Job extends Command
 {
     public $description = ''
         . '├─=: php xcat Job [选项]' . PHP_EOL
-        . '│ ├─ SendMail                - 处理邮件队列' . PHP_EOL
-        . '│ ├─ DailyJob                - 每日任务，每天' . PHP_EOL
-        . '│ ├─ CheckJob                - 检查任务，每分钟' . PHP_EOL
-        . '│ ├─ UserJob                 - 用户账户相关任务，每小时' . PHP_EOL;
+        . '│ ├─ SendMail                - 处理邮件队列' . PHP_EOL
+        . '│ ├─ DailyJob                - 每日任务，每天' . PHP_EOL
+        . '│ ├─ CheckJob                - 检查任务，每分钟' . PHP_EOL
+        . '│ ├─ UserJob                 - 用户账户相关任务，每小时' . PHP_EOL;
 
     public function boot()
     {
@@ -66,7 +66,7 @@ class Job extends Command
                         $email_queue->to_email,
                         $email_queue->subject,
                         $email_queue->template,
-                        'system',
+                        isset($email_queue->mail_type) ? $email_queue->mail_type : 'system',
                         json_decode($email_queue->array),
                         []
                     );

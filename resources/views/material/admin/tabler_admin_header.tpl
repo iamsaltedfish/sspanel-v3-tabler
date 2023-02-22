@@ -114,11 +114,15 @@
                                         <div class="dropdown-menu-column">
                                             <a class="dropdown-item" href="/admin/setting">
                                                 <i class="ti ti-tool"></i>&nbsp;
-                                                设置
+                                                设置中心
                                             </a>
                                             <a class="dropdown-item" href="/admin/config">
                                                 <i class="ti ti-file-settings"></i>&nbsp;
-                                                配置
+                                                配置文件
+                                            </a>
+                                            <a class="dropdown-item" href="/admin/check">
+                                                <i class="ti ti-checklist"></i>&nbsp;
+                                                环境检查
                                             </a>
                                             <a class="dropdown-item" href="/admin/user">
                                                 <i class="ti ti-users"></i>&nbsp;

@@ -66,7 +66,7 @@ class Job extends Command
                         $email_queue->to_email,
                         $email_queue->subject,
                         $email_queue->template,
-                        isset($email_queue->mail_type) ? $email_queue->mail_type : 'system',
+                        $email_queue->mail_type ?? 'system',
                         json_decode($email_queue->array),
                         []
                     );

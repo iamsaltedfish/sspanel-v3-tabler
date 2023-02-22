@@ -249,6 +249,7 @@ return function (SlimApp $app) {
 
         // 配置文件
         $this->get('/config',                   App\Controllers\Admin\ConfigController::class . ':index');
+        $this->get('/check',                    App\Controllers\Admin\CheckController::class . ':index');
     })->add(new Admin());
 
     if ($_ENV['enableAdminApi']){

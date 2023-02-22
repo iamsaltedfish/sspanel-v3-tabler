@@ -49,10 +49,16 @@
 
     <script>
         $("td:contains('empty string')").css("font-style", "italic");
-        $("td:contains('true')").css("font-style", "italic");
-        $("td:contains('false')").css("font-style", "italic");
-        $("td:contains('true')").css("color", "green");
-        $("td:contains('false')").css("color", "red");
+        // https://stackoverflow.com/questions/15364298/select-element-by-exact-match-of-its-content
+        {literal}
+            $("td").filter(function() {
+                return $(this).text() === "true";
+            }).css({"font-style": "italic", "color": "green"});
+
+            $("td").filter(function() {
+                return $(this).text() === "false";
+            }).css({"font-style": "italic", "color": "red"});
+        {/literal}
     </script>
 
 {include file='admin/tabler_admin_footer.tpl'}

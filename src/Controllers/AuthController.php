@@ -253,7 +253,7 @@ class AuthController extends BaseController
                 }
             }
 
-            self::registerHelper($name, $email, $passwd, $code, $imtype, $imvalue, 0, false, $fingerprint);
+            self::registerHelper($name, $email, $passwd, $code, $imtype, $imvalue, 0, $fingerprint);
         } catch (\Exception $e) {
             return $response->withJson([
                 'ret' => 0,
@@ -289,7 +289,6 @@ class AuthController extends BaseController
         $imtype,
         $imvalue,
         $telegram_id,
-        $auto_login = true,
         $fingerprint
     ) {
         $ga = new GoogleAuthenticator();
@@ -360,11 +359,6 @@ class AuthController extends BaseController
         $config->created_at = time();
         $config->updated_at = time();
         $config->save();
-
-        if ($auto_login) {
-            Auth::login($user->id, 3600);
-            $user->collectLoginIP($_SERVER['REMOTE_ADDR'], $request->getHeaderLine('User-Agent'));
-        }
     }
 
     public function logout($request, $response, $next)

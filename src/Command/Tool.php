@@ -13,15 +13,15 @@ class Tool extends Command
 {
     public $description = ''
         . '├─=: php xcat Tool [选项]' . PHP_EOL
-        . '│ ├─ initQQWry                     - 下载 IP 解析库' . PHP_EOL
-        . '│ ├─ setTelegram                   - 设置 Telegram 机器人' . PHP_EOL
-        . '│ ├─ resetAllSettings              - 使用默认值覆盖设置中心设置' . PHP_EOL
-        . '│ ├─ exportAllSettings             - 导出所有设置' . PHP_EOL
-        . '│ ├─ importAllSettings             - 导入所有设置' . PHP_EOL
-        . '│ ├─ mailboxSuffixCount            - 统计注册用户邮箱域' . PHP_EOL
-        . '│ ├─ supplementaryLoginAttribution - 补充登录日志归属' . PHP_EOL
-        . '│ ├─ completeNickname              - 为空字符串昵称用户补全昵称' . PHP_EOL
-        . '│ ├─ conversionTransferConfig      - 转换中转配置' . PHP_EOL;
+        . '│ ├─ initQQWry                     - 下载 IP 解析库' . PHP_EOL
+        . '│ ├─ setTelegram                   - 设置 Telegram 机器人' . PHP_EOL
+        . '│ ├─ resetAllSettings              - 使用默认值覆盖设置中心设置' . PHP_EOL
+        . '│ ├─ exportAllSettings             - 导出所有设置' . PHP_EOL
+        . '│ ├─ importAllSettings             - 导入所有设置' . PHP_EOL
+        . '│ ├─ mailboxSuffixCount            - 统计注册用户邮箱域' . PHP_EOL
+        . '│ ├─ supplementaryLoginAttribution - 补充登录日志归属' . PHP_EOL
+        . '│ ├─ completeNickname              - 为空字符串昵称用户补全昵称' . PHP_EOL
+        . '│ ├─ conversionTransferConfig      - 转换中转配置' . PHP_EOL;
 
     public function boot()
     {
@@ -203,8 +203,8 @@ class Tool extends Command
     {
         $result = [];
         $str = explode('|', $text);
-        foreach ($str as $k => $v) {
-            $content = explode('=', $v);
+        foreach ($str as $key) {
+            $content = explode('=', $key);
             $result[$content[0]] = $content[1];
         }
 

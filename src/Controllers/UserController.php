@@ -403,7 +403,7 @@ class UserController extends BaseController
             foreach ($product_content as $key => $value) {
                 switch ($key) {
                     case 'product_time':
-                        if (isset($product_content['product_reset_time']) && $product_content['product_reset_time'] == '1') {
+                        if (isset($product_content['product_reset_time']) && $product_content['product_reset_time'] === '1') {
                             $user->expire_in = date('Y-m-d H:i:s', time() + ($value * 86400));
                         } else {
                             if (time() > strtotime($user->expire_in)) {
@@ -414,7 +414,7 @@ class UserController extends BaseController
                         }
                         break;
                     case 'product_traffic':
-                        if (isset($product_content['product_reset_traffic']) && $product_content['product_reset_traffic'] == '1') {
+                        if (isset($product_content['product_reset_traffic']) && $product_content['product_reset_traffic'] === '1') {
                             $user->transfer_enable = ($user->u + $user->d) + ($value * 1073741824);
                         } else {
                             $user->transfer_enable += $value * 1073741824;
@@ -424,10 +424,10 @@ class UserController extends BaseController
                         $user->class = $value;
                         break;
                     case 'product_class_time':
-                        if ($product_content['product_reset_class_time'] == '1') {
+                        if ($product_content['product_reset_class_time'] === '1') {
                             // 用户等级与套餐等级不同时，重置为套餐等级时长；相同时叠加
                             $pct = $product_content['product_class_time'];
-                            if ($user->class != $product_content['product_class']) {
+                            if ($user->class !== (int) $product_content['product_class']) {
                                 $user->class_expire = date('Y-m-d H:i:s', time() + ($pct * 86400));
                             } else {
                                 if (time() > strtotime($user->class_expire)) {
@@ -436,11 +436,11 @@ class UserController extends BaseController
                                     $user->class_expire = date('Y-m-d H:i:s', strtotime($user->class_expire) + ($pct * 86400));
                                 }
                             }
-                        } elseif ($product_content['product_reset_class_time'] == '2') {
+                        } elseif ($product_content['product_reset_class_time'] === '2') {
                             // 用户等级与套餐等级不同时，重置为套餐等级时长；相同时重置
                             $pct = $product_content['product_class_time'];
                             $user->class_expire = date('Y-m-d H:i:s', time() + ($pct * 86400));
-                        } elseif ($product_content['product_reset_class_time'] == '3') {
+                        } elseif ($product_content['product_reset_class_time'] === '3') {
                             // 将用户等级到期时间调整为购买后的账户到期时间
                             $user->class_expire = $user->expire_in;
                         }

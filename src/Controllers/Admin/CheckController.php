@@ -17,7 +17,7 @@ class CheckController extends AdminController
             if (!$file) {
                 break;
             }
-            if ($file !== '.' && $file != '..') {
+            if ($file !== '.' && $file !== '..') {
                 $i++;
             }
         }

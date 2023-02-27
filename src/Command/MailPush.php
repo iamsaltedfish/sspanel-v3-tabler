@@ -10,8 +10,8 @@ class MailPush extends Command
 {
     public $description = ''
         . '├─=: php xcat MailPush [选项]' . PHP_EOL
-        . '│ ├─ generateList            - 为现有用户生成个性化邮件配置' . PHP_EOL
-        . '│ ├─ reEncrypt               - 修改盐后执行' . PHP_EOL;
+        . '│ ├─ generateList            - 为现有用户生成个性化邮件配置' . PHP_EOL
+        . '│ ├─ reEncrypt               - 修改盐后执行' . PHP_EOL;
 
     public function boot()
     {

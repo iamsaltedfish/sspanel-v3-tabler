@@ -242,11 +242,10 @@ class User extends Model
         return date('Ymd') !== date('Ymd', $this->last_check_in_time);
     }
 
-    public function getGAurl()
+    public function getGAurl(): string
     {
         $site_name = urlencode($_ENV['appName']);
-        $url = "otpauth://totp/${site_name}?secret={$this->ga_token}";
-        return $url;
+        return "otpauth://totp/${site_name}?secret={$this->ga_token}";
     }
 
     /**
@@ -371,7 +370,6 @@ class User extends Model
             'msg' => '解绑成功.',
         ];
 
-        $telegram_id = $this->telegram_id;
         $this->telegram_id = 0;
 
         if (!$this->save()) {

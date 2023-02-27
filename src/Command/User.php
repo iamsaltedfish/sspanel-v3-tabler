@@ -10,10 +10,10 @@ class User extends Command
 {
     public $description = ''
         . '├─=: php xcat User [选项]' . PHP_EOL
-        . '│ ├─ createAdmin             - 创建管理员帐号' . PHP_EOL
-        . '│ ├─ sendAdminMail           - 向管理员发送通知邮件' . PHP_EOL
-        . '│ ├─ sendUserMail            - 向用户发送通知邮件' . PHP_EOL
-        . '│ ├─ resetUserLevel          - 重置用户等级' . PHP_EOL;
+        . '│ ├─ createAdmin             - 创建管理员帐号' . PHP_EOL
+        . '│ ├─ sendAdminMail           - 向管理员发送通知邮件' . PHP_EOL
+        . '│ ├─ sendUserMail            - 向用户发送通知邮件' . PHP_EOL
+        . '│ ├─ resetUserLevel          - 重置用户等级' . PHP_EOL;
 
     public function boot()
     {
@@ -111,7 +111,7 @@ class User extends Command
 
         if (strtolower($y) === 'y') {
             try {
-                AuthController::registerHelper('admin', $email, $passwd, '', '1', '', 0, false, 'null');
+                AuthController::registerHelper('admin', $email, $passwd, '', '1', '', 0, 'null');
                 $last_user = ModelsUser::where('email', $email)->first();
                 $last_user->is_admin = 1;
                 $last_user->save();

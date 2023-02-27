@@ -149,8 +149,8 @@ class NewLinkController extends BaseController
     {
         $result = [];
         $str = explode('|', $text);
-        foreach ($str as $k => $v) {
-            $content = explode('=', $v);
+        foreach ($str as $key) {
+            $content = explode('=', $key);
             $result[$content[0]] = $content[1];
         }
 
@@ -193,10 +193,10 @@ class NewLinkController extends BaseController
             'aid' => $split[2], // alterid
             'net' => $split[3], // 网络模式 此处应该是ws
             'type' => 'none', // 含义未知
-            'host' => isset($params['host']) ? $params['host'] : 'fail.to.parse.host.com',
-            'path' => isset($params['path']) ? $params['path'] : '/failToParsePath',
+            'host' => $params['host'] ?? 'fail.to.parse.host.com',
+            'path' => $params['path'] ?? '/failToParsePath',
             'tls' => ($is_tls) ? 'tls' : '',
-            'sni' => isset($params['sni']) ? $params['sni'] : (isset($params['host']) ? $params['host'] : 'fail.to.parse.sni.com'),
+            'sni' => $params['sni'] ?? ($params['host'] ?? 'fail.to.parse.sni.com'),
         ];
         // 是否加入直连订阅 (适用于仅直连, 或有中转配置但仍需保留直连入口时启用)
         if ($node->add_in === 1) {
@@ -234,7 +234,7 @@ class NewLinkController extends BaseController
         $split = explode(';', $node->server);
         // 如果你见到此提示 说明某一节点的 parsing_mode 没有正确设置
         $params = self::parsingAdditionalParameters($split[5]);
-        $path = isset($params['path']) ? $params['path'] : '/failToParsePath';
+        $path = $params['path'] ?? '/failToParsePath';
         if ($node->add_in === 1) {
             $wait = "{$node->name} = vmess, {$split[0]}, {$split[1]}, none, \"{$user->uuid}\", over-tls=false, tls-host={$split[0]}, certificate=1, obfs=ws, obfs-path=\"{$path}\", obfs-header=\"Host: {$split[0]}[Rr][Nn]User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 11_2_6 like Mac OS X) AppleWebKit/604.5.6 (KHTML, like Gecko) Mobile/15D100\"";
             $text .= 'vmess://' . self::urlSafeBase64Encode($wait) . PHP_EOL;
@@ -303,12 +303,12 @@ class NewLinkController extends BaseController
             'cipher' => 'auto',
             'tls' => $is_tls,
             'skip-cert-verify' => true,
-            'servername' => isset($params['sni']) ? $params['sni'] : (isset($params['host']) ? $params['host'] : 'fail.to.parse.sni.com'),
+            'servername' => $params['sni'] ?? ($params['host'] ?? 'fail.to.parse.sni.com'),
             'network' => $split[3],
             'ws-opts' => [
-                'path' => isset($params['path']) ? $params['path'] : '/failToParsePath',
+                'path' => $params['path'] ?? '/failToParsePath',
                 'headers' => [
-                    'Host' => isset($params['host']) ? $params['host'] : 'fail.to.parse.host.com',
+                    'Host' => $params['host'] ?? 'fail.to.parse.host.com',
                 ],
             ],
             'udp' => true,

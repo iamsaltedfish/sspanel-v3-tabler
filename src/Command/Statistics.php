@@ -12,10 +12,10 @@ class Statistics extends Command
 {
     public $description = ''
         . '├─=: php xcat Statistics [选项]' . PHP_EOL
-        . '│ ├─ CheckIn                 - 统计签到数' . PHP_EOL
-        . '│ ├─ Another                 - 统计其他项目' . PHP_EOL
-        . '│ ├─ CountHistoryRegister    - 统计历史注册数' . PHP_EOL
-        . '│ ├─ CountHistoricalSales    - 统计历史销售额' . PHP_EOL;
+        . '│ ├─ CheckIn                 - 统计签到数' . PHP_EOL
+        . '│ ├─ Another                 - 统计其他项目' . PHP_EOL
+        . '│ ├─ CountHistoryRegister    - 统计历史注册数' . PHP_EOL
+        . '│ ├─ CountHistoricalSales    - 统计历史销售额' . PHP_EOL;
 
     public function boot()
     {

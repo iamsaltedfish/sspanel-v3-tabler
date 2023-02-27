@@ -175,7 +175,7 @@ class GiftCardController extends AdminController
         foreach ($details['search_dialog'] as $from) {
             $field = $from['id'];
             $keyword = $request->getParam($field);
-            if (!empty($keyword) && $field === 'balance') {
+            if ($keyword !== '' && $field === 'balance') {
                 $keyword *= 100;
             }
             if ($from['type'] === 'input') {

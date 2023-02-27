@@ -7,22 +7,22 @@ use App\Models\Product;
 
 class ProductController extends AdminController
 {
-    public static function translate($array, $type)
+    public static function translate(array $array, string $type): string
     {
-        if ($type == 'tatp') {
+        if ($type === 'tatp') {
             $text = '时长' . $array['product_time'] . '天';
-            $text .= ($array['product_reset_time'] == '0') ? '（叠加上此值）' : '（重置为此值）';
+            $text .= ($array['product_reset_time'] === '0') ? '（叠加上此值）' : '（重置为此值）';
             $text .= '，流量' . $array['product_traffic'] . 'GB';
-            $text .= ($array['product_reset_traffic'] == '0') ? '（叠加上此值）' : '（重置为此值）';
-            $text .= ($array['product_device'] == '0') ? '，不限制设备' : '，限制' . $array['product_device'] . '个设备使用';
-            $text .= ($array['product_speed'] == '0') ? '，不限速' : '，限速' . $array['product_speed'] . 'Mbps';
+            $text .= ($array['product_reset_traffic'] === '0') ? '（叠加上此值）' : '（重置为此值）';
+            $text .= ($array['product_device'] === '0') ? '，不限制设备' : '，限制' . $array['product_device'] . '个设备使用';
+            $text .= ($array['product_speed'] === '0') ? '，不限速' : '，限速' . $array['product_speed'] . 'Mbps';
             $text .= '，设置等级为' . $array['product_class'];
             $text .= '，等级时效' . $array['product_class_time'] . '天';
-            if ($array['product_reset_class_time'] == '1') {
+            if ($array['product_reset_class_time'] === '1') {
                 $text .= '（用户等级与套餐等级不同时，重置为套餐等级时长；相同时叠加）';
-            } elseif ($array['product_reset_class_time'] == '2') {
+            } elseif ($array['product_reset_class_time'] === '2') {
                 $text .= '（用户等级与套餐等级不同时，重置为套餐等级时长；相同时重置）';
-            } elseif ($array['product_reset_class_time'] == '3') {
+            } elseif ($array['product_reset_class_time'] === '3') {
                 $text .= '（将用户等级到期时间调整为购买后的账户到期时间）';
             }
         }

@@ -301,7 +301,7 @@ class UserController extends AdminController
                     throw new \Exception('没有有效的发信配置');
                 }
             }
-            AuthController::registerHelper('user', $email, $password, '', '1', '', 0, false, 'null');
+            AuthController::registerHelper('user', $email, $password, '', '1', '', 0, 'null');
             if ($email_notify === 1) {
                 $subject = $_ENV['appName'] . ' - 您的账户已创建';
                 $text = '请在 ' . $_ENV['baseUrl'] . ' 使用以下信息登录：'

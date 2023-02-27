@@ -157,7 +157,7 @@ class Job extends Command
                     $usage->value = $today_usage;
                 } else {
                     // 如果昨天是重置日
-                    if ($node->bandwidthlimit_resetday == (date('j') - 1)) {
+                    if ($node->bandwidthlimit_resetday === (date('j') - 1)) {
                         $usage->value = round($node->node_bandwidth / 1048576, 2); // to mb
                     } else {
                         // 如果昨天不是重置日，但today_usage是负数，那就是在后台将节点流量用量改小了

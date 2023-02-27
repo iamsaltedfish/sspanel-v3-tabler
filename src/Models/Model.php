@@ -14,7 +14,7 @@ class Model extends EloquentMedel
      */
     public static function getTableName(): string
     {
-        $class = get_called_class();
+        $class = static::class;
         return (new $class())->getTable();
     }
 

@@ -91,7 +91,7 @@ class UserController extends BaseController
 
         $header_etag = $request->getHeaderLine('IF_NONE_MATCH');
         $etag = Tools::etag($users);
-        if ($header_etag == $etag) {
+        if ($header_etag === $etag) {
             return $response->withStatus(304);
         }
         return $response->withHeader('ETAG', $etag)->withJson([

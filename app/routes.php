@@ -260,7 +260,7 @@ return function (SlimApp $app) {
             $this->get('/node/{id}',         App\Controllers\Admin\ApiController::class . ':getNodeInfo');
             $this->get('/nodes/relay',       App\Controllers\Admin\ApiController::class . ':getNodeRelayList');
             $this->get('/nodeid/{ip}',       App\Controllers\Admin\ApiController::class . ':getNodeId');
-            $this->put('/node/{id}/port',    App\Controllers\Admin\ApiController::class . ':change');
+            $this->put('/node/{id}/port',    App\Controllers\Admin\ApiController::class . ':changeServicePort');
             $this->get('/node/{id}/status',  App\Controllers\Admin\ApiController::class . ':getNodeStatus');
 
             // Re-bind controller, bypass admin token require

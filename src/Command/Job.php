@@ -88,15 +88,16 @@ class Job extends Command
         $limit = date('Y-m-d H:i:s', time() - 86400 * (int) $_ENV['subscribeLog_keep_days']);
         Ip::where('datetime', '<', time() - 300)->delete();
         Token::where('expire_time', '<', time())->delete();
-        DetectLog::where('datetime', '<', time() - 86400 * 3)->delete();
-        NodeInfoLog::where('log_time', '<', time() - 86400 * 3)->delete();
+        DetectLog::where('datetime', '<', time() - 86400 * 1)->delete();
+        NodeInfoLog::where('log_time', '<', time() - 86400 * 1)->delete();
         StreamMedia::where('created_at', '<', time() - 86400 * 24)->delete();
         EmailVerify::where('expire_in', '<', time() - 86400 * 3)->delete();
         PasswordReset::where('expire_time', '<', time() - 86400 * 3)->delete();
         TelegramSession::where('datetime', '<', time() - 900)->delete();
-        NodeOnlineLog::where('log_time', '<', time() - 86400 * 3)->delete();
+        NodeOnlineLog::where('log_time', '<', time() - 86400 * 1)->delete();
         UserSubscribeLog::where('request_time', '<', $limit)->delete();
         StatisticsModel::where('item', 'user_traffic')->where('created_at', '<', time() - 86400 * 14)->delete();
+        StatisticsModel::where('item', 'node_traffic_log')->where('created_at', '<', time() - 86400 * 31)->delete();
 
         // 重置自增ID
         $db = new DatatablesHelper();

@@ -64,7 +64,7 @@ class ApiController extends BaseController
         $requests_node_sort = $request->getParam('requests_node_sort');
 
         // 处理查询索引
-        if ($requests_index === '') {
+        if ($requests_index === '' || $requests_index === 'node_ip') {
             array_push($condition, ['node_ip', '=', $param]);
         } elseif ($requests_index === 'hostname') {
             array_push($condition, ['server', 'like', '%' . $param . '%']);

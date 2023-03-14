@@ -512,6 +512,16 @@ class NewLinkController extends BaseController
                         '♻️ 自动选择',
                     ],
                 ],
+                [
+                    'name' => '🤖 OpenAI',
+                    'type' => 'select',
+                    // 插入节点名称
+                    'proxies' => [
+                        '🔰 节点选择',
+                        '🎯 全球直连',
+                        '♻️ 自动选择',
+                    ],
+                ],
             ],
             'rules' => [
                 'DOMAIN-SUFFIX,local,🎯 全球直连',
@@ -9518,6 +9528,9 @@ class NewLinkController extends BaseController
                 'IP-CIDR,34.210.42.111/32,🎥 NETFLIX,no-resolve',
                 'IP-CIDR,52.89.124.203/32,🎥 NETFLIX,no-resolve',
                 'IP-CIDR,54.148.37.5/32,🎥 NETFLIX,no-resolve',
+                'DOMAIN-SUFFIX,openai.com,🤖 OpenAI',
+                'DOMAIN-SUFFIX,chat.openai.com,🤖 OpenAI',
+                'DOMAIN-SUFFIX,platform.openai.com,🤖 OpenAI',
                 'DOMAIN-SUFFIX,jtvnw.net,🌍 国外媒体',
                 'DOMAIN-SUFFIX,ttvnw.net,🌍 国外媒体',
                 'DOMAIN-SUFFIX,twitch.tv,🌍 国外媒体',
@@ -10756,7 +10769,7 @@ class NewLinkController extends BaseController
             ],
         ];
 
-        $all_index = [0, 1, 2, 5, 7, 8, 9, 12];
+        $all_index = [0, 1, 2, 5, 7, 8, 9, 12, 13];
         foreach ($all_index as $index) {
             foreach ($node_names as $node_name) {
                 $array['proxy-groups'][$index]['proxies'][] = $node_name;

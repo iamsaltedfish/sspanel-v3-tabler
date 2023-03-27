@@ -19,11 +19,11 @@ class GiftCard extends Model
 
     public function getStatusAttribute(int $value): string
     {
-        return ($value === 0) ? '未使用' : '已用';
+        return $value === 0 ? '未使用' : '已用';
     }
 
     public function getUsedAtAttribute(int $value): string
     {
-        return ($value === 0) ? 'null' : date('Y-m-d H:i:s', $value);
+        return $value === 0 ? 'null' : date('Y-m-d H:i:s', $value);
     }
 }

@@ -19,12 +19,12 @@ class Payback extends Model
 
     public function getAssociatedOrderAttribute($value)
     {
-        return ($value === null) ? 'null' : $value;
+        return $value === null ? 'null' : $value;
     }
 
     public function getFraudDetectAttribute($value)
     {
-        return ($value === 0 || $value === '0') ? '通过' : '存疑';
+        return $value === 0 || $value === '0' ? '通过' : '存疑';
     }
 
     public static function fraudDetection($user)
@@ -57,7 +57,7 @@ class Payback extends Model
         //var_dump($receiver);
 
         $intersection = array_intersect($initiator_f, $receiver_f);
-        return (count($intersection) > 0) ? false : true; // false为没有通过检测
+        return count($intersection) > 0 ? false : true; // false为没有通过检测
     }
 
     public static function rebate($user_id, $order_amount, $order_no)
@@ -122,7 +122,7 @@ class Payback extends Model
         $payback_log->userid = $user_id;
         $payback_log->ref_by = $gift_user_id;
         $payback_log->ref_get = $adjust_rebate ?? $rebate_amount;
-        $payback_log->fraud_detect = ($fraud) ? 1 : 0; // 0为通过; 1为存疑
+        $payback_log->fraud_detect = $fraud ? 1 : 0; // 0为通过; 1为存疑
         $payback_log->associated_order = $order_no;
         $payback_log->datetime = time();
         $payback_log->save();

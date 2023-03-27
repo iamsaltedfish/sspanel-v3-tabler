@@ -14,6 +14,6 @@ class Log extends Model
 
     public function getStatusAttribute(int $value): string
     {
-        return ($value === 0) ? '未处理' : '已处理';
+        return $value === 0 ? '未处理' : '已处理';
     }
 }

@@ -19,7 +19,7 @@ class WorkOrder extends Model
 
     public function getClosedAtAttribute($value): string
     {
-        return ($value === null) ? 'null' : date('Y-m-d H:i', $value);
+        return $value === null ? 'null' : date('Y-m-d H:i', $value);
     }
 
     public function getTheLatestReply(int $tk_id): string
@@ -36,7 +36,7 @@ class WorkOrder extends Model
             ->where('tk_id', $tk_id)
             ->first();
         if ($topic->closed_by === null) {
-            return ($topic->wait_reply === 'admin') ? 'open_wait_admin' : 'open_wait_user';
+            return $topic->wait_reply === 'admin' ? 'open_wait_admin' : 'open_wait_user';
         }
 
         return 'closed';

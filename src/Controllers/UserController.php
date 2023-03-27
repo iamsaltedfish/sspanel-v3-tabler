@@ -19,9 +19,9 @@ use App\Models\ProductOrder;
 use App\Models\Setting;
 use App\Models\Statistics;
 use App\Models\StreamMedia;
+use App\Models\TelegramSession;
 use App\Models\User;
 use App\Models\UserSubscribeLog;
-use App\Models\TelegramSession;
 use App\Services\Auth;
 use App\Services\Config;
 use App\Services\Mail;
@@ -185,8 +185,8 @@ class UserController extends BaseController
             $order->product_type = $product->type;
             $order->product_content = $product->translate;
             $order->product_price = $product->price;
-            $order->order_coupon = (!isset($coupon)) ? null : $coupon_code;
-            $order->order_price = (!isset($coupon)) ? $product->price : $product->price * $coupon->discount;
+            $order->order_coupon = !isset($coupon) ? null : $coupon_code;
+            $order->order_price = !isset($coupon) ? $product->price : $product->price * $coupon->discount;
             $order->order_payment = 'balance';
             if ($user->money <= 0 || $user->money >= ($order->order_price / 100)) {
                 $order->balance_payment = 0;
@@ -265,7 +265,7 @@ class UserController extends BaseController
             if (!isset($payments[$payment]) && $payment !== 'balance') {
                 throw new \Exception('提交的支付方式不存在，请从给出的选项中选择');
             }
-            $order->order_payment = (!isset($payments[$payment])) ? 'balance' : $payments[$payment]['name'];
+            $order->order_payment = !isset($payments[$payment]) ? 'balance' : $payments[$payment]['name'];
             $order->save();
             if (time() > $order->expired_at) {
                 throw new \Exception('此订单已过期');

@@ -167,62 +167,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {if $config['enable_telegram'] == true}
-                                            <div class="col-sm-12 col-md-6">
-                                                {if $user->telegram_id != 0}
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <h3 class="card-title">解绑 Telegram</h3>
-                                                            <p>当前绑定的 Telegram 账户：<a
-                                                                    href="https://t.me/{$user->im_value}">@{$user->im_value}</a>
-                                                            </p>
-                                                        </div>
-                                                        <div class="card-footer">
-                                                            <div class="d-flex">
-                                                                <a href="/user/telegram_reset"
-                                                                    class="btn btn-red ms-auto">解绑</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                {else}
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <h3 class="card-title">绑定 Telegram</h3>
-                                                            {if $config['use_new_telegram_bot'] == true}
-                                                                <div class="row">
-                                                                    <div class="col-6 col-sm-2 col-md-2 col-xl mb-3">
-                                                                        手机电脑平板等如已安装 Telegram 可点击
-                                                                    </div>
-                                                                    <div class="col-6 col-sm-2 col-md-2 col-sm mb-3">
-                                                                        <a href="https://t.me/{$telegram_bot}?start={$bind_token}"
-                                                                            class="btn btn-primary w-100">
-                                                                            一键绑定
-                                                                        </a>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row">
-                                                                    <div class="col-6 col-sm-2 col-md-2 col-xl mb-3">
-                                                                        向机器人 <a
-                                                                            href="https://t.me/{$telegram_bot}">@{$telegram_bot}</a>
-                                                                        发送验证码绑定
-                                                                    </div>
-                                                                    <div class="col-6 col-sm-2 col-md-2 col-sm mb-3">
-                                                                        <button data-clipboard-text="{$bind_token}"
-                                                                            class="copy btn btn-primary w-100">
-                                                                            复制验证码
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            {else}
-                                                                <p>向机器人 <a href="https://t.me/{$telegram_bot}">@{$telegram_bot}</a>
-                                                                    发送图片绑定，拍照可能导致解码失败</p>
-                                                                <p id="qrcode-telegram"></p>
-                                                            {/if}
-                                                        </div>
-                                                    </div>
-                                                {/if}
-                                            </div>
-                                        {/if}
                                         <div class="col-sm-12 col-md-6">
                                             <div class="card">
                                                 <div class="card-body">

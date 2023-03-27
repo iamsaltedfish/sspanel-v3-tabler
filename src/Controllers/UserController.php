@@ -21,6 +21,7 @@ use App\Models\Statistics;
 use App\Models\StreamMedia;
 use App\Models\User;
 use App\Models\UserSubscribeLog;
+use App\Models\TelegramSession;
 use App\Services\Auth;
 use App\Services\Config;
 use App\Services\Mail;
@@ -1016,13 +1017,14 @@ class UserController extends BaseController
         $config = new Config();
         $themes = Tools::getDir(BASE_PATH . '/resources/views');
         $mail_setting = MailPush::where('user_id', $this->user->id)->first();
+        $bind_token = TelegramSession::generateToken($this->user->id);
 
         return $this->view()
-            ->assign('user', $this->user)
             ->assign('themes', $themes)
-            ->assign('mail_setting', $mail_setting)
-            ->assign('telegram_bot', $_ENV['telegram_bot'])
+            ->assign('user', $this->user)
+            ->assign('bind_token', $bind_token)
             ->assign('config_service', $config)
+            ->assign('mail_setting', $mail_setting)
             ->display('user/edit.tpl');
     }
 

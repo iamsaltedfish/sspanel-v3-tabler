@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Controllers\TelegramController;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -29,6 +30,21 @@ class HomeController extends BaseController
     public function tos($request, $response, $args): ResponseInterface
     {
         return $response->write($this->view()->fetch('tos.tpl'));
+    }
+
+    /**
+     * @param Request   $request
+     * @param Response  $response
+     * @param array     $args
+     */
+    public function telegram($request, $response, $args)
+    {
+        $token = $request->getQueryParam('token');
+        if ($token === md5($_ENV['muKey'])) {
+            $update = json_decode($request->getBody(), true); // array
+            TelegramController::requestEntry($update);
+        }
+        return $response->withStatus(200);
     }
 
     /**

@@ -412,6 +412,7 @@
                                             <div class="card my-3">
                                                 <div class="card-body">
                                                     <h3 class="card-title">修改主题</h3>
+                                                    <p>若站点支持其他主题，您可以在这里切换</p>
                                                     <div class="mb-3">
                                                         <select id="user-theme" class="form-select">
                                                             {foreach $themes as $theme}
@@ -429,6 +430,37 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        {if $config['enable_telegram'] === true}
+                                            <div class="col-sm-12 col-md-6">
+                                                {if isset($user->telegram_id) && $user->telegram_id !== 0}
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h3 class="card-title">解绑 Telegram</h3>
+                                                            <p>解除绑定后，您将无法再使用 Bot 的功能</p>
+                                                        </div>
+                                                        <div class="card-footer">
+                                                            <div class="d-flex">
+                                                                <a href="/user/telegram_reset"
+                                                                    class="btn btn-red ms-auto">解绑</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {else}
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h3 class="card-title">绑定 Telegram</h3>
+                                                            <p>若您的设备已经安装 Telegram 客户端，可以点击下面的按钮快捷绑定账户</p>
+                                                            <div class="col-6 col-sm-2 col-md-2 col-sm mb-3">
+                                                                <a href="https://t.me/{$config['telegram_bot']}?start={$bind_token}"
+                                                                    class="btn btn-primary w-100">
+                                                                    一键绑定
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {/if}
+                                            </div>
+                                        {/if}
                                     </div>
                                 </div>
                             </div>

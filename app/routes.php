@@ -14,10 +14,10 @@ return function (SlimApp $app) {
     $app->get('/staff',     App\Controllers\HomeController::class . ':staff');
 
     // Other
-    $app->post('/notify',               App\Controllers\HomeController::class . ':notify');
+    $app->post('/notify',                       App\Controllers\HomeController::class . ':notify');
 
     // Telegram
-    $app->post('/telegram_callback',    App\Controllers\HomeController::class . ':telegram');
+    $app->post('/telegramCallback',             App\Controllers\HomeController::class . ':telegram');
 
     // User Center
     $app->group('/user', function () {

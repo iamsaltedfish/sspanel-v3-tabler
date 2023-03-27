@@ -14,6 +14,7 @@ class Tool extends Command
     public $description = ''
         . '├─=: php xcat Tool [选项]' . PHP_EOL
         . '│ ├─ initQQWry                     - 下载 IP 解析库' . PHP_EOL
+        . '│ ├─ setTelegram                   - 设置 Telegram 机器人' . PHP_EOL
         . '│ ├─ resetAllSettings              - 使用默认值覆盖设置中心设置' . PHP_EOL
         . '│ ├─ exportAllSettings             - 导出所有设置' . PHP_EOL
         . '│ ├─ importAllSettings             - 导入所有设置' . PHP_EOL
@@ -33,6 +34,28 @@ class Tool extends Command
             } else {
                 echo '方法不存在.' . PHP_EOL;
             }
+        }
+    }
+
+    public function setTelegram()
+    {
+        if ($_ENV['telegram_bot'] === '' || $_ENV['telegram_token'] === '' || $_ENV['enable_telegram'] === false) {
+            echo "Please try again after configuring telegram_bot, telegram_token, enable_telegram items in config/.config.php file" . PHP_EOL;
+            return;
+        }
+
+        try {
+            $web_hook_url = $_ENV['baseUrl'] . '/telegramCallback?token=' . md5($_ENV['muKey']);
+            $telegram = new \Telegram\Bot\Api($_ENV['telegram_token']);
+            $telegram->removeWebhook();
+            if ($telegram->setWebhook(['url' => $web_hook_url])) {
+                $bot_name = $telegram->getMe()->getUsername();
+                echo "The new version telegram robot @{$bot_name} has been set up." . PHP_EOL;
+                $rep = file_get_contents(sprintf("https://api.telegram.org/bot%s/getWebhookInfo", $_ENV['telegram_token']));
+                echo json_encode(json_decode($rep, true), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+            }
+        } catch (\Exception $e) {
+            echo "Unable to set webhooks: {$e->getMessage()}" . PHP_EOL;
         }
     }
 

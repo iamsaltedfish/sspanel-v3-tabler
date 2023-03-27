@@ -509,17 +509,6 @@
             correctLevel: QRCode.CorrectLevel.H
         });
 
-        {if $config['use_new_telegram_bot'] == false}
-            var tgqrcode = new QRCode('qrcode-telegram', {
-                text: 'mod://bind/{$bind_token}',
-                width: 128,
-                height: 128,
-                colorDark: '#000000',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H
-            });
-        {/if}
-
         var clipboard = new ClipboardJS('.copy');
         clipboard.on('success', function(e) {
             $('#success-message').text('已复制到剪切板');

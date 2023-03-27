@@ -64,6 +64,15 @@ class AuthController extends BaseController
             ]);
         }
 
+        if (MailPush::allow('login_reminder', $user->id)) {
+            // 创建一个推送任务到邮件队列
+            $user->sendMail('登录提醒', 'notice.tpl', 'login_reminder', [
+                'title' => '登录提醒',
+                'content' => sprintf('您于 【%s】 在 【%s】 登录用户中心，请注意', date("Y-m-d H:i:s", time()), Tools::getIpInfo($_SERVER['REMOTE_ADDR'])),
+                'concluding_remarks' => "此邮件由系统自动发送，分类是 <b>登录提醒</b>。取消此类通知，请在用户中心前往 <b>我的->资料修改</b> 页面设置",
+            ], [], true);
+        }
+
         return $response->withJson([
             'ret' => 1,
             'msg' => '登录成功，欢迎回来',

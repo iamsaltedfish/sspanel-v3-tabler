@@ -223,6 +223,31 @@
                                                 {/if}
                                             </div>
                                         {/if}
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h3 class="card-title">账户安全</h3>
+                                                    <p>在这里可以设置是否在登录用户中心和订阅时，向您的注册邮箱推送邮件提醒</p>
+                                                    <div class="mb-3">
+                                                        <select id="login_reminder" class="form-select">
+                                                            <option value="0">不操作</option>
+                                                            <option value="1">登录时邮件通知我</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <select id="sub_reminder" class="form-select">
+                                                            <option value="0">不操作</option>
+                                                            <option value="1">订阅时邮件通知我</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer">
+                                                    <div class="d-flex">
+                                                        <a id="modify-reminder" class="btn btn-primary ms-auto">修改</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="login_security" role="tabpanel">
@@ -607,6 +632,29 @@
                 dataType: "json",
                 data: {
                     newusername: $('#new-nickname').val()
+                },
+                success: function(data) {
+                    if (data.ret == 1) {
+                        $('#success-message').text(data.msg);
+                        $('#success-dialog').modal('show');
+                    } else {
+                        $('#fail-message').text(data.msg);
+                        $('#fail-dialog').modal('show');
+                    }
+                }
+            })
+        });
+
+        $('#sub_reminder').val('{$mail_setting->sub_reminder}');
+        $('#login_reminder').val('{$mail_setting->login_reminder}');
+        $("#modify-reminder").click(function() {
+            $.ajax({
+                type: "POST",
+                url: "/user/reminder",
+                dataType: "json",
+                data: {
+                    sub_reminder: $('#sub_reminder').val(),
+                    login_reminder: $('#login_reminder').val()
                 },
                 success: function(data) {
                     if (data.ret == 1) {

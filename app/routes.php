@@ -70,6 +70,7 @@ return function (SlimApp $app) {
         $this->get('/edit',                     App\Controllers\UserController::class . ':edit');
         $this->get('/telegram_reset',           App\Controllers\UserController::class . ':telegramReset');
         $this->post('/email',                   App\Controllers\UserController::class . ':updateEmail');
+        $this->post('/reminder',                App\Controllers\UserController::class . ':updateReminder');
         $this->post('/username',                App\Controllers\UserController::class . ':updateUsername');
         $this->post('/password',                App\Controllers\UserController::class . ':updatePassword');
         $this->post('/send',                    App\Controllers\AuthController::class . ':sendVerify');

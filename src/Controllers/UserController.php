@@ -11,6 +11,7 @@ use App\Models\GiftCard;
 use App\Models\InviteCode;
 use App\Models\Ip;
 use App\Models\LoginIp;
+use App\Models\MailPush;
 use App\Models\Node;
 use App\Models\Payback;
 use App\Models\Product;
@@ -820,6 +821,30 @@ class UserController extends BaseController
         ]);
     }
 
+    public function updateReminder($request, $response, $args)
+    {
+        $user = $this->user;
+        $sub_reminder = (int) $request->getParam('sub_reminder');
+        $login_reminder = (int) $request->getParam('login_reminder');
+
+        try {
+            $setting = MailPush::where('user_id', $user->id)->first();
+            $setting->sub_reminder = $sub_reminder;
+            $setting->login_reminder = $login_reminder;
+            $setting->save();
+        } catch (\Exception $e) {
+            return $response->withJson([
+                'ret' => 0,
+                'msg' => $e->getMessage(),
+            ]);
+        }
+
+        return $response->withJson([
+            'ret' => 1,
+            'msg' => '修改成功',
+        ]);
+    }
+
     public function updateUsername($request, $response, $args)
     {
         $newusername = $request->getParam('newusername');
@@ -992,11 +1017,13 @@ class UserController extends BaseController
         $config = new Config();
         $themes = Tools::getDir(BASE_PATH . '/resources/views');
         $bind_token = TelegramSessionManager::addBindSession($this->user);
+        $mail_setting = MailPush::where('user_id', $this->user->id)->first();
 
         return $this->view()
             ->assign('user', $this->user)
             ->assign('themes', $themes)
             ->assign('bind_token', $bind_token)
+            ->assign('mail_setting', $mail_setting)
             ->assign('telegram_bot', $_ENV['telegram_bot'])
             ->assign('config_service', $config)
             ->display('user/edit.tpl');

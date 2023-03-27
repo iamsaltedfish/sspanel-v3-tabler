@@ -3,9 +3,11 @@
 namespace App\Controllers;
 
 use App\Models\Link;
+use App\Models\MailPush;
 use App\Models\Node;
 use App\Models\User;
 use App\Models\UserSubscribeLog;
+use App\Utils\Tools;
 use Symfony\Component\Yaml\Yaml;
 use voku\helper\AntiXSS;
 
@@ -34,6 +36,15 @@ class NewLinkController extends BaseController
         $client = self::detectTheSubscribingClient($user_agent);
         if ($_ENV['subscribeLog'] === true) {
             self::loggingSubscriptions($user, $client, $user_agent);
+        }
+
+        if (MailPush::allow('sub_reminder', $user->id)) {
+            // 创建一个推送任务到邮件队列
+            $user->sendMail('订阅提醒', 'notice.tpl', 'sub_reminder', [
+                'title' => '订阅提醒',
+                'content' => sprintf('您于 【%s】 在 【%s】 发起了一次订阅请求，请求标头是 【%s】 <br /><br />请注意：如非您本人操作，请及时在 <b>我的->资料修改->使用</b> 选项卡中重置订阅地址并重置连接密码令旧的配置失效。同时，您需要在客户端中更新订阅地址', date("Y-m-d H:i:s", time()), Tools::getIpInfo($_SERVER['REMOTE_ADDR']), $user_agent),
+                'concluding_remarks' => "此邮件由系统自动发送，分类是 <b>订阅提醒</b>。取消此类通知，请在用户中心前往 <b>我的->资料修改</b> 页面设置",
+            ], [], true);
         }
 
         $specified = (int) $request->getParam('clash');

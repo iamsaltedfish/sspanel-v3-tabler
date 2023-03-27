@@ -19,7 +19,7 @@ class MailAnalyzeController extends AdminController
 
         $chart_content = [];
         $mail_type = ['basic', 'system', 'work_order', 'due_reminder', 'account_security'];
-        // general_notice important_notice market traffic_report
+        // general_notice important_notice market traffic_report sub_reminder login_reminder
         foreach ($mail_type as $type) {
             $set = [];
             foreach ($datas as $data) {

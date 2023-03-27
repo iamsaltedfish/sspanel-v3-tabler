@@ -430,14 +430,15 @@ class User extends Model
     {
         $result = false;
         if ($is_queue) {
-            $new_emailqueue = new EmailQueue();
-            $new_emailqueue->to_email = $this->email;
-            $new_emailqueue->subject = $subject;
-            $new_emailqueue->template = $template;
-            $new_emailqueue->time = time();
+            $task = new EmailQueue();
+            $task->time = time();
+            $task->mail_type = $type;
+            $task->subject = $subject;
+            $task->template = $template;
+            $task->to_email = $this->email;
             $ary = array_merge(['user' => $this], $ary);
-            $new_emailqueue->array = json_encode($ary);
-            $new_emailqueue->save();
+            $task->array = json_encode($ary);
+            $task->save();
             return true;
         }
         // 验证邮箱地址是否正确

@@ -310,7 +310,6 @@ class User extends Model
         InviteCode::where('user_id', '=', $uid)->delete();
         EmailVerify::where('email', '=', $email)->delete();
         PasswordReset::where('email', '=', $email)->delete();
-        TelegramSession::where('user_id', '=', $uid)->delete();
         UserSubscribeLog::where('user_id', '=', $uid)->delete();
 
         $this->delete();

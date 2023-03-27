@@ -53,7 +53,6 @@ class Config
             // telegram
             'enable_telegram'         => $_ENV['enable_telegram'],
             'telegram_bot'            => $_ENV['telegram_bot'],
-            'use_new_telegram_bot'    => $_ENV['use_new_telegram_bot'],
             // 自定义页面
             'page_load_data_entry'          => $_ENV['page_load_data_entry'],
             'user_media_page_custom'        => $_ENV['user_media_page_custom'],

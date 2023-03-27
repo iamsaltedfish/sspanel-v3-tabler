@@ -257,32 +257,9 @@ $_ENV['max_port'] = 60000; // 0为不分配; 其他值时为分配终止端口
     Telegram bot
 */
 
-// 变更这些参数均需要执行 php xcat Tool setTelegram
 $_ENV['telegram_bot'] = ''; // 机器人用户名
 $_ENV['telegram_token'] = ''; // 机器人token
-$_ENV['telegram_chatid'] = ''; // 群组会话id
 $_ENV['enable_telegram'] = false; // 机器人开关
-$_ENV['use_new_telegram_bot'] = true; // 新版机器人开关
-$_ENV['telegram_group_quiet'] = false; // 是否在群组中不回应
-$_ENV['telegram_request_token'] = '51d38e0819930dbdb808a5c3e65d08a9'; // 修改为随机字符串
-
-// 功能设置
-$_ENV['finance_public'] = false; // 财务报告是否向群公开
-$_ENV['enable_welcome_message'] = true; // 机器人发送欢迎消息
-$_ENV['enable_telegram_login'] = false; // 需配置并启用新版机器人开关
-$_ENV['allow_to_join_new_groups'] = true; // 允许 Bot 加入下方配置之外的群组
-$_ENV['group_id_allowed_to_join'] = []; // 允许加入的群组 ID
-$_ENV['telegram_admins'] = []; // 额外的 Telegram 管理员 ID
-$_ENV['delete_message_time'] = 180; // 0为关闭; 其他数值为在此时间后删除用户触发的 bot 回复
-$_ENV['delete_admin_message_time'] = 86400; // 0为关闭; 其他数值为在此时间后删除管理命令触发的 bot 回复
-$_ENV['enable_delete_user_cmd'] = false; // 删除用户触发的 bot 回复功能开关
-$_ENV['help_any_command'] = false; // 其他未知命令触发 /help 回复
-$_ENV['enable_user_email_group_show'] = false; // false时隐藏用户完整邮箱
-$_ENV['enable_detect_offline'] = false; // 节点掉线检测
-$_ENV['show_group_link'] = false; // 是否展示群组链接
-$_ENV['group_link'] = ''; // 群组链接
-$_ENV['unbind_kick_member'] = false; // 当用户解除绑定时，是否将其从用户群中移除
-$_ENV['group_bound_user'] = false; // 仅允许绑定的用户加入群组
 
 /*
     订阅设置

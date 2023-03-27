@@ -14,7 +14,6 @@ class Tool extends Command
     public $description = ''
         . '├─=: php xcat Tool [选项]' . PHP_EOL
         . '│ ├─ initQQWry                     - 下载 IP 解析库' . PHP_EOL
-        . '│ ├─ setTelegram                   - 设置 Telegram 机器人' . PHP_EOL
         . '│ ├─ resetAllSettings              - 使用默认值覆盖设置中心设置' . PHP_EOL
         . '│ ├─ exportAllSettings             - 导出所有设置' . PHP_EOL
         . '│ ├─ importAllSettings             - 导入所有设置' . PHP_EOL
@@ -33,30 +32,6 @@ class Tool extends Command
                 $this->$methodName();
             } else {
                 echo '方法不存在.' . PHP_EOL;
-            }
-        }
-    }
-
-    public function setTelegram()
-    {
-        if ($_ENV['use_new_telegram_bot'] === true) {
-            $web_hook_url = $_ENV['baseUrl'] . '/telegram_callback?token=' . $_ENV['telegram_request_token'];
-            $telegram = new \Telegram\Bot\Api($_ENV['telegram_token']);
-            $telegram->removeWebhook();
-            if ($telegram->setWebhook(['url' => $web_hook_url])) {
-                $bot_name = $telegram->getMe()->getUsername();
-                echo "The new version telegram robot @{$bot_name} has been set up." . PHP_EOL;
-            }
-        } else {
-            $telegram_token = $_ENV['telegram_token'];
-            $bot = new \TelegramBot\Api\BotApi($telegram_token);
-            $request_url = "https://api.telegram.org/bot{$telegram_token}/deleteWebhook";
-            $response = file_get_contents($request_url); // return json content
-            $response_array = json_decode($response, true);
-            if ($response_array['ok'] && $response_array['result']) {
-                if ($bot->setWebhook($_ENV['baseUrl'] . '/telegram_callback?token=' . $_ENV['telegram_request_token']) === 1) {
-                    echo 'The old version telegram robot has been set up.' . PHP_EOL;
-                }
             }
         }
     }

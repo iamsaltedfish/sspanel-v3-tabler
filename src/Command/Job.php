@@ -14,7 +14,6 @@ use App\Models\PasswordReset;
 use App\Models\Setting;
 use App\Models\Statistics as StatisticsModel;
 use App\Models\StreamMedia;
-use App\Models\TelegramSession;
 use App\Models\Token;
 use App\Models\User;
 use App\Models\UserSubscribeLog;
@@ -93,7 +92,6 @@ class Job extends Command
         StreamMedia::where('created_at', '<', time() - 86400 * 24)->delete();
         EmailVerify::where('expire_in', '<', time() - 86400 * 3)->delete();
         PasswordReset::where('expire_time', '<', time() - 86400 * 3)->delete();
-        TelegramSession::where('datetime', '<', time() - 900)->delete();
         NodeOnlineLog::where('log_time', '<', time() - 86400 * 1)->delete();
         UserSubscribeLog::where('request_time', '<', $limit)->delete();
         StatisticsModel::where('item', 'user_traffic')->where('created_at', '<', time() - 86400 * 14)->delete();

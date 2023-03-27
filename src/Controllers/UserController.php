@@ -27,7 +27,6 @@ use App\Services\Mail;
 use App\Services\Payment;
 use App\Utils\DatatablesHelper;
 use App\Utils\Hash;
-use App\Utils\TelegramSessionManager;
 use App\Utils\Tools;
 use Ramsey\Uuid\Uuid;
 use Vectorface\GoogleAuthenticator;
@@ -1016,13 +1015,11 @@ class UserController extends BaseController
     {
         $config = new Config();
         $themes = Tools::getDir(BASE_PATH . '/resources/views');
-        $bind_token = TelegramSessionManager::addBindSession($this->user);
         $mail_setting = MailPush::where('user_id', $this->user->id)->first();
 
         return $this->view()
             ->assign('user', $this->user)
             ->assign('themes', $themes)
-            ->assign('bind_token', $bind_token)
             ->assign('mail_setting', $mail_setting)
             ->assign('telegram_bot', $_ENV['telegram_bot'])
             ->assign('config_service', $config)

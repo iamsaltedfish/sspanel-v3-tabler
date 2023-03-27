@@ -2,8 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Utils\Telegram\Process;
-use App\Utils\TelegramProcess;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -41,27 +39,6 @@ class HomeController extends BaseController
     public function staff($request, $response, $args): ResponseInterface
     {
         return $response->write($this->view()->fetch('staff.tpl'));
-    }
-
-    /**
-     * @param Request   $request
-     * @param Response  $response
-     * @param array     $args
-     */
-    public function telegram($request, $response, $args): ResponseInterface
-    {
-        $token = $request->getQueryParam('token');
-        if ($token === $_ENV['telegram_request_token']) {
-            if ($_ENV['use_new_telegram_bot']) {
-                Process::index();
-            } else {
-                TelegramProcess::process();
-            }
-            $result = '1';
-        } else {
-            $result = '0';
-        }
-        return $response->write($result);
     }
 
     /**

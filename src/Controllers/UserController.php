@@ -617,7 +617,7 @@ class UserController extends BaseController
 
     public function profile($request, $response, $args)
     {
-        $use_logs = Ip::where('userid', $this->user->id)
+        $raw_use_logs = Ip::where('userid', $this->user->id)
             ->where('datetime', '>=', time() - 300)
             ->get();
 
@@ -626,6 +626,26 @@ class UserController extends BaseController
             ->where('type', '0')
             ->take(8)
             ->get();
+
+        if ($_ENV['hidden_transit_server_ip']
+            && isset($_ENV['hidden_transit_server_ip_list'])
+            && count($_ENV['hidden_transit_server_ip_list']) > 0
+        ) {
+            // https://laravelacademy.org/post/6863
+            $use_logs = $raw_use_logs->reject(static function ($log) {
+                return in_array($log->ip, $_ENV['hidden_transit_server_ip_list'], true);
+            });
+        }
+
+        if ($_ENV['marked_site_server_login_ip']) {
+            $ip_set = Node::distinct()->pluck('node_ip')->toArray();
+            //var_dump($ip_set);
+            foreach ($totallogin as $login) {
+                if (in_array($login->ip, $ip_set, true)) {
+                    $login->attribution .= ' (本站节点)';
+                }
+            }
+        }
 
         return $response->write(
             $this->view()

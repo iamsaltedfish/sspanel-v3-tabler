@@ -317,6 +317,9 @@ $_ENV['theme'] = 'material'; // 默认主题
 $_ENV['timeZone'] = 'PRC'; // PRC / UTC
 $_ENV['jump_delay'] = 1200; // 页面跳转延时
 $_ENV['enable_login_bind_ip'] = true; // 是否将登陆线程和IP绑定
+$_ENV['hidden_transit_server_ip'] = false; // 账户信息页面的最近使用ip是否排除展示下列ip
+$_ENV['hidden_transit_server_ip_list'] = ['8.8.8.8']; // 排除展示的ip
+$_ENV['marked_site_server_login_ip'] = false; // 账户信息页面的登录ip如果是站点服务器ip则进行标注
 
 /*
     获取客户端地址

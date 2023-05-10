@@ -112,7 +112,11 @@
                                         <tr>
                                             <td>{$login->ip}</td>
                                             <td>{date('Y-m-d H:i:s', $login->datetime)}</td>
-                                            <td>{Tools::getIpInfo($login->ip)}</td>
+                                            {if isset($login->attribution)}
+                                                <td>{$login->attribution}</td>
+                                            {else}
+                                                <td>{Tools::getIpInfo($login->ip)}</td>
+                                            {/if}
                                         </tr>
                                     {/foreach}
                                 </tbody>

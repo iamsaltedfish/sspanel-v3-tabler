@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="card">
-                        {if $invite_permissions['result'] === true}
+                        {if $invite_permissions['result'] === true || $user->force_allow_invite === 1}
                             <div class="card-body">
                                 <h3 class="card-title">邀请链接</h3>
                                 {if $user->invite_num >= 0}

@@ -229,7 +229,9 @@ class AuthController extends BaseController
                 }
                 $invite_limit_check = InviteCode::invitationPermissionCheck($invite_user->id); // array
                 if (!$invite_limit_check['result']) {
-                    throw new \Exception('邀请人暂无邀请权限');
+                    if ($invite_user->force_allow_invite !== 1) {
+                        throw new \Exception('邀请人暂无邀请权限');
+                    }
                 }
             }
             if ($_ENV['enable_reg_im']) {

@@ -130,6 +130,17 @@
                                     </div>
                                     <div>
                                         <label class="row">
+                                            <span class="col">强制允许邀请</span>
+                                            <span class="col-auto">
+                                                <label class="form-check form-check-single form-switch">
+                                                    <input id="force_allow_invite" class="form-check-input" type="checkbox"
+                                                        {if $edit_user->force_allow_invite === 1}checked="" {/if}>
+                                                </label>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label class="row">
                                             <span class="col">两步认证</span>
                                             <span class="col-auto">
                                                 <label class="form-check form-check-single form-switch">
@@ -389,6 +400,7 @@
                 is_admin: $("#is_admin").is(":checked"),
                 ga_enable: $("#ga_enable").is(":checked"),
                 limit_order: $("#limit_order").is(":checked"),
+                force_allow_invite: $("#force_allow_invite").is(":checked"),
             },
             success: function(data) {
                 if (data.ret == 1) {

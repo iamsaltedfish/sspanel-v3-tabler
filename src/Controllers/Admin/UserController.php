@@ -253,6 +253,7 @@ class UserController extends AdminController
             $user->enable = ($request->getParam('enable') === 'true') ? 0 : 1; // 值为1时是正常状态
             $user->ga_enable = ($request->getParam('ga_enable') === 'true') ? 1 : 0; // 值为0时是关闭状态
             $user->limit_order = ($request->getParam('limit_order') === 'true') ? 1 : 0; // 值为1时限制下单
+            $user->force_allow_invite = ($request->getParam('force_allow_invite') === 'true') ? 1 : 0; // 值为1时忽略设置的邀请限制
             if ($request->getParam('reset_user_passwd') !== '') {
                 $user->pass = Hash::passwordHash($request->getParam('reset_user_passwd'));
             }

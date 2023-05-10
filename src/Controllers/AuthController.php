@@ -218,16 +218,17 @@ class AuthController extends BaseController
                 $code = (count($split) === 1) ? $code : end($split);
                 $reg_invite_code = InviteCode::where('code', $code)->first();
                 if ($reg_invite_code === null) {
-                    throw new \Exception('没有找到这个邀请码');
+                    throw new \Exception("没有找到这个邀请码：{$code}");
                 }
                 $invite_user = User::where('id', $reg_invite_code->user_id)->first();
                 if ($invite_user === null) {
                     throw new \Exception('邀请人不存在');
                 }
                 if ($invite_user->invite_num === 0) {
-                    throw new \Exception('邀请码可用次数不足');
+                    throw new \Exception('邀请人的邀请码可用次数不足');
                 }
-                if (!InviteCode::invitationPermissionCheck($invite_user->id)) {
+                $invite_limit_check = InviteCode::invitationPermissionCheck($invite_user->id); // array
+                if (!$invite_limit_check['result']) {
                     throw new \Exception('邀请人暂无邀请权限');
                 }
             }

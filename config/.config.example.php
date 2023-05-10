@@ -179,6 +179,9 @@ $_ENV['registration_duration_switch'] = false; // 根据注册时长限制邀请
 $_ENV['registration_duration'] = 90; // 注册多少天才能邀请人
 $_ENV['consumption_amount_switch'] = false; // 根据消费金额限制邀请权限
 $_ENV['consumption_amount'] = 60; // 消费多少元才能邀请人
+// 若 registration_duration_switch 和 consumption_amount_switch 都为真且此项目为真
+// 则用户只需满足其中一条规则即有邀请权限
+$_ENV['one_of_the_conditions_is_satisfied'] = false;
 
 /*
     页面自定义

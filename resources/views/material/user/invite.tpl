@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="card">
-                        {if $invite_permissions === true}
+                        {if $invite_permissions['result'] === true}
                             <div class="card-body">
                                 <h3 class="card-title">邀请链接</h3>
                                 {if $user->invite_num >= 0}
@@ -59,8 +59,8 @@
                                 <h3 class="card-title">邀请链接</h3>
                                 <p>您因为不满足下列条件，所以暂无邀请权限。过段时间再来看看吧</p>
                                 <ul>
-                                    <li>注册时长未满足设置条件</li>
-                                    <li>消费金额未满足设置条件</li>
+                                    <li>{$invite_permissions['reason']}</li>
+                                    <!--<li>消费金额未满足设置条件</li>-->
                                 </ul>
                             </div>
                             <div class="card-footer">

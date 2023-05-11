@@ -635,6 +635,8 @@ class UserController extends BaseController
             $use_logs = $raw_use_logs->reject(static function ($log) {
                 return in_array($log->ip, $_ENV['hidden_transit_server_ip_list'], true);
             });
+        } else {
+            $use_logs = $raw_use_logs;
         }
 
         if ($_ENV['marked_site_server_login_ip']) {

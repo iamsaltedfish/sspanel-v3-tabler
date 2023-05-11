@@ -63,7 +63,6 @@
                                 <p>您因为不满足下列条件，所以暂无邀请权限。过段时间再来看看吧</p>
                                 <ul>
                                     <li>{$invite_permissions['reason']}</li>
-                                    <!--<li>消费金额未满足设置条件</li>-->
                                 </ul>
                             </div>
                             <div class="card-footer">

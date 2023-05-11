@@ -71,7 +71,7 @@ class InviteCode extends Model
         }
         if ($check_reg_time['result'] === false || $check_pay_sum['result'] === false) {
             $end['result'] = false;
-            $end['reason'] = isset($check_reg_time['reason']) ? $check_reg_time['reason'] : $check_pay_sum['reason'];
+            $end['reason'] = $check_reg_time['reason'] ?? $check_pay_sum['reason'];
             return $end;
         }
         // 都满足返回真

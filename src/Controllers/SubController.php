@@ -242,9 +242,8 @@ class SubController extends BaseController
             }
             if ($node === null) {
                 continue;
-            } else {
-                $nodes[] = $node;
             }
+            $nodes[] = $node;
         }
 
         $sub_info = [

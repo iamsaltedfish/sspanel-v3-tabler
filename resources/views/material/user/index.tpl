@@ -312,7 +312,7 @@
                                     {if $config['checkin_add_time'] == true}
                                         流量并获得 <code>{$config['checkin_add_time_hour']}</code> 小时的时长，
                                     {/if}
-                                    每日零时后就可以可签到了
+                                    每日零时后就可以签到了
                                 </p>
                                 <p class="text-muted">
                                     上次签到时间：<code>{$user->lastCheckInTime()}</code>

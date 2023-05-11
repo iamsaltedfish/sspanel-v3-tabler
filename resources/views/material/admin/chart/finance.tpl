@@ -20,6 +20,14 @@
             <div class="row row-deck row-cards">
                 <div class="col-12">
                     <div class="card">
+                        <div class="card-body">
+                            <p>统计起始时间：<code>{date('Y-m-d H:i:s', $begin_time)}</code>，统计终止时间：<code>{date('Y-m-d H:i:s', $end_time)}</code></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card">
                         <div class="table-responsive">
                             <table class="table table-vcenter text-nowrap card-table">
                                 <thead>

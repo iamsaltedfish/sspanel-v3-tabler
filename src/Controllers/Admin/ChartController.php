@@ -6,6 +6,7 @@ use App\Controllers\AdminController;
 use App\Models\Node;
 use App\Models\ProductOrder;
 use App\Models\Statistics;
+use Carbon\Carbon;
 
 class ChartController extends AdminController
 {
@@ -20,7 +21,7 @@ class ChartController extends AdminController
         $chart_y = [];
 
         foreach ($items as $record) {
-            $timestamp = ($offset) ? $record->created_at - 86400 : $record->created_at;
+            $timestamp = $offset ? $record->created_at - 86400 : $record->created_at;
             $chart_x[] = "'" . date('m-d', $timestamp) . "'";
             $chart_y[] = $record->value;
         }
@@ -126,8 +127,11 @@ class ChartController extends AdminController
 
     public function finance($request, $response, $args)
     {
-        $begin_time = strtotime(date('Y-m-01 00:00:00', strtotime('-1 month')));
-        $end_time = strtotime(date('Y-m-d 23:59:59', strtotime(-date('d') . 'day')));
+        $offset = $request->getParam('back') ?? 0;
+        $offset = 1 + $offset;
+        $date = Carbon::now()->subMonths($offset);
+        $begin_time = $date->startOfMonth()->timestamp;
+        $end_time = $date->endOfMonth()->timestamp;
 
         $result = [];
         $total_fee = 0;
@@ -189,6 +193,8 @@ class ChartController extends AdminController
         return $response->write(
             $this->view()
                 ->assign('result', $result)
+                ->assign('end_time', $end_time)
+                ->assign('begin_time', $begin_time)
                 ->display('admin/chart/finance.tpl')
         );
     }

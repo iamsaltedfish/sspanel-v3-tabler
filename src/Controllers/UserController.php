@@ -671,8 +671,30 @@ class UserController extends BaseController
             ->sum('ref_get');
         $invite_url = $_ENV['baseUrl'] . '/auth/register?code=' . $code->code;
 
+        $table = [];
+        if ($_ENV['public_product_rebate_comparison_table']) {
+            // 0 此商品返利规则跟随系统设置
+            // 1 此商品不返利
+            // 2 此商品返利金额使用下方数值（选择此模式则不受系统设置中的各项返利限制）
+            $products = Product::where('status', 1)->get();
+            foreach ($products as $product) {
+                switch($product->rebate_mode) {
+                    case 0:
+                        $table[$product->name] = $product->price / 100 * Setting::obtain('rebate_ratio');
+                        break;
+                    case 1:
+                        $table[$product->name] = 0;
+                        break;
+                    case 2:
+                        $table[$product->name] = $product->rebate_amount / 100;
+                        break;
+                }
+            }
+        }
+
         return $this->view()
             ->assign('code', $code)
+            ->assign('table', $table)
             ->assign('paybacks', $paybacks)
             ->assign('invite_url', $invite_url)
             ->assign('paybacks_sum', $paybacks_sum)

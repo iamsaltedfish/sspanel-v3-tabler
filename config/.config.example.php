@@ -166,6 +166,7 @@ $_ENV['checkinMax'] = 300; // 签到可获得的最多流量(MB)
 $_ENV['checkin_add_time'] = false; // 签到是否增加时间
 $_ENV['checkin_add_time_hour'] = 4; // 签到增加多长小时的时间
 $_ENV['gift_card_rebate'] = false; // 当用户兑换礼品卡添加余额时，是否执行返利
+$_ENV['public_product_rebate_comparison_table'] = false; // 在邀请注册页面公开商品返利对照表
 $_ENV['hide_old_server_list'] = false; // 是否隐藏旧的服务器列表入口
 $_ENV['hide_audit_rules_and_logs'] = false; // 是否隐藏审计规则与日志入口
 $_ENV['show_live_chat_on_logout_page'] = false; // 是否在未登录页面显示livechat

@@ -32,6 +32,9 @@
                                 <li>若邀请注册的用户申请退款，返利金额也将撤销</li>
                             </ul>
                             <p>您目前通过邀请好友获得的总返利为 <code>{$paybacks_sum}</code> 元</p>
+                            {if count($table) > 0}
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#rebate-comparison-table">查看商品返利对照表</a>
+                            {/if}
                         </div>
                     </div>
                 </div>
@@ -77,7 +80,7 @@
                         <div class="card-header">
                             <h3 class="card-title">返利记录</h3>
                         </div>
-                        {if $paybacks->count() != '0'}
+                        {if $paybacks->count() !== 0}
                             <div class="table-responsive">
                                 <table class="table card-table table-vcenter text-nowrap datatable">
                                     <thead>
@@ -118,6 +121,44 @@
             </div>
         </div>
     </div>
+
+    {if count($table) > 0}
+        <div class="modal modal-blur fade" id="rebate-comparison-table" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">商品返利对照表</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="table-responsive">
+                                <table class="table table-vcenter card-table">
+                                    <thead>
+                                        <tr>
+                                            <th>商品</th>
+                                            <th>金额</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {foreach $table as $name => $price}
+                                            <tr>
+                                                <td>{$name}</td>
+                                                <td>{sprintf("%.2f", $price)}</td>
+                                            </tr>
+                                        {/foreach}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {/if}
 
     <div class="modal modal-blur fade" id="success-dialog" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-sm modal-dialog-centered" role="document">

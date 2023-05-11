@@ -31,7 +31,7 @@
                                 <li>部分商品的返利比例可能不遵循上面的比例</li>
                                 <li>若邀请注册的用户申请退款，返利金额也将撤销</li>
                             </ul>
-                            <p>您目前通过邀请好友获得的总返利为 <code>{$paybacks_sum}</code> 元</p>
+                            <p>您目前通过邀请好友获得的总返利为 <code>{sprintf("%.2f", $paybacks_sum)}</code> 元</p>
                             {if count($table) > 0}
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#rebate-comparison-table">查看商品返利对照表</a>
                             {/if}

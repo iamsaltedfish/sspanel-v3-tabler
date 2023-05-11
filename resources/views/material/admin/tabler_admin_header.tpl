@@ -27,7 +27,7 @@
     <!-- JS files -->
     <script src="/theme/tabler/js/qrcode.min.js"></script>
     <script src="/theme/tabler/js/clipboard.min.js"></script>
-    <script src="/theme/tabler/js/jquery-3.6.0.min.js"></script>
+    <script src="/theme/tabler/js/jquery-3.6.4.min.js"></script>
     <script src="/theme/tabler/js/jquery.dataTables.min.js"></script>
     <script src="/theme/tabler/js/dataTables.bootstrap5.min.js"></script>
     <style>

@@ -21,6 +21,6 @@
     <link href="/theme/tabler/css/tabler-payments.min.css" rel="stylesheet" />
     <link href="/theme/tabler/css/tabler-vendors.min.css" rel="stylesheet" />
     <link href="/theme/tabler/css/demo.min.css" rel="stylesheet" />
-    <script src="/theme/tabler/js/jquery-3.6.0.min.js"></script>
+    <script src="/theme/tabler/js/jquery-3.6.4.min.js"></script>
     <script src="/theme/tabler/js/tabler.min.js"></script>
 </head>

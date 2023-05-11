@@ -73,7 +73,13 @@ class PaybackController extends AdminController
 
     public function index($request, $response, $args)
     {
-        $logs = Payback::orderBy('id', 'desc')
+        $condition = [];
+        $user_id = $request->getParam('user_id');
+        if (isset($user_id)) {
+            $condition[] = ['ref_by', '=', $user_id];
+        }
+        $logs = Payback::where($condition)
+            ->orderBy('id', 'desc')
             ->limit($_ENV['page_load_data_entry'])
             ->get();
 

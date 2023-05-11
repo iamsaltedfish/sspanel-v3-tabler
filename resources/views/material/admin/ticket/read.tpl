@@ -155,6 +155,7 @@
                                 ，昵称：<code>{$tk_user->user_name}</code>
                                 ，注册邮箱：<code>{$tk_user->email}</code>
                                 ，<a href="/admin/user/{$tk_user->id}/edit">编辑用户</a>
+                                | <a href="/admin/payback?user_id={$tk_user->id}">查阅返利</a>
                             </p>
                             <p style="line-height: 24px;">
                                 用户等级：<code>{$tk_user->class}</code>

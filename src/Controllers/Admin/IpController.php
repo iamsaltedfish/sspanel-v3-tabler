@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\AdminController;
 use App\Models\Ip;
 use App\Models\LoginIp;
+use App\Models\Node;
 use App\Utils\QQWry;
 use App\Utils\Tools;
 use Slim\Http\Request;
@@ -154,6 +155,42 @@ class IpController extends AdminController
             $this->view()
                 ->assign('table_config', $table_config)
                 ->display('admin/ip/alive.tpl')
+        );
+    }
+
+    public function aliveTop($request, $response, $args)
+    {
+        $top = [];
+        $nodes = Node::pluck('name', 'id')->all();
+        // 因为不能在查询后的对象变量上调用 distinct 方法所以暂时先分三次查询实现
+        $online_user = IP::where('datetime', '>=', time() - 60)->get();
+        $user_ids = IP::where('datetime', '>=', time() - 60)
+            ->distinct()
+            ->pluck('userid')
+            ->toArray();
+        $ip_distinct = IP::where('datetime', '>=', time() - 60)
+            ->distinct()
+            ->pluck('ip')
+            ->toArray();
+
+        $qqwry = new QQWry();
+        $ip_location = $qqwry->getlocationArray($ip_distinct);
+        foreach ($user_ids as $user_id) {
+            $top[] = [
+                'user_id' => $user_id,
+                'count' => $online_user->where('userid', $user_id)->count(),
+                'logs' => $online_user->where('userid', $user_id)->toArray(),
+            ];
+        }
+
+        array_multisort(array_column($top, 'count'), SORT_DESC, $top);
+
+        return $response->write(
+            $this->view()
+                ->assign('top', $top)
+                ->assign('nodes', $nodes)
+                ->assign('ip_location', $ip_location)
+                ->display('admin/ip/aliveTop.tpl')
         );
     }
 

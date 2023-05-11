@@ -109,7 +109,7 @@
                     <div class="form-group mb-3 row">
                         <label class="form-label col-3 col-form-label">订单号</label>
                         <div class="col">
-                            <input id="no" type="text" class="form-control">
+                            <input id="no" type="text" class="form-control" placeholder="模糊搜索">
                         </div>
                     </div>
                     <div class="form-group mb-3 row">

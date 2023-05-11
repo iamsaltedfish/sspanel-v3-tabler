@@ -277,6 +277,10 @@
                                         <i class="ti ti-router"></i>&nbsp;
                                         在线
                                     </a>
+                                    <a class="dropdown-item" href="/admin/alive/top">
+                                        <i class="ti ti-brand-apple-arcade"></i>&nbsp;
+                                        在线排行
+                                    </a>
                                     <a class="dropdown-item" href="/admin/log">
                                         <i class="ti ti-book-download"></i>&nbsp;
                                         自定义

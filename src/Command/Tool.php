@@ -194,7 +194,7 @@ class Tool extends Command
             $user->save();
         }
 
-        echo "All tasks have been completed." . PHP_EOL;
+        echo "All tasks have been completed, {$users->count()} user names are changed." . PHP_EOL;
     }
 
     public static function parsingAdditionalParameters(string $text): array

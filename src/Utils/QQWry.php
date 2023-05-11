@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Utils;
 
 /*
@@ -9,27 +8,19 @@ namespace App\Utils;
 class QQWry
 {
     private $fp;
-
     private $firstip;
-
     private $lastip;
-
     private $totalip;
 
     public function __construct()
     {
         $filename = BASE_PATH . '/storage/qqwry.dat';
-
         $this->fp = fopen($filename, 'rb');
-
         if ($this->fp !== false) {
             $this->firstip = $this->getlong();
-
             $this->lastip = $this->getlong();
-
             $this->totalip = ($this->lastip - $this->firstip) / 7;
-
-            register_shutdown_function([ & $this, '__destruct']);
+            register_shutdown_function([&$this, '__destruct']);
         }
     }
 
@@ -38,21 +29,18 @@ class QQWry
         if ($this->fp) {
             fclose($this->fp);
         }
-
         $this->fp = 0;
     }
 
     private function getlong()
     {
         $result = unpack('Vlong', fread($this->fp, 4));
-
         return $result['long'];
     }
 
     private function getlong3()
     {
         $result = unpack('Vlong', fread($this->fp, 3) . chr(0));
-
         return $result['long'];
     }
 
@@ -64,40 +52,29 @@ class QQWry
     private function getstring($data = '')
     {
         $char = fread($this->fp, 1);
-
         while (ord($char) > 0) {
             $data .= $char;
-
             $char = fread($this->fp, 1);
         }
-
         return $data;
     }
 
     private function getarea()
     {
         $byte = fread($this->fp, 1);
-
         switch (ord($byte)) {
             case 0:
                 $area = '';
-
                 break;
-
             case 1:
             case 2:
                 fseek($this->fp, $this->getlong3());
-
                 $area = $this->getstring();
-
                 break;
-
             default:
                 $area = $this->getstring($byte);
-
                 break;
         }
-
         return $area;
     }
 
@@ -106,111 +83,153 @@ class QQWry
         if (!$this->fp) {
             return null;
         }
-
         $location = [];
         $location['ip'] = gethostbyname($ip);
-
         $ip = $this->packip($location['ip']);
-
         $l = 0;
-
         $u = $this->totalip;
-
         $findip = $this->lastip;
-
         while ($l <= $u) {
             $i = floor(($l + $u) / 2);
-
             fseek($this->fp, $this->firstip + $i * 7);
-
             $beginip = strrev(fread($this->fp, 4));
-
             if ($ip < $beginip) {
                 $u = $i - 1;
             } else {
                 fseek($this->fp, $this->getlong3());
-
                 $endip = strrev(fread($this->fp, 4));
-
                 if ($ip > $endip) {
                     $l = $i + 1;
                 } else {
                     $findip = $this->firstip + $i * 7;
-
                     break;
                 }
             }
         }
-
         fseek($this->fp, $findip);
-
         $location['beginip'] = long2ip($this->getlong());
-
         $offset = $this->getlong3();
-
         fseek($this->fp, $offset);
-
         $location['endip'] = long2ip($this->getlong());
-
         $byte = fread($this->fp, 1);
-
         switch (ord($byte)) {
             case 1:
                 $countryOffset = $this->getlong3();
-
                 fseek($this->fp, $countryOffset);
-
                 $byte = fread($this->fp, 1);
-
                 switch (ord($byte)) {
                     case 2:
                         fseek($this->fp, $this->getlong3());
-
                         $location['country'] = $this->getstring();
-
                         fseek($this->fp, $countryOffset + 4);
-
                         $location['area'] = $this->getarea();
-
                         break;
-
                     default:
                         $location['country'] = $this->getstring($byte);
-
                         $location['area'] = $this->getarea();
-
                         break;
                 }
-
                 break;
-
             case 2:
                 fseek($this->fp, $this->getlong3());
-
                 $location['country'] = $this->getstring();
-
                 fseek($this->fp, $offset + 8);
-
                 $location['area'] = $this->getarea();
-
                 break;
-
             default:
                 $location['country'] = $this->getstring($byte);
-
                 $location['area'] = $this->getarea();
-
                 break;
         }
-
         if ($location['country'] === ' CZ88.NET') {
             $location['country'] = '未知';
         }
-
         if ($location['area'] === ' CZ88.NET') {
             $location['area'] = '';
         }
-
         return $location;
+    }
+
+    /*
+     * 参数是一维的 ip 地址数组
+     * 返回是 ip, location 的关联数组
+     */
+    public function getlocationArray(array $ips): array
+    {
+        if (!$this->fp) {
+            return null;
+        }
+        $result = [];
+        // 存放关联数组
+        foreach ($ips as $ip) {
+            $raw_ip = $ip;
+            $location = [];
+            $location['ip'] = gethostbyname($ip);
+            $ip = $this->packip($location['ip']);
+            $l = 0;
+            $u = $this->totalip;
+            $findip = $this->lastip;
+            while ($l <= $u) {
+                $i = floor(($l + $u) / 2);
+                fseek($this->fp, $this->firstip + $i * 7);
+                $beginip = strrev(fread($this->fp, 4));
+                if ($ip < $beginip) {
+                    $u = $i - 1;
+                } else {
+                    fseek($this->fp, $this->getlong3());
+                    $endip = strrev(fread($this->fp, 4));
+                    if ($ip > $endip) {
+                        $l = $i + 1;
+                    } else {
+                        $findip = $this->firstip + $i * 7;
+                        break;
+                    }
+                }
+            }
+            fseek($this->fp, $findip);
+            $location['beginip'] = long2ip($this->getlong());
+            $offset = $this->getlong3();
+            fseek($this->fp, $offset);
+            $location['endip'] = long2ip($this->getlong());
+            $byte = fread($this->fp, 1);
+            switch (ord($byte)) {
+                case 1:
+                    $countryOffset = $this->getlong3();
+                    fseek($this->fp, $countryOffset);
+                    $byte = fread($this->fp, 1);
+                    switch (ord($byte)) {
+                        case 2:
+                            fseek($this->fp, $this->getlong3());
+                            $location['country'] = $this->getstring();
+                            fseek($this->fp, $countryOffset + 4);
+                            $location['area'] = $this->getarea();
+                            break;
+                        default:
+                            $location['country'] = $this->getstring($byte);
+                            $location['area'] = $this->getarea();
+                            break;
+                    }
+                    break;
+                case 2:
+                    fseek($this->fp, $this->getlong3());
+                    $location['country'] = $this->getstring();
+                    fseek($this->fp, $offset + 8);
+                    $location['area'] = $this->getarea();
+                    break;
+                default:
+                    $location['country'] = $this->getstring($byte);
+                    $location['area'] = $this->getarea();
+                    break;
+            }
+            if ($location['country'] === ' CZ88.NET') {
+                $location['country'] = '未知';
+            }
+            if ($location['area'] === ' CZ88.NET') {
+                $location['area'] = '';
+            }
+            //return $location;
+            $result[$raw_ip] = iconv('gbk', 'utf-8//IGNORE', $location['country'] . $location['area']);
+        }
+        return $result;
     }
 }

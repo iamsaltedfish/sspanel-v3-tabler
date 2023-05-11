@@ -213,6 +213,7 @@ return function (SlimApp $app) {
         // IP Mange
         $this->get('/login',                    App\Controllers\Admin\IpController::class . ':index');
         $this->get('/alive',                    App\Controllers\Admin\IpController::class . ':alive');
+        $this->get('/alive/top',                App\Controllers\Admin\IpController::class . ':aliveTop');
         $this->post('/login/ajax',              App\Controllers\Admin\IpController::class . ':ajaxQuery');
         $this->post('/alive/ajax',              App\Controllers\Admin\IpController::class . ':ajaxAlive');
 

@@ -89,6 +89,18 @@
                                         value="{$edit_user->expire_in}">
                                 </div>
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label">快速调整日期</label>
+                                <input id="quick-date-adjustment" type="range" class="form-range mb-2" value="0"
+                                    min="-12" max="12" step="1" list="tickmarks">
+                                <datalist id="tickmarks">
+                                    <option value="0">1</option>
+                                    <option value="25">1</option>
+                                    <option value="50">1</option>
+                                    <option value="75">1</option>
+                                    <option value="100">1</option>
+                                </datalist>
+                            </div>
                             <div class="hr-text">
                                 <span>高级选项</span>
                             </div>
@@ -133,7 +145,8 @@
                                             <span class="col">强制允许邀请</span>
                                             <span class="col-auto">
                                                 <label class="form-check form-check-single form-switch">
-                                                    <input id="force_allow_invite" class="form-check-input" type="checkbox"
+                                                    <input id="force_allow_invite" class="form-check-input"
+                                                        type="checkbox"
                                                         {if $edit_user->force_allow_invite === 1}checked="" {/if}>
                                                 </label>
                                             </span>
@@ -224,32 +237,32 @@
                                 </div>
                             </div> -->
                             <div class="form-group mb-3 col-12">
-                                    <label class="form-label col-12 col-form-label">节点群组</label>
-                                    <div class="col">
-                                        <input id="node_group" type="text" class="form-control"
-                                            value="{$edit_user->node_group}">
-                                    </div>
+                                <label class="form-label col-12 col-form-label">节点群组</label>
+                                <div class="col">
+                                    <input id="node_group" type="text" class="form-control"
+                                        value="{$edit_user->node_group}">
                                 </div>
-                                <div class="form-group mb-3 col-12">
-                                    <label class="form-label col-12 col-form-label">账户等级</label>
-                                    <div class="col">
-                                        <input id="class" type="text" class="form-control" value="{$edit_user->class}">
-                                    </div>
+                            </div>
+                            <div class="form-group mb-3 col-12">
+                                <label class="form-label col-12 col-form-label">账户等级</label>
+                                <div class="col">
+                                    <input id="class" type="text" class="form-control" value="{$edit_user->class}">
                                 </div>
-                                <div class="form-group mb-3 col-12">
-                                    <label class="form-label col-12 col-form-label">速度限制 (Mbps)</label>
-                                    <div class="col">
-                                        <input id="node_speedlimit" type="text" class="form-control"
-                                            value="{$edit_user->node_speedlimit}">
-                                    </div>
+                            </div>
+                            <div class="form-group mb-3 col-12">
+                                <label class="form-label col-12 col-form-label">速度限制 (Mbps)</label>
+                                <div class="col">
+                                    <input id="node_speedlimit" type="text" class="form-control"
+                                        value="{$edit_user->node_speedlimit}">
                                 </div>
-                                <div class="form-group mb-3 col-12">
-                                    <label class="form-label col-12 col-form-label">链接设备限制</label>
-                                    <div class="col">
-                                        <input id="node_connector" type="text" class="form-control"
-                                            value="{$edit_user->node_connector}">
-                                    </div>
+                            </div>
+                            <div class="form-group mb-3 col-12">
+                                <label class="form-label col-12 col-form-label">链接设备限制</label>
+                                <div class="col">
+                                    <input id="node_connector" type="text" class="form-control"
+                                        value="{$edit_user->node_connector}">
                                 </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -413,6 +426,19 @@
                 }
             }
         })
+    });
+
+    raw_class_expire = $('#class_expire').val();
+    raw_expire_in = $('#expire_in').val();
+
+    $('#quick-date-adjustment').on('input', function() {
+        var value = $(this).val();
+        //console.log('当前滑块的进度值为：' + value);
+        var monthsToAdd = parseInt(value);
+        var classExpire = moment(raw_class_expire).add(monthsToAdd, 'months');
+        var expireIn = moment(raw_expire_in).add(monthsToAdd, 'months');
+        $('#class_expire').val(classExpire.format('YYYY-MM-DD HH:mm:ss'));
+        $('#expire_in').val(expireIn.format('YYYY-MM-DD HH:mm:ss'));
     });
 </script>
 

@@ -170,6 +170,7 @@ class UserController extends AdminController
     {
         $condition = [];
         $details = self::page();
+        $quickly_jump = $request->getParam('quickly_jump') === 'true' ? 1 : 0;
         foreach ($details['search_dialog'] as $from) {
             $field = $from['id'];
             $keyword = $request->getParam($field);
@@ -188,7 +189,16 @@ class UserController extends AdminController
         $results = User::orderBy('id', 'desc')
             ->where($condition)
             ->limit($_ENV['page_load_data_entry'])
-            ->get();
+            ->get(array_keys(self::page()['field'])); // 只获取表格需要的列
+
+        if ($quickly_jump === 1 && $results->count() === 1) {
+            foreach ($results as $result) {
+                return $response->withJson([
+                    'ret' => 2,
+                    'result' => $result->id,
+                ]);
+            }
+        }
 
         foreach ($results as $result) {
             $result->transfer_enable = round($result->transfer_enable / 1073741824, 2);

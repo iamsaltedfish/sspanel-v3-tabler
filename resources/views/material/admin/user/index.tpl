@@ -140,6 +140,21 @@
                             </div>
                         {/if}
                     {/foreach}
+                    <div class="mb-3">
+                        <div class="divide-y">
+                            <div>
+                                <label class="row">
+                                    <span class="col">条件符合项快速跳转</span>
+                                    <span class="col-auto">
+                                        <label class="form-check form-check-single form-switch">
+                                            <input id="quickly_jump" class="form-check-input" type="checkbox"
+                                                checked="">
+                                        </label>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn me-auto" data-bs-dismiss="modal">取消</button>
@@ -369,6 +384,7 @@
                     {foreach $details['search_dialog'] as $from}
                         {$from['id']}: $('#search-{$from['id']}').val(),
                     {/foreach}
+                    quickly_jump: $("#quickly_jump").is(":checked"),
                 },
                 success: function(data) {
                     if (data.ret == 1) {
@@ -390,6 +406,9 @@
                         $('#data_table').DataTable().destroy();
                         $("#table_content").html(str);
                         loadTable();
+                    }
+                    if (data.ret == 2) {
+                        window.location.href = "/admin/user/" + data.result + "/edit";
                     }
                 }
             })

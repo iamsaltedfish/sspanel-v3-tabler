@@ -147,7 +147,7 @@ class UserController extends AdminController
     {
         $logs = User::orderBy('id', 'desc')
             ->limit($_ENV['page_load_data_entry'])
-            ->get();
+            ->get(array_keys(self::page()['field']));
 
         foreach ($logs as $log) {
             $log->transfer_enable = round($log->transfer_enable / 1073741824, 2);

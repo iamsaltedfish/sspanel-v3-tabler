@@ -92,14 +92,7 @@
                             <div class="mb-3">
                                 <label class="form-label">快速调整日期</label>
                                 <input id="quick-date-adjustment" type="range" class="form-range mb-2" value="0"
-                                    min="-12" max="12" step="1" list="tickmarks">
-                                <datalist id="tickmarks">
-                                    <option value="0">1</option>
-                                    <option value="25">1</option>
-                                    <option value="50">1</option>
-                                    <option value="75">1</option>
-                                    <option value="100">1</option>
-                                </datalist>
+                                    min="-12" max="12" step="1">
                             </div>
                             <div class="hr-text">
                                 <span>高级选项</span>

@@ -87,7 +87,7 @@ class Job extends Command
         $limit = date('Y-m-d H:i:s', time() - 86400 * (int) $_ENV['subscribeLog_keep_days']);
         //Ip::where('datetime', '<', time() - 300)->delete();
         Token::where('expire_time', '<', time())->delete();
-        DetectLog::where('datetime', '<', time() - 86400 * 1)->delete();
+        //DetectLog::where('datetime', '<', time() - 86400 * 1)->delete();
         NodeInfoLog::where('log_time', '<', time() - 86400 * 1)->delete();
         StreamMedia::where('created_at', '<', time() - 86400 * 24)->delete();
         EmailVerify::where('expire_in', '<', time() - 86400 * 3)->delete();
@@ -113,14 +113,16 @@ class Job extends Command
             // 累加总用量
             $lastday_total += $diff;
             // 记录单用量
-            $insert_data[] = [
-                'item' => 'user_traffic',
-                'value' => round($diff / 1048576, 2), // to mb
-                'user_id' => $user->id,
-                'created_at' => time(),
-            ];
+            if ($diff !== 0) {
+                $insert_data[] = [
+                    'item' => 'user_traffic',
+                    'value' => round($diff / 1048576, 2), // to mb
+                    'user_id' => $user->id,
+                    'created_at' => time(),
+                ];
+            }
             // 重置统计字段
-            $user->last_day_t = ($user->u + $user->d);
+            $user->last_day_t = $user->u + $user->d;
             $user->save();
         }
 
@@ -199,6 +201,7 @@ class Job extends Command
 
         if ((int) date('i') % 5 === 0) {
             Ip::where('datetime', '<', time() - 300)->delete();
+            DetectLog::where('datetime', '<', time() - 300)->delete();
         }
     }
 

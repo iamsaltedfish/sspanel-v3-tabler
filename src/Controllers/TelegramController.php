@@ -83,7 +83,7 @@ class TelegramController
                     return;
                 }
                 $bot->sendMessage($chat_id, '今天有什么可以帮您? 发送 `/help` 获取支持的命令列表', 'Markdown');
-            } catch (\Exception$e) {
+            } catch (\Exception $e) {
                 $bot->sendMessage($chat_id, $e->getMessage());
             }
         }
@@ -118,5 +118,22 @@ class TelegramController
 
         $user->save();
         return $return_text;
+    }
+
+    public static function sendMessageToAdmin(string $content)
+    {
+        $bot = new Client($_ENV['telegram_token']);
+        $admins = User::where('is_admin', 1)->get(['telegram_id']);
+        if ($admins->count() > 0) {
+            foreach ($admins as $admin) {
+                if (isset($admin->telegram_id) && $admin->telegram_id !== '') {
+                    try {
+                        $bot->sendMessage($admin->telegram_id, $content, 'Markdown');
+                    } catch (\Exception $e) {
+                        // todo
+                    }
+                }
+            }
+        }
     }
 }

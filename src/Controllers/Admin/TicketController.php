@@ -154,7 +154,7 @@ class TicketController extends AdminController
             ]);
         }
 
-        if ($_ENV['mail_ticket']) {
+        if ($_ENV['user_ticket_mail_notify']) {
             $anti_xss = new AntiXSS();
             $user = User::find($topic->user_id);
             $user->sendMail(
@@ -223,7 +223,7 @@ class TicketController extends AdminController
         $ticket->closed_by = 'admin';
         $ticket->save();
 
-        /* if ($_ENV['mail_ticket']) {
+        /* if ($_ENV['user_ticket_mail_notify']) {
             $anti_xss = new AntiXSS();
             $user = User::find($ticket->user_id);
             $user->sendMail($_ENV['appName'] . ' - 工单被关闭', 'news/warn.tpl', 'work_order',

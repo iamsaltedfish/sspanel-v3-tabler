@@ -134,7 +134,9 @@ $_ENV['streaming_media_unlock_multiplexing'] = [
 */
 
 $_ENV['enable_ticket'] = true; // 是否开启工单系统
-$_ENV['mail_ticket'] = true; // 是否开启工单邮件提醒
+$_ENV['user_ticket_mail_notify'] = true; // 用户的工单有新回复时邮件通知其注册邮箱
+$_ENV['admin_ticket_mail_notify'] = true; // 用户回复工单时邮件通知所有管理员
+$_ENV['admin_ticket_telegram_notify'] = true; // 用户回复工单时推送给所有绑定了telegram的管理员
 $_ENV['quick_fill_function'] = false; // 工单回复快速填充内容开关
 $_ENV['quick_fill_content'] = [
     [

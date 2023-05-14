@@ -43,75 +43,72 @@
     </div>
     <div class="page-body">
         <div class="container-xl">
-            <div class="row row-deck row-cards">
-                <div class="col-12">
-                        {if $tickets->count() !== 0}
-                            {foreach $tickets as $ticket}
-                                <div class="col-md-4 col-sm-12">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="card-stamp">
-                                                {$tk_status = $ticket->getTheWorkOrderStatus($ticket->tk_id)}
-                                                {if $tk_status !== 'closed'}
-                                                    <div class="card-stamp-icon bg-yellow">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="icon icon-tabler icon-tabler-clock" width="24" height="24"
-                                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                                            stroke-linecap="round" stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                            <circle cx="12" cy="12" r="9"></circle>
-                                                            <polyline points="12 7 12 12 15 15"></polyline>
-                                                        </svg>
-                                                    </div>
-                                                {else}
-                                                    <div class="card-stamp-icon bg-green">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="icon icon-tabler icon-tabler-check" width="24" height="24"
-                                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                                            stroke-linecap="round" stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                                            <path d="M5 12l5 5l10 -10"></path>
-                                                        </svg>
-                                                    </div>
-                                                {/if}
+            <div class="row row-cards">
+                {if $tickets->count() !== 0}
+                    {foreach $tickets as $ticket}
+                        <div class="col-md-4 col-sm-12 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-stamp">
+                                        {$tk_status = $ticket->getTheWorkOrderStatus($ticket->tk_id)}
+                                        {if $tk_status !== 'closed'}
+                                            <div class="card-stamp-icon bg-yellow">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock"
+                                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                    stroke="currentColor" fill="none" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <circle cx="12" cy="12" r="9"></circle>
+                                                    <polyline points="12 7 12 12 15 15"></polyline>
+                                                </svg>
                                             </div>
-                                            <h3 class="card-title" style="font-size: 20px;">
-                                                #{$ticket->tk_id} {$ticket->title}
-                                            </h3>
-                                            <!--<p class="mb-3">
+                                        {else}
+                                            <div class="card-stamp-icon bg-green">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check"
+                                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                    stroke="currentColor" fill="none" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                    <path d="M5 12l5 5l10 -10"></path>
+                                                </svg>
+                                            </div>
+                                        {/if}
+                                    </div>
+                                    <h3 class="card-title" style="font-size: 20px;">
+                                        #{$ticket->tk_id} {$ticket->title}
+                                    </h3>
+                                    <!--<p class="mb-3">
                                                 <span class="badge bg-red-lt">Waiting</span>
                                             </p> -->
-                                            <p class="text-muted text-truncate" style="height: 100px;">
-                                                {nl2br($ticket->getTheLatestReply($ticket->tk_id))}
-                                            </p>
-                                        </div>
-                                        <div class="card-footer">
-                                            <div class="d-flex">
-                                                {if $tk_status === 'closed'}
-                                                    <span class="status status-grey">已结单</span>
-                                                {/if}
-                                                {if $tk_status === 'open_wait_user'}
-                                                    <span class="status status-orange">等您回复</span>
-                                                {/if}
-                                                {if $tk_status === 'open_wait_admin'}
-                                                    <span class="status status-green">进行中</span>
-                                                {/if}
-                                                <a href="/user/ticket/{$ticket->tk_id}/view"
-                                                    class="btn btn-primary ms-auto">浏览</a>
-                                            </div>
-                                        </div>
+                                    <p class="text-muted text-truncate" style="height: 100px;">
+                                        {nl2br($ticket->getTheLatestReply($ticket->tk_id))}
+                                    </p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex">
+                                        {if $tk_status === 'closed'}
+                                            <span class="status status-grey">已结单</span>
+                                        {/if}
+                                        {if $tk_status === 'open_wait_user'}
+                                            <span class="status status-orange">等您回复</span>
+                                        {/if}
+                                        {if $tk_status === 'open_wait_admin'}
+                                            <span class="status status-green">进行中</span>
+                                        {/if}
+                                        <a href="/user/ticket/{$ticket->tk_id}/view" class="btn btn-primary ms-auto">浏览</a>
                                     </div>
                                 </div>
-                            {/foreach}
-                        {else}
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title">没有任何工单</h3>
-                                </div>
-                                <div class="card-body">如需帮助，请点击右上角按钮开启新工单</div>
                             </div>
-                        {/if}
-                </div>
+                        </div>
+                    {/foreach}
+                {else}
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">没有任何工单</h3>
+                        </div>
+                        <div class="card-body">如需帮助，请点击右上角按钮开启新工单</div>
+                    </div>
+                {/if}
             </div>
         </div>
     </div>
